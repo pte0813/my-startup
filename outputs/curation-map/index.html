@@ -64,6 +64,8 @@
   dd { margin:0; }
   .empty { color:var(--muted); padding:20px; text-align:center; border:1px dashed var(--line); border-radius:6px; }
   footer { color:var(--muted); font-size:12px; }
+  footer a { color:var(--accent); }
+  footer p { margin:0 0 8px; }
 </style>
 
 <div class="wrap">
@@ -82,41 +84,65 @@
     <div class="list" id="list"></div>
   </div>
 
-  <footer>표시된 장소는 모두 샘플 데이터입니다. 속이 빈 핀은 마지막 검증 후 90일이 지난 곳입니다. 지도는 위치 관계만 보여주는 개략도입니다.</footer>
+  <footer>
+    <p>가게 이름과 요약은 2026년 10월 웹 검색 결과를 정리한 것이고, 직접 방문해 검증한 정보가 아닙니다. 영업 여부와 웨이팅은 달라졌을 수 있으니 방문 전에 가게 공식 채널이나 예약 앱에서 확인하세요. 상황 분류(데이트·혼밥·팀 회식)는 메뉴 성격을 보고 붙인 추정입니다. 지도 위 핀은 동네 안의 대략적인 위치이고, 속이 빈 핀은 현장 검증 전이거나 검증 후 90일이 지난 곳입니다.</p>
+    <p>참고: <a href="https://v.daum.net/v/Wt3NayGMqU?f=p" target="_blank" rel="noopener">성수 직장인 맛집(다음)</a> · <a href="https://hotplacehunter.co.kr/sns/article/65272/" target="_blank" rel="noopener">연남 맛집(핫플헌터)</a> · <a href="https://www.esquirekorea.co.kr/article/54691" target="_blank" rel="noopener">락희돈(에스콰이어, 2021)</a> · <a href="https://v.daum.net/v/Qmij7Vme6v" target="_blank" rel="noopener">판교 직장인 맛집(다음)</a> · <a href="https://polle.com/place/500mzp/%EC%8A%A4%EC%8B%9C%20%EA%B0%80%EC%98%A4" target="_blank" rel="noopener">스시 가오(폴레)</a> · <a href="https://polle.com/place/3bVz8S/%EC%8A%88%ED%8D%BC%ED%83%80%EC%9D%B4" target="_blank" rel="noopener">슈퍼타이(폴레)</a></p>
+  </footer>
 </div>
 
 <script>
 const AREAS = {
-  "성수": { lat: 37.5445, lng: 127.0557, span: 0.0075 },
-  "연남": { lat: 37.5625, lng: 126.9255, span: 0.0075 },
-  "판교": { lat: 37.3947, lng: 127.1112, span: 0.0075 },
+  "성수": { lat: 37.5440, lng: 127.0550, span: 0.022 },
+  "연남": { lat: 37.5615, lng: 126.9245, span: 0.022 },
+  "판교": { lat: 37.3947, lng: 127.1112, span: 0.022 },
 };
 const SITS = ["전체", "데이트", "혼밥", "팀 회식"];
 const STALE_DAYS = 90;
 const TODAY = new Date("2026-10-20");
 
+const TBD = "확인 필요";
 const PLACES = [
-  { id:1, area:"성수", name:"[샘플] 성수 파스타집", cat:"양식", lat:37.5446, lng:127.0560, sits:["데이트"], price:"₩₩₩", verified:"2026-10-05", ad:false,
-    summary:"조용한 2층 창가석이 포인트", wait:"토요일 18시 기준 60분 이상. 평일 17:30 입장을 추천합니다.", resv:"캐치테이블 오픈 2주 전 10시. 창가석은 메모에 요청하세요." },
-  { id:2, area:"성수", name:"[샘플] 성수 국밥", cat:"한식", lat:37.5430, lng:127.0540, sits:["혼밥"], price:"₩", verified:"2026-09-12", ad:false,
-    summary:"바 좌석이 많아 혼자 가기 편함", wait:"점심 12시 전후 20분. 11시 30분 전에 도착하면 대기가 없습니다.", resv:"예약 불가, 현장 웨이팅." },
-  { id:3, area:"성수", name:"[샘플] 성수 고깃집", cat:"고기", lat:37.5460, lng:127.0580, sits:["팀 회식"], price:"₩₩₩", verified:"2026-06-01", ad:true,
-    summary:"단체룸 12명까지, 환기 좋음", wait:"금요일 저녁은 예약 필수.", resv:"전화 예약, 단체룸은 3일 전까지." },
-  { id:4, area:"연남", name:"[샘플] 연남 브런치", cat:"브런치", lat:37.5630, lng:126.9250, sits:["데이트","혼밥"], price:"₩₩", verified:"2026-10-10", ad:false,
-    summary:"주말 오전이 가장 여유로움", wait:"일요일 11시 이후 40분.", resv:"네이버 예약. 당일 취소분은 오전 9시에 열립니다." },
-  { id:5, area:"연남", name:"[샘플] 연남 이자카야", cat:"주점", lat:37.5615, lng:126.9270, sits:["팀 회식","데이트"], price:"₩₩₩", verified:"2026-08-20", ad:false,
-    summary:"8명 이하 모임에 맞는 룸", wait:"20시 이후 입장은 대기 가능성이 높습니다.", resv:"인스타 DM 예약만 가능." },
-  { id:6, area:"판교", name:"[샘플] 판교 한식 정식", cat:"한식", lat:37.3950, lng:127.1100, sits:["팀 회식","혼밥"], price:"₩₩", verified:"2026-10-15", ad:false,
-    summary:"점심 정식 회전이 빠름", wait:"12시 10분이 피크, 12시 50분 이후는 한산합니다.", resv:"6인 이상 점심 예약 가능(전화)." },
-  { id:7, area:"판교", name:"[샘플] 판교 라멘", cat:"일식", lat:37.3935, lng:127.1125, sits:["혼밥"], price:"₩₩", verified:"2026-05-02", ad:false,
-    summary:"카운터석 중심, 10분 안에 식사 가능", wait:"점심 평균 15분. 키오스크 선결제.", resv:"예약 불가." },
+  // 성수
+  { id:1, area:"성수", name:"도도한면", cat:"우동", lat:37.5421, lng:127.0560, sits:["혼밥"], price:"",
+    summary:"갈치 우동이 대표, 매일 한정 수량", wait:"매일 긴 웨이팅. 오픈런이 필수라는 평가가 많습니다.", resv:TBD, addr:"성동구 연무장길 41-17" },
+  { id:2, area:"성수", name:"만학", cat:"파스타", lat:37.5433, lng:127.0590, sits:["데이트"], price:"",
+    summary:"파스타 맛집으로 소개됨", wait:"주말에는 오픈 전부터 웨이팅. 일찍 가는 편이 좋다는 후기가 있습니다.", resv:TBD, addr:TBD },
+  { id:3, area:"성수", name:"bd 버거", cat:"버거", lat:37.5435, lng:127.0535, sits:["혼밥","데이트"], price:"",
+    summary:"쉬림프 버거가 시그니처", wait:TBD, resv:TBD, addr:"성동구 성수이로14길 7" },
+  { id:4, area:"성수", name:"도죠", cat:"일식", lat:37.5448, lng:127.0520, sits:["혼밥"], price:"",
+    summary:"가라아게가 추천 메뉴, 번화가에서 조금 떨어져 한적", wait:TBD, resv:TBD, addr:"성동구 성수이로 126" },
+  { id:5, area:"성수", name:"성수장", cat:"중식", lat:37.5460, lng:127.0580, sits:["팀 회식"], price:"",
+    summary:"간짜장과 탕수육이 추천 메뉴", wait:TBD, resv:"배달 앱에 없어서 전화 주문이 필요합니다.", addr:TBD },
+  // 연남
+  { id:6, area:"연남", name:"형제특수부위 연남점", cat:"고기", lat:37.5598, lng:126.9246, sits:["팀 회식","데이트"], price:"",
+    summary:"가브리살·항정살·갈매기살, 2개 층으로 넓음", wait:"인기 고깃집이라 웨이팅 대비가 필요합니다. 매일 15:00~01:00 영업(라스트오더 00:30).", resv:TBD, addr:"마포구 동교로 258 1·2층" },
+  { id:7, area:"연남", name:"연남화로", cat:"고기", lat:37.5612, lng:126.9238, sits:["팀 회식","데이트"], price:"",
+    summary:"부채살·갈비살·살치살을 단품으로 선택", wait:TBD, resv:TBD, addr:TBD },
+  { id:8, area:"연남", name:"툭툭 누들 타이", cat:"태국식", lat:37.5640, lng:126.9250, sits:["혼밥","데이트"], price:"",
+    summary:"오랫동안 사랑받은 태국식 국수집", wait:TBD, resv:TBD, addr:TBD },
+  { id:9, area:"연남", name:"락희돈", cat:"일식", lat:37.5578, lng:126.9252, sits:["혼밥"], price:"",
+    summary:"일본식 돼지고기 꼬치구이 '야끼동'", wait:TBD, resv:TBD, addr:"홍대입구역 3번 출구 인근 (2021년 기사 기준)" },
+  { id:10, area:"연남", name:"진어참치", cat:"참치", lat:37.5655, lng:126.9232, sits:["팀 회식"], price:"",
+    summary:"골목 속 참치 노포", wait:TBD, resv:TBD, addr:TBD },
+  // 판교
+  { id:11, area:"판교", name:"르메콩", cat:"베트남식", lat:37.3955, lng:127.1100, sits:["혼밥"], price:"",
+    summary:"점심에만 여는 덮밥·국수집", wait:TBD, resv:TBD, addr:"판교역 일대" },
+  { id:12, area:"판교", name:"한와담", cat:"고기", lat:37.3940, lng:127.1125, sits:["팀 회식"], price:"",
+    summary:"차돌박이가 대표 메뉴, 퇴근 후 식사로 인기", wait:TBD, resv:TBD, addr:"판교역 일대" },
+  { id:13, area:"판교", name:"스시 가오", cat:"초밥", lat:37.3935, lng:127.1098, sits:["혼밥"], price:"",
+    summary:"점심 특선: 미니라멘+초밥 5피스 (후기상 9천원)", wait:"웨이팅이 있지만 회전이 빨라 금방 빠진다는 후기가 있습니다.", resv:TBD, addr:"판교역 일대" },
+  { id:14, area:"판교", name:"슈퍼타이", cat:"태국식", lat:37.3962, lng:127.1120, sits:["혼밥","팀 회식"], price:"",
+    summary:"태국 음식 점심 맛집", wait:"평일 12시 45분에 20분 기다렸다는 후기가 있습니다.", resv:TBD, addr:"판교역 일대" },
+  { id:15, area:"판교", name:"비즐 돈까스", cat:"돈까스", lat:37.3950, lng:127.1140, sits:["팀 회식","혼밥"], price:"",
+    summary:"평일 점심에 일찍 만석", wait:"평일 11:30에도 이미 만석이라 캐치테이블로 웨이팅했다는 후기가 있습니다.", resv:"캐치테이블은 메뉴를 먼저 골라야 예약됩니다. 단체는 메뉴를 미리 정해 두세요.", addr:"판교역 일대" },
 ];
 
 const state = { area:"성수", sit:"전체", sel:null };
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const age = p => Math.floor((TODAY - new Date(p.verified)) / 86400000);
-const isStale = p => age(p) > STALE_DAYS;
+const age = p => p.verified ? Math.floor((TODAY - new Date(p.verified)) / 86400000) : null;
+const isStale = p => age(p) === null || age(p) > STALE_DAYS;
+const staleLabel = p => age(p) === null ? "현장 검증 전" : `검증 ${age(p)}일 지남`;
 
 function chips(el, items, key) {
   el.innerHTML = "";
@@ -131,12 +157,12 @@ function chips(el, items, key) {
 
 function drawMap(items) {
   const a = AREAS[state.area], W = 400, H = 320;
-  const lngSpan = a.span, latSpan = a.span * H / W * 0.8;
+  const lngSpan = a.span, latSpan = a.span * H / W * 0.79;
   let g = "";
   for (let x = 0; x <= W; x += 50) g += `<line class="gridline" x1="${x}" y1="0" x2="${x}" y2="${H}"/>`;
   for (let y = 0; y <= H; y += 50) g += `<line class="gridline" x1="0" y1="${y}" x2="${W}" y2="${y}"/>`;
   g += `<text class="area-name" x="14" y="26">${esc(state.area)}</text>`;
-  g += `<text class="note" x="${W - 12}" y="${H - 10}" text-anchor="end">개략도 · 위치 관계만 표시</text>`;
+  g += `<text class="note" x="${W - 12}" y="${H - 10}" text-anchor="end">개략도 · 대략적 위치</text>`;
   items.forEach((p, i) => {
     const x = W / 2 + (p.lng - a.lng) / lngSpan * W;
     const y = H / 2 - (p.lat - a.lat) / latSpan * H;
@@ -159,10 +185,10 @@ function drawList(items) {
     return `<div class="card${open ? " sel" : ""}" data-card="${p.id}">
       <button class="head" type="button" data-id="${p.id}" aria-expanded="${open}">
         <span class="num${st ? " stale" : ""}">${i + 1}</span>
-        <span class="title"><b>${esc(p.name)}</b><span class="meta">${esc(p.cat)} · ${esc(p.price)} · ${esc(p.summary)}</span>
-          <span class="tags">${p.sits.map(s => `<span class="tag">${esc(s)}</span>`).join("")}${p.ad ? '<span class="tag ad">협찬</span>' : ""}${st ? `<span class="tag stale">검증 ${age(p)}일 지남</span>` : ""}</span></span>
+        <span class="title"><b>${esc(p.name)}</b><span class="meta">${esc(p.cat)} · ${esc(p.summary)}</span>
+          <span class="tags">${p.sits.map(s => `<span class="tag">${esc(s)}</span>`).join("")}${p.ad ? '<span class="tag ad">협찬</span>' : ""}${st ? `<span class="tag stale">${staleLabel(p)}</span>` : ""}</span></span>
       </button>
-      ${open ? `<dl><div><dt>웨이팅 팁</dt><dd>${esc(p.wait)}</dd></div><div><dt>예약 요령</dt><dd>${esc(p.resv)}</dd></div><div><dt>마지막 검증</dt><dd>${esc(p.verified)}</dd></div></dl>` : ""}
+      ${open ? `<dl><div><dt>웨이팅 팁</dt><dd>${esc(p.wait)}</dd></div><div><dt>예약 요령</dt><dd>${esc(p.resv)}</dd></div><div><dt>주소</dt><dd>${esc(p.addr)}</dd></div><div><dt>마지막 검증</dt><dd>${esc(p.verified || "아직 직접 방문하지 않음")}</dd></div></dl>` : ""}
     </div>`;
   }).join("");
   list.querySelectorAll(".head").forEach(b => b.onclick = () => { const id = +b.dataset.id; state.sel = state.sel === id ? null : id; render(); });
