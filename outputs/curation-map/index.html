@@ -64,7 +64,9 @@
   dd { margin:0; }
   .empty { color:var(--muted); padding:20px; text-align:center; border:1px dashed var(--line); border-radius:6px; }
   footer { color:var(--muted); font-size:12px; }
-  footer a { color:var(--accent); }
+  footer a, .maplink { color:var(--accent); }
+  .maplink { font-weight:700; text-decoration:none; }
+  .maplink:hover { text-decoration:underline; }
   footer p { margin:0 0 8px; }
 </style>
 
@@ -85,7 +87,7 @@
   </div>
 
   <footer>
-    <p>가게 이름과 요약은 2026년 10월 웹 검색 결과를 정리한 것이고, 직접 방문해 검증한 정보가 아닙니다. 영업 여부와 웨이팅은 달라졌을 수 있으니 방문 전에 가게 공식 채널이나 예약 앱에서 확인하세요. 상황 분류(데이트·혼밥·팀 회식)는 메뉴 성격을 보고 붙인 추정입니다. 지도 위 핀은 동네 안의 대략적인 위치이고, 속이 빈 핀은 현장 검증 전이거나 검증 후 90일이 지난 곳입니다.</p>
+    <p>가게 이름과 요약은 2026년 10월 웹 검색 결과를 정리한 것이고, 직접 방문해 검증한 정보가 아닙니다. 영업 여부와 웨이팅은 달라졌을 수 있으니 방문 전에 가게 공식 채널이나 예약 앱에서 확인하세요. 상황 분류(데이트·혼밥·팀 회식)는 메뉴 성격을 보고 붙인 추정입니다. 지도 위 핀은 실제 좌표가 아니라 동네 안의 임의 배치이므로 정확한 위치는 각 카드의 네이버 지도 링크로 확인하세요. 속이 빈 핀은 현장 검증 전이거나 검증 후 90일이 지난 곳입니다.</p>
     <p>참고: <a href="https://v.daum.net/v/Wt3NayGMqU?f=p" target="_blank" rel="noopener">성수 직장인 맛집(다음)</a> · <a href="https://hotplacehunter.co.kr/sns/article/65272/" target="_blank" rel="noopener">연남 맛집(핫플헌터)</a> · <a href="https://www.esquirekorea.co.kr/article/54691" target="_blank" rel="noopener">락희돈(에스콰이어, 2021)</a> · <a href="https://v.daum.net/v/Qmij7Vme6v" target="_blank" rel="noopener">판교 직장인 맛집(다음)</a> · <a href="https://polle.com/place/500mzp/%EC%8A%A4%EC%8B%9C%20%EA%B0%80%EC%98%A4" target="_blank" rel="noopener">스시 가오(폴레)</a> · <a href="https://polle.com/place/3bVz8S/%EC%8A%88%ED%8D%BC%ED%83%80%EC%9D%B4" target="_blank" rel="noopener">슈퍼타이(폴레)</a></p>
   </footer>
 </div>
@@ -188,7 +190,7 @@ function drawList(items) {
         <span class="title"><b>${esc(p.name)}</b><span class="meta">${esc(p.cat)} · ${esc(p.summary)}</span>
           <span class="tags">${p.sits.map(s => `<span class="tag">${esc(s)}</span>`).join("")}${p.ad ? '<span class="tag ad">협찬</span>' : ""}${st ? `<span class="tag stale">${staleLabel(p)}</span>` : ""}</span></span>
       </button>
-      ${open ? `<dl><div><dt>웨이팅 팁</dt><dd>${esc(p.wait)}</dd></div><div><dt>예약 요령</dt><dd>${esc(p.resv)}</dd></div><div><dt>주소</dt><dd>${esc(p.addr)}</dd></div><div><dt>마지막 검증</dt><dd>${esc(p.verified || "아직 직접 방문하지 않음")}</dd></div></dl>` : ""}
+      ${open ? `<dl><div><dt>웨이팅 팁</dt><dd>${esc(p.wait)}</dd></div><div><dt>예약 요령</dt><dd>${esc(p.resv)}</dd></div><div><dt>주소</dt><dd>${esc(p.addr)}</dd></div><div><dt>마지막 검증</dt><dd>${esc(p.verified || "아직 직접 방문하지 않음")}</dd></div><div><a class="maplink" href="https://map.naver.com/p/search/${encodeURIComponent(p.area + ' ' + p.name)}" target="_blank" rel="noopener">네이버 지도에서 보기 ↗</a></div></dl>` : ""}
     </div>`;
   }).join("");
   list.querySelectorAll(".head").forEach(b => b.onclick = () => { const id = +b.dataset.id; state.sel = state.sel === id ? null : id; render(); });
