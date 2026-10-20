@@ -8,30 +8,30 @@
 <style>
   /* 레이아웃: 왼쪽 정렬 한 단. 이름·슬로건 머리말 아래에 로고, 색, 글꼴, 사용 규칙을 라벨/본문 짝으로 나열 */
   :root {
-    --bg: #f2f5f8;
+    --bg: #eef7fd;
     --fg: #14202c;
-    --muted: #51606f;
-    --line: #cfd8e1;
-    --accent: #1b5ec9;
-    --accent-soft: #e1e9f3;
+    --muted: #4f6578;
+    --line: #c9e2f3;
+    --accent: #2f8fd6;
+    --accent-soft: #dcedf9;
     --caution: #8a5a00;
     --caution-soft: #fbeccb;
-    --logo-bg: #1b5ec9;
+    --logo-bg: #2f8fd6;
     --logo-fg: #ffffff;
     --font-display: "Noto Serif KR", "Nanum Myeongjo", serif;
     --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0e1620; --fg: #e5ebf1; --muted: #9aa9b8; --line: #263444;
-      --accent: #7aa9ff; --accent-soft: #1a2736; --caution: #f2c970; --caution-soft: #3a2c0c;
-      --logo-bg: #7aa9ff; --logo-fg: #0e1620; color-scheme: dark;
+      --bg: #0d1a26; --fg: #e5ebf1; --muted: #9fb3c4; --line: #25405a;
+      --accent: #7cc4f5; --accent-soft: #16283a; --caution: #f2c970; --caution-soft: #3a2c0c;
+      --logo-bg: #7cc4f5; --logo-fg: #0d1a26; color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0e1620; --fg: #e5ebf1; --muted: #9aa9b8; --line: #263444;
-    --accent: #7aa9ff; --accent-soft: #1a2736; --caution: #f2c970; --caution-soft: #3a2c0c;
-    --logo-bg: #7aa9ff; --logo-fg: #0e1620; color-scheme: dark;
+    --bg: #0d1a26; --fg: #e5ebf1; --muted: #9fb3c4; --line: #25405a;
+    --accent: #7cc4f5; --accent-soft: #16283a; --caution: #f2c970; --caution-soft: #3a2c0c;
+    --logo-bg: #7cc4f5; --logo-fg: #0d1a26; color-scheme: dark;
   }
   body {
     background: var(--bg);
@@ -68,8 +68,8 @@
     border-radius: 6px; border: 1px solid var(--line);
   }
   .tile svg { width: 3.5rem; height: 3.5rem; }
-  .tile.light { background: #f2f5f8; --logo-bg: #1b5ec9; --logo-fg: #ffffff; }
-  .tile.dark { background: #0e1620; --logo-bg: #7aa9ff; --logo-fg: #0e1620; }
+  .tile.light { background: #eef7fd; --logo-bg: #2f8fd6; --logo-fg: #ffffff; }
+  .tile.dark { background: #0d1a26; --logo-bg: #7cc4f5; --logo-fg: #0d1a26; }
   .tile.small svg { width: 1.5rem; height: 1.5rem; }
   .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.75rem; }
   .sw { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.875rem; min-width: 0; }
@@ -125,15 +125,16 @@
       <dt>색</dt>
       <dd>
         <div class="swatches">
-          <div class="sw"><div class="chip" style="background:#1b5ec9"></div><b>포인트(밝은)</b><code>#1b5ec9</code></div>
-          <div class="sw"><div class="chip" style="background:#7aa9ff"></div><b>포인트(어두운)</b><code>#7aa9ff</code></div>
+          <div class="sw"><div class="chip" style="background:#2f8fd6"></div><b>포인트(밝은)</b><code>#2f8fd6</code></div>
+          <div class="sw"><div class="chip" style="background:#1a6aa6"></div><b>글씨용 포인트(밝은)</b><code>#1a6aa6</code></div>
+          <div class="sw"><div class="chip" style="background:#7cc4f5"></div><b>포인트(어두운)</b><code>#7cc4f5</code></div>
           <div class="sw"><div class="chip" style="background:#14202c"></div><b>글자(밝은)</b><code>#14202c</code></div>
           <div class="sw"><div class="chip" style="background:#e5ebf1"></div><b>글자(어두운)</b><code>#e5ebf1</code></div>
-          <div class="sw"><div class="chip" style="background:#f2f5f8"></div><b>배경(밝은)</b><code>#f2f5f8</code></div>
-          <div class="sw"><div class="chip" style="background:#0e1620"></div><b>배경(어두운)</b><code>#0e1620</code></div>
+          <div class="sw"><div class="chip" style="background:#eef7fd"></div><b>배경(밝은)</b><code>#eef7fd</code></div>
+          <div class="sw"><div class="chip" style="background:#0d1a26"></div><b>배경(어두운)</b><code>#0d1a26</code></div>
           <div class="sw"><div class="chip" style="background:#fbeccb"></div><b>주의 표시</b><code>#fbeccb / #8a5a00</code></div>
         </div>
-        <p>파랑 하나를 포인트로 쓰고 나머지는 같은 푸른 기운의 회색으로 맞췄습니다. 전체 값은 <code>brand/brand.json</code>에 있습니다.</p>
+        <p>하늘색 하나를 포인트로 쓰고 나머지는 같은 푸른 기운의 회색으로 맞췄습니다. 작은 글씨에는 더 진한 하늘색(글씨용 포인트)을 씁니다. 전체 값은 <code>brand/brand.json</code>에 있습니다.</p>
       </dd>
     </div>
 

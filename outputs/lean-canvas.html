@@ -8,13 +8,13 @@
 <style>
   /* 레이아웃: 린캔버스 표준 배치(문제·해결책/지표·가치 제안·경쟁 우위/채널·고객) 위에 비용·수익 두 칸. 좁은 화면에서는 한 열로 쌓는다 */
   :root {
-    --bg: #f2f5f8;
+    --bg: #eef7fd;
     --fg: #14202c;
-    --muted: #51606f;
-    --line: #b9c6d3;
-    --cell: #fbfcfd;
-    --accent: #1b5ec9;
-    --chip-bg: #e1e9f3;
+    --muted: #4f6578;
+    --line: #a9cfe8;
+    --cell: #fbfdff;
+    --accent: #2f8fd6; --accent-text: #1a6aa6;
+    --chip-bg: #dcedf9;
     --warn: #8a5a00;
     --warn-bg: #fbeccb;
     --font-display: "Noto Serif KR", "Nanum Myeongjo", serif;
@@ -22,14 +22,14 @@
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0e1620; --fg: #e5ebf1; --muted: #9aa9b8; --line: #34465a;
-      --cell: #142030; --accent: #7aa9ff; --chip-bg: #1a2736;
+      --bg: #0d1a26; --fg: #e5ebf1; --muted: #9fb3c4; --line: #2f4d68;
+      --cell: #122436; --accent: #7cc4f5; --accent-text: #7cc4f5; --chip-bg: #16283a;
       --warn: #f2c970; --warn-bg: #3a2c0c; color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0e1620; --fg: #e5ebf1; --muted: #9aa9b8; --line: #34465a;
-    --cell: #142030; --accent: #7aa9ff; --chip-bg: #1a2736;
+    --bg: #0d1a26; --fg: #e5ebf1; --muted: #9fb3c4; --line: #2f4d68;
+    --cell: #122436; --accent: #7cc4f5; --accent-text: #7cc4f5; --chip-bg: #16283a;
     --warn: #f2c970; --warn-bg: #3a2c0c; color-scheme: dark;
   }
   body {
@@ -80,7 +80,7 @@
     font-size: 0.8125rem;
     font-weight: 500;
     letter-spacing: 0.08em;
-    color: var(--accent);
+    color: var(--accent-text);
   }
   .cell p { margin: 0; font-size: 0.9375rem; line-height: 1.65; overflow-wrap: anywhere; }
   .cell p.main { font-family: var(--font-display); font-weight: 600; font-size: 1.0625rem; line-height: 1.55; }

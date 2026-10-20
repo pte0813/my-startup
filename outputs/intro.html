@@ -8,24 +8,24 @@
 <style>
   /* 레이아웃: 왼쪽 정렬 한 단. 상단에 한 줄 소개, 아래에 세 항목을 라벨/본문 짝으로 나열 */
   :root {
-    --bg: #f2f5f8;
+    --bg: #eef7fd;
     --fg: #14202c;
-    --muted: #51606f;
-    --line: #cfd8e1;
-    --accent: #1b5ec9;
-    --chip-bg: #e1e9f3;
+    --muted: #4f6578;
+    --line: #c9e2f3;
+    --accent: #2f8fd6; --accent-text: #1a6aa6;
+    --chip-bg: #dcedf9;
     --font-display: "Noto Serif KR", "Nanum Myeongjo", serif;
     --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0e1620; --fg: #e5ebf1; --muted: #9aa9b8; --line: #263444;
-      --accent: #7aa9ff; --chip-bg: #1a2736; color-scheme: dark;
+      --bg: #0d1a26; --fg: #e5ebf1; --muted: #9fb3c4; --line: #25405a;
+      --accent: #7cc4f5; --accent-text: #7cc4f5; --chip-bg: #16283a; color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0e1620; --fg: #e5ebf1; --muted: #9aa9b8; --line: #263444;
-    --accent: #7aa9ff; --chip-bg: #1a2736; color-scheme: dark;
+    --bg: #0d1a26; --fg: #e5ebf1; --muted: #9fb3c4; --line: #25405a;
+    --accent: #7cc4f5; --accent-text: #7cc4f5; --chip-bg: #16283a; color-scheme: dark;
   }
   body {
     background: var(--bg);
@@ -42,7 +42,7 @@
     align-self: flex-start;
     font-size: 0.8125rem;
     letter-spacing: 0.04em;
-    color: var(--accent);
+    color: var(--accent-text);
     background: var(--chip-bg);
     padding: 0.25rem 0.75rem;
     border-radius: 999px;

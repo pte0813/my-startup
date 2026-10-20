@@ -8,13 +8,13 @@
 <style>
   /* 레이아웃: 제목과 설명 아래에 5열 비교표 한 장. 넓은 화면에서는 칸마다 한 줄, 좁은 화면에서는 표를 가로로 밀어 보거나 줄바꿈 */
   :root {
-    --bg: #f2f5f8;
+    --bg: #eef7fd;
     --fg: #14202c;
-    --muted: #51606f;
-    --line: #cfd8e1;
-    --head-bg: #e1e9f3;
-    --cell: #fbfcfd;
-    --accent: #1b5ec9;
+    --muted: #4f6578;
+    --line: #c9e2f3;
+    --head-bg: #dcedf9;
+    --cell: #fbfdff;
+    --accent: #2f8fd6; --accent-text: #1a6aa6;
     --warn: #8a5a00;
     --warn-bg: #fbeccb;
     --font-display: "Noto Serif KR", "Nanum Myeongjo", serif;
@@ -22,14 +22,14 @@
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0e1620; --fg: #e5ebf1; --muted: #9aa9b8; --line: #263444;
-      --head-bg: #1a2736; --cell: #142030; --accent: #7aa9ff;
+      --bg: #0d1a26; --fg: #e5ebf1; --muted: #9fb3c4; --line: #25405a;
+      --head-bg: #16283a; --cell: #122436; --accent: #7cc4f5; --accent-text: #7cc4f5;
       --warn: #f2c970; --warn-bg: #3a2c0c; color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0e1620; --fg: #e5ebf1; --muted: #9aa9b8; --line: #263444;
-    --head-bg: #1a2736; --cell: #142030; --accent: #7aa9ff;
+    --bg: #0d1a26; --fg: #e5ebf1; --muted: #9fb3c4; --line: #25405a;
+    --head-bg: #16283a; --cell: #122436; --accent: #7cc4f5; --accent-text: #7cc4f5;
     --warn: #f2c970; --warn-bg: #3a2c0c; color-scheme: dark;
   }
   body {
@@ -67,7 +67,7 @@
   tbody th { font-family: var(--font-display); font-weight: 600; font-size: 1.0625rem; white-space: nowrap; }
   td { min-width: 14rem; }
   td.ours { color: var(--fg); }
-  a { color: var(--accent); text-underline-offset: 0.15em; }
+  a { color: var(--accent-text); text-underline-offset: 0.15em; }
   td a.src { font-size: 0.8125rem; margin-left: 0.4rem; white-space: nowrap; }
   .tag {
     display: inline-block;
