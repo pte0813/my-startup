@@ -13,3 +13,4 @@
 | 2026-10-20 | 서비스 이름을 X, 슬로건을 "사람과 사람을 연결한다"로 변경 | CLAUDE.md, brand.json, logo.svg, brand-kit.html 반영, 로고는 임시 1안으로 표시 |
 | 2026-10-20 | 로고를 X자 모양으로 다시 그림 | brand/logo.svg를 X자와 네 끝 점(사람) 디자인으로 교체, brand-kit.html·brand.json 반영 |
 | 2026-10-20 | 서비스 소개 카드뉴스 3장(문제→해결→사전신청) 1080×1080 PNG와 인스타 게시 문구 제작 | outputs/cardnews-1/에 card-01~03.png, caption.md 작성, 할인율·마감일·계정명은 [확인 필요] |
+| 2026-10-20 | 카드뉴스 제작 과정을 /cardnews 스킬로 저장 | .claude/skills/cardnews/(SKILL.md, render.js, example-spec.json) 작성, 새 폴더 번호로 저장하고 덮어쓰기 금지, CLAUDE.md에 스킬 안내 추가 |
