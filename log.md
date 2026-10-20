@@ -15,3 +15,4 @@
 | 2026-10-20 | 서비스 소개 카드뉴스 3장(문제→해결→사전신청) 1080×1080 PNG와 인스타 게시 문구 제작 | outputs/cardnews-1/에 card-01~03.png, caption.md 작성, 할인율·마감일·계정명은 [확인 필요] |
 | 2026-10-20 | 카드뉴스 제작 과정을 /cardnews 스킬로 저장 | .claude/skills/cardnews/(SKILL.md, render.js, example-spec.json) 작성, 새 폴더 번호로 저장하고 덮어쓰기 금지, CLAUDE.md에 스킬 안내 추가 |
 | 2026-10-20 | /cardnews로 사전신청 오픈 이벤트 카드뉴스 3장 제작 (글자 더 크게, 로고 크게), 수정사항을 스킬에 반영 | outputs/cardnews-2/에 card-01~03.png, caption.md 작성, render.js 글자·로고 확대와 넘침 검사 수정, 할인 조건·기간·계정명 [확인 필요] |
+| 2026-10-20 | 카드뉴스 색을 짙은 파랑에서 하늘색 계열로 변경 | outputs/cardnews-3/에 같은 내용의 하늘색 3장+caption.md 작성, brand.json에 cardnews 팔레트 추가, 스킬 반영 (cardnews-1·2는 그대로) |

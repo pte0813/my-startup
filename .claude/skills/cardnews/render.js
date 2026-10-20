@@ -24,7 +24,7 @@ if (fs.existsSync(outDir)) { console.error(`이미 있는 폴더입니다. 덮�
 fs.mkdirSync(outDir, { recursive: true });
 
 const L = brand.colors.light;
-const themes = {
+const themes = brand.cardnews ? { light: brand.cardnews.light, cta: brand.cardnews.cta } : {
   light: { bg: L.bg, fg: L.fg, muted: L.muted, line: L.line, accent: L.accent, mark: L.accent, markFg: '#ffffff' },
   cta: { bg: L.accent, fg: '#ffffff', muted: '#dce8fb', line: '#6f9be0', accent: '#ffffff', mark: '#ffffff', markFg: L.accent },
 };

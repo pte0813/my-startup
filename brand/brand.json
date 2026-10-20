@@ -34,5 +34,26 @@
     "body": "IBM Plex Sans KR (400, 500)",
     "fallback": "Nanum Myeongjo, Apple SD Gothic Neo, Malgun Gothic, serif/sans-serif"
   },
-  "voice": "짧고 직접적인 문장. 확인되지 않은 내용은 [확인 필요]로 표시한다."
+  "voice": "짧고 직접적인 문장. 확인되지 않은 내용은 [확인 필요]로 표시한다.",
+  "cardnews": {
+    "note": "카드뉴스 전용 하늘색 팔레트. 로고와 다른 브랜드 색은 그대로 두고 카드뉴스에만 쓴다.",
+    "light": {
+      "bg": "#eef7fd",
+      "fg": "#14202c",
+      "muted": "#4f6578",
+      "line": "#c9e2f3",
+      "accent": "#2f8fd6",
+      "mark": "#2f8fd6",
+      "markFg": "#ffffff"
+    },
+    "cta": {
+      "bg": "#8ccbf3",
+      "fg": "#0f2a40",
+      "muted": "#1f4a6b",
+      "line": "#5aa9dc",
+      "accent": "#0f2a40",
+      "mark": "#ffffff",
+      "markFg": "#2f8fd6"
+    }
+  }
 }
