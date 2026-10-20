@@ -1,0 +1,4 @@
+threads-bot/config.json
+threads-bot/posts.json
+threads-bot/state.json
+__pycache__/
