@@ -10,3 +10,4 @@
 | 2026-10-20 | idea-brief.md로 린캔버스 outputs/lean-canvas.html 제작 (빈 칸 5개 질문) | 9칸 한 장 작성, 가치 제안·채널·비용·지표·경쟁 우위 채움, 가격만 [확인 필요] 표시 |
 | 2026-10-20 | 경쟁 서비스 3곳 웹 검색 후 competitors.html·competitors.xlsx 작성 | ValidatorAI·CheckMyIdea·WorthBuild 비교표, 공식 사이트 접속 불가로 검색 결과 기준, 빈 칸은 [확인 필요] |
 | 2026-10-20 | 브랜드 키트 제작 (이름·슬로건 질문 후 brand.json, 로고 SVG, brand-kit.html) | 이름 먼저확인, 슬로건 만들기 전에 수요부터, 체크 로고 1안 작성, CLAUDE.md에 이름·슬로건 추가 |
+| 2026-10-20 | 서비스 이름을 X, 슬로건을 "사람과 사람을 연결한다"로 변경 | CLAUDE.md, brand.json, logo.svg, brand-kit.html 반영, 로고는 임시 1안으로 표시 |
