@@ -25,7 +25,8 @@
   .sub { color:var(--muted); margin:4px 0 0; }
   .filters { display:grid; gap:8px; }
   .row { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
-  .label { font-size:12px; letter-spacing:.08em; color:var(--muted); width:44px; }
+  .label { font-size:12px; letter-spacing:.08em; color:var(--muted); width:44px; flex:none; align-self:flex-start; padding-top:8px; }
+  #areas, #sits { flex:1; min-width:0; }
   button { font:inherit; }
   .chip { border:1px solid var(--line); background:var(--surface); color:var(--fg); border-radius:999px; padding:6px 14px; cursor:pointer; }
   .chip[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--accent-fg); font-weight:700; }
@@ -88,7 +89,7 @@
 
   <footer>
     <p>가게 이름과 요약은 2026년 10월 웹 검색 결과를 정리한 것이고, 직접 방문해 검증한 정보가 아닙니다. 영업 여부와 웨이팅은 달라졌을 수 있으니 방문 전에 가게 공식 채널이나 예약 앱에서 확인하세요. 상황 분류(데이트·혼밥·팀 회식)는 메뉴 성격을 보고 붙인 추정입니다. 지도 위 핀은 실제 좌표가 아니라 동네 안의 임의 배치이므로 정확한 위치는 각 카드의 네이버 지도 링크로 확인하세요. 속이 빈 핀은 현장 검증 전이거나 검증 후 90일이 지난 곳입니다.</p>
-    <p>참고: <a href="https://v.daum.net/v/Wt3NayGMqU?f=p" target="_blank" rel="noopener">성수 직장인 맛집(다음)</a> · <a href="https://hotplacehunter.co.kr/sns/article/65272/" target="_blank" rel="noopener">연남 맛집(핫플헌터)</a> · <a href="https://www.esquirekorea.co.kr/article/54691" target="_blank" rel="noopener">락희돈(에스콰이어, 2021)</a> · <a href="https://v.daum.net/v/Qmij7Vme6v" target="_blank" rel="noopener">판교 직장인 맛집(다음)</a> · <a href="https://polle.com/place/500mzp/%EC%8A%A4%EC%8B%9C%20%EA%B0%80%EC%98%A4" target="_blank" rel="noopener">스시 가오(폴레)</a> · <a href="https://polle.com/place/3bVz8S/%EC%8A%88%ED%8D%BC%ED%83%80%EC%9D%B4" target="_blank" rel="noopener">슈퍼타이(폴레)</a></p>
+    <p>참고: <a href="https://v.daum.net/v/Wt3NayGMqU?f=p" target="_blank" rel="noopener">성수 직장인 맛집(다음)</a> · <a href="https://hotplacehunter.co.kr/sns/article/65272/" target="_blank" rel="noopener">연남 맛집(핫플헌터)</a> · <a href="https://www.esquirekorea.co.kr/article/54691" target="_blank" rel="noopener">락희돈(에스콰이어, 2021)</a> · <a href="https://v.daum.net/v/Qmij7Vme6v" target="_blank" rel="noopener">판교 직장인 맛집(다음)</a> · <a href="https://polle.com/place/500mzp/%EC%8A%A4%EC%8B%9C%20%EA%B0%80%EC%98%A4" target="_blank" rel="noopener">스시 가오(폴레)</a> · <a href="https://polle.com/place/3bVz8S/%EC%8A%88%ED%8D%BC%ED%83%80%EC%9D%B4" target="_blank" rel="noopener">슈퍼타이(폴레)</a> · <a href="https://www.siksinhot.com/toplists/best/102766_hongdae" target="_blank" rel="noopener">홍대(식신)</a> · <a href="https://hotplacehunter.co.kr/?p=61871" target="_blank" rel="noopener">강남(핫플헌터)</a> · <a href="https://v.daum.net/v/97WmhwphUm" target="_blank" rel="noopener">한남(다음)</a> · <a href="https://jab-guyver.co.kr/5011" target="_blank" rel="noopener">건대(블로그)</a> · <a href="https://hotplacehunter.co.kr/?p=62226" target="_blank" rel="noopener">을지로(핫플헌터)</a> · <a href="https://polle.com/place/4c7Mth/%EA%B8%B0%EB%9F%AC%EA%B8%B0%20%EB%91%A5%EC%A7%80" target="_blank" rel="noopener">익선동(폴레)</a> · <a href="https://mediahub.seoul.go.kr/archives/2004130" target="_blank" rel="noopener">망원(서울시 미디어허브)</a> · <a href="https://polle.com/place/2oapIV/%EC%86%94%EC%86%A5" target="_blank" rel="noopener">송리단길(폴레)</a> · <a href="https://hotplacehunter.co.kr/sns/article/68999/" target="_blank" rel="noopener">압구정(핫플헌터)</a> · <a href="https://www.gqkorea.co.kr/?p=210180" target="_blank" rel="noopener">서촌(GQ)</a></p>
   </footer>
 </div>
 
@@ -97,6 +98,16 @@ const AREAS = {
   "성수": { lat: 37.5440, lng: 127.0550, span: 0.022 },
   "연남": { lat: 37.5615, lng: 126.9245, span: 0.022 },
   "판교": { lat: 37.3947, lng: 127.1112, span: 0.022 },
+  "홍대": { lat: 37.5563, lng: 126.9237, span: 0.022 },
+  "강남": { lat: 37.4979, lng: 127.0276, span: 0.022 },
+  "이태원·한남": { lat: 37.534, lng: 126.9948, span: 0.022 },
+  "건대": { lat: 37.5404, lng: 127.0692, span: 0.022 },
+  "을지로": { lat: 37.5663, lng: 126.991, span: 0.022 },
+  "익선동": { lat: 37.5741, lng: 126.9874, span: 0.022 },
+  "망원": { lat: 37.556, lng: 126.9014, span: 0.022 },
+  "송리단길": { lat: 37.51, lng: 127.107, span: 0.022 },
+  "압구정": { lat: 37.527, lng: 127.039, span: 0.022 },
+  "서촌": { lat: 37.579, lng: 126.969, span: 0.022 },
 };
 const SITS = ["전체", "데이트", "혼밥", "팀 회식"];
 const STALE_DAYS = 90;
@@ -137,6 +148,56 @@ const PLACES = [
     summary:"태국 음식 점심 맛집", wait:"평일 12시 45분에 20분 기다렸다는 후기가 있습니다.", resv:TBD, addr:"판교역 일대" },
   { id:15, area:"판교", name:"비즐 돈까스", cat:"돈까스", lat:37.3950, lng:127.1140, sits:["팀 회식","혼밥"], price:"",
     summary:"평일 점심에 일찍 만석", wait:"평일 11:30에도 이미 만석이라 캐치테이블로 웨이팅했다는 후기가 있습니다.", resv:"캐치테이블은 메뉴를 먼저 골라야 예약됩니다. 단체는 메뉴를 미리 정해 두세요.", addr:"판교역 일대" },
+
+  // 추가 10개 동네 (핀 위치는 실제 좌표가 아닌 임의 배치)
+  { id:16, area:"홍대", name:"안녕파스타씨", cat:"파스타", lat:37.5563, lng:126.9237, sits:["데이트"], price:"", summary:"파스타 맛집으로 알려짐", wait:"웨이팅이 조금 있지만 매일 기다려야 하는 정도는 아니라는 후기가 있습니다.", resv:TBD, addr:TBD },
+  { id:17, area:"홍대", name:"더다이닝랩", cat:"게스트로펍", lat:37.5593, lng:126.9302, sits:["데이트"], price:"", summary:"동교동 게스트로펍, 르꼬르동블루 출신 셰프", wait:TBD, resv:TBD, addr:TBD },
+  { id:18, area:"홍대", name:"옥희 홍대점", cat:"한식 주점", lat:37.5533, lng:126.9297, sits:["팀 회식", "데이트"], price:"", summary:"오픈 초기부터 웨이팅 필수라는 소개(2022년 기사)", wait:"웨이팅이 필수라는 소개가 있습니다(2022년 기사).", resv:TBD, addr:TBD },
+  { id:19, area:"홍대", name:"하이디라오", cat:"훠궈", lat:37.5591, lng:126.9172, sits:["팀 회식"], price:"", summary:"웨이팅이 긴 편이라는 후기", wait:"웨이팅이 긴 편이라는 후기가 있습니다.", resv:TBD, addr:TBD },
+  { id:20, area:"홍대", name:"월향", cat:"막걸리", lat:37.5531, lng:126.9177, sits:["데이트"], price:"", summary:"가정집을 개조한 막걸리 전문점(2013년 기사라 현재 확인 필요)", wait:TBD, resv:TBD, addr:TBD },
+  { id:21, area:"강남", name:"딘타이펑 강남점", cat:"중식", lat:37.4979, lng:127.0276, sits:["데이트", "팀 회식"], price:"", summary:"분위기와 음식 호평", wait:"손님이 많아 웨이팅이 생길 수 있다는 후기가 있습니다.", resv:TBD, addr:TBD },
+  { id:22, area:"강남", name:"1992 덮밥&짜글이 강남점", cat:"한식", lat:37.5009, lng:127.0341, sits:["혼밥", "팀 회식"], price:"", summary:"인테리어가 깔끔하고 단체 방문에 좋다는 후기", wait:TBD, resv:TBD, addr:TBD },
+  { id:23, area:"강남", name:"붓처스컷 강남대로점", cat:"스테이크", lat:37.4949, lng:127.0336, sits:["데이트"], price:"", summary:"스테이크 전문점", wait:"한 후기에서는 주말인데도 조용했다고 합니다.", resv:TBD, addr:TBD },
+  { id:24, area:"강남", name:"라브리크 서울", cat:"브런치", lat:37.5007, lng:127.0211, sits:["데이트"], price:"", summary:"정원 테라스와 프라이빗룸, 라브리크 버터밀이 시그니처", wait:TBD, resv:TBD, addr:TBD },
+  { id:25, area:"강남", name:"강남 진해장", cat:"해장", lat:37.4947, lng:127.0216, sits:["혼밥"], price:"", summary:"내장탕 등 해장 메뉴", wait:TBD, resv:TBD, addr:TBD },
+  { id:26, area:"이태원·한남", name:"한남동자리", cat:"중식", lat:37.5340, lng:126.9948, sits:["데이트"], price:"", summary:"짬뽕·탕수육·깐풍기, 조용한 데이트에 어울린다는 평", wait:TBD, resv:TBD, addr:TBD },
+  { id:27, area:"이태원·한남", name:"오스테리아 오르조", cat:"이탈리안", lat:37.5370, lng:127.0013, sits:["데이트"], price:"", summary:"와인 마시기 좋아 데이트로 자주 간다는 후기", wait:TBD, resv:TBD, addr:TBD },
+  { id:28, area:"이태원·한남", name:"교카이젠", cat:"돈카츠", lat:37.5310, lng:127.0008, sits:["데이트"], price:"", summary:"한남동 돈카츠 코스 요리, 조용한 오픈 키친", wait:TBD, resv:TBD, addr:TBD },
+  { id:29, area:"이태원·한남", name:"문타로", cat:"이자카야", lat:37.5368, lng:126.9883, sits:["팀 회식", "데이트"], price:"", summary:"일본식 꼬치구이", wait:"가게가 작아 주말에는 일찍 가는 편이 좋다는 후기가 있습니다.", resv:TBD, addr:TBD },
+  { id:30, area:"이태원·한남", name:"술탄 케밥", cat:"케밥", lat:37.5308, lng:126.9888, sits:["혼밥"], price:"", summary:"야식이나 클럽 후 들르는 곳으로 후기가 많음", wait:TBD, resv:TBD, addr:TBD },
+  { id:31, area:"건대", name:"텐텐양꼬치 숯불통양갈비", cat:"양꼬치", lat:37.5404, lng:127.0692, sits:["팀 회식"], price:"", summary:"건대 양꼬치거리, 넓은 매장", wait:TBD, resv:TBD, addr:"건대입구역 2번 출구 도보 약 5분" },
+  { id:32, area:"건대", name:"송화 산시도삭면", cat:"중식 면요리", lat:37.5434, lng:127.0757, sits:["혼밥"], price:"", summary:"건대 대표 맛집", wait:"웨이팅이 있지만 회전율이 좋습니다. 본점이 2호점보다 웨이팅이 적었다는 후기가 있습니다.", resv:TBD, addr:TBD },
+  { id:33, area:"건대", name:"정면", cat:"고기국수", lat:37.5374, lng:127.0752, sits:["혼밥"], price:"", summary:"해물 육수 고기국수, 미쉐린 가이드 수록", wait:"테이블이 7석이라 식사 시간에는 웨이팅이 필수입니다.", resv:TBD, addr:TBD },
+  { id:34, area:"건대", name:"건대곱창", cat:"곱창", lat:37.5432, lng:127.0627, sits:["팀 회식"], price:"", summary:"건대입구 주변에서 손꼽는 곱창집", wait:TBD, resv:TBD, addr:TBD },
+  { id:35, area:"건대", name:"펑화김해뒷고기", cat:"고기", lat:37.5372, lng:127.0632, sits:["팀 회식"], price:"", summary:"단체 모임 장소로 추천", wait:TBD, resv:TBD, addr:TBD },
+  { id:36, area:"을지로", name:"지하식당", cat:"노포", lat:37.5663, lng:126.9910, sits:["혼밥", "데이트"], price:"", summary:"중부시장 멸치 골목, 네 테이블짜리 작은 가게", wait:TBD, resv:TBD, addr:TBD },
+  { id:37, area:"을지로", name:"대성골뱅이", cat:"골뱅이", lat:37.5693, lng:126.9975, sits:["팀 회식"], price:"", summary:"천막 아래 퇴근길 직장인들로 붐빔, 골뱅이 무침", wait:TBD, resv:TBD, addr:TBD },
+  { id:38, area:"을지로", name:"혜성슈퍼", cat:"야외 술집", lat:37.5633, lng:126.9970, sits:["팀 회식", "데이트"], price:"", summary:"야외 분위기, 이용 시간 2시간", wait:"웨이팅이 자주 있다고 안내되어 있습니다.", resv:TBD, addr:TBD },
+  { id:39, area:"을지로", name:"올디스타코", cat:"타코", lat:37.5691, lng:126.9845, sits:["데이트", "혼밥"], price:"", summary:"힙지로 대표 타코집", wait:"여행 후기에서는 오후 6시 이전에 웨이팅을 시작해야 먹을 수 있다고 합니다.", resv:TBD, addr:TBD },
+  { id:40, area:"을지로", name:"통일집", cat:"한우구이", lat:37.5631, lng:126.9850, sits:["팀 회식"], price:"", summary:"골목 안 한우구이, 암소 등심을 강한 불에 구움", wait:TBD, resv:TBD, addr:TBD },
+  { id:41, area:"익선동", name:"익선잡방", cat:"스테이크", lat:37.5741, lng:126.9874, sits:["데이트"], price:"", summary:"꿀자몽 스테이크, 2인 세트 약 7만 7천 원(후기 기준)", wait:TBD, resv:"예약을 하고 가야 하는 곳이라는 후기가 많습니다.", addr:TBD },
+  { id:42, area:"익선동", name:"반주", cat:"퓨전 한식", lat:37.5771, lng:126.9939, sits:["데이트"], price:"", summary:"퓨전 한식과 막걸리, 김부각·육회 추천 후기", wait:TBD, resv:TBD, addr:TBD },
+  { id:43, area:"익선동", name:"익선애뜻", cat:"한식", lat:37.5711, lng:126.9934, sits:["데이트"], price:"", summary:"테이블이 3개뿐인 작은 가게", wait:"주말에는 웨이팅이 있고, 평일 오후 5시쯤 바로 앉았다는 후기가 있습니다. 3명 이상이면 기다릴 수 있습니다.", resv:TBD, addr:TBD },
+  { id:44, area:"익선동", name:"기러기 둥지", cat:"분위기 식당", lat:37.5769, lng:126.9809, sits:["데이트"], price:"", summary:"크리스마스 영화 속 오두막 같은 분위기", wait:"웨이팅이 거의 항상 있습니다. 좌석 간격이 좁아 2~3명에 적합하다는 평이 많습니다.", resv:TBD, addr:TBD },
+  { id:45, area:"망원", name:"라오삐약", cat:"라오스 쌀국수", lat:37.5560, lng:126.9014, sits:["혼밥", "데이트"], price:"", summary:"망원역에서 도보 약 10분", wait:TBD, resv:TBD, addr:"마포구 희우정로10길 5" },
+  { id:46, area:"망원", name:"망원동고기집 본점", cat:"고기", lat:37.5590, lng:126.9079, sits:["팀 회식"], price:"", summary:"목살과 눈꽃살이 좋다는 후기 많음", wait:TBD, resv:TBD, addr:"마포구 망원로 66" },
+  { id:47, area:"망원", name:"발리 인 망원", cat:"발리 음식", lat:37.5530, lng:126.9074, sits:["데이트"], price:"", summary:"망리단길 초창기부터 자리를 지킴, 재방문 의사 없다는 후기도 있어 호불호", wait:TBD, resv:TBD, addr:"마포구 포은로 67 1층" },
+  { id:48, area:"망원", name:"돼지국밥 송정", cat:"돼지국밥", lat:37.5588, lng:126.8949, sits:["혼밥"], price:"", summary:"국밥집", wait:"웨이팅을 걸어두고 오픈 시간에 입장했다는 후기가 있습니다.", resv:TBD, addr:"마포구 월드컵로17길 38" },
+  { id:49, area:"망원", name:"망원 이치젠", cat:"일식", lat:37.5528, lng:126.8954, sits:["데이트"], price:"", summary:"후기에서 만족도가 높다는 평가", wait:TBD, resv:TBD, addr:TBD },
+  { id:50, area:"송리단길", name:"본디", cat:"돼지갈비", lat:37.5100, lng:127.1070, sits:["팀 회식", "데이트"], price:"", summary:"호르몬동 전문점 단디의 세컨브랜드", wait:"평일에도 웨이팅이 상당합니다.", resv:"캐치테이블 원격줄서기를 쓰면 도착하자마자 입장했다는 후기가 있습니다.", addr:TBD },
+  { id:51, area:"송리단길", name:"서보", cat:"족발덮밥·새우국밥", lat:37.5130, lng:127.1135, sits:["혼밥"], price:"", summary:"대사관 쉐프가 직접 운영", wait:TBD, resv:"캐치테이블 원격 줄서기가 가능합니다.", addr:TBD },
+  { id:52, area:"송리단길", name:"고도식", cat:"돼지 알등심", lat:37.5070, lng:127.1130, sits:["데이트", "팀 회식"], price:"", summary:"직원이 직접 구워줌, 테이블당 2인 한정 메뉴", wait:"방송에서 웨이팅이 길다고 소개됐습니다.", resv:TBD, addr:TBD },
+  { id:53, area:"송리단길", name:"갓잇", cat:"타코·파히타", lat:37.5128, lng:127.1005, sits:["데이트"], price:"", summary:"발렛 서비스 제공", wait:"웨이팅이 있었다는 후기가 있습니다.", resv:TBD, addr:TBD },
+  { id:54, area:"송리단길", name:"솔솥", cat:"솥밥", lat:37.5068, lng:127.1010, sits:["혼밥"], price:"", summary:"대기는 있지만 회전이 빠르다는 평, 가격 대비 호불호", wait:"대기가 있지만 회전이 빠르다는 평이 있습니다.", resv:TBD, addr:TBD },
+  { id:55, area:"압구정", name:"한추", cat:"치킨", lat:37.5270, lng:127.0390, sits:["팀 회식"], price:"", summary:"신사동 터줏대감, 후라이드치킨이 대표", wait:"저녁 시간에 사람이 많이 몰립니다.", resv:TBD, addr:TBD },
+  { id:56, area:"압구정", name:"산동교자관", cat:"중식", lat:37.5300, lng:127.0455, sits:["팀 회식", "데이트"], price:"", summary:"웨이팅까지 해서 먹어야 한다고 소개됨", wait:"웨이팅이 있다고 소개됐습니다.", resv:TBD, addr:TBD },
+  { id:57, area:"압구정", name:"솔티서울", cat:"와인바", lat:37.5240, lng:127.0450, sits:["데이트"], price:"", summary:"압구정카페골목의 신생 와인바, 제철 해산물과 와인", wait:TBD, resv:TBD, addr:TBD },
+  { id:58, area:"압구정", name:"압구정제주집", cat:"제주 흑돼지", lat:37.5298, lng:127.0325, sits:["팀 회식"], price:"", summary:"제주 흑돼지 전문점", wait:TBD, resv:TBD, addr:TBD },
+  { id:59, area:"압구정", name:"사토시", cat:"스시 오마카세", lat:37.5238, lng:127.0330, sits:["데이트"], price:"", summary:"압구정로데오 디너 오마카세", wait:TBD, resv:TBD, addr:TBD },
+  { id:60, area:"서촌", name:"공기식당", cat:"카레", lat:37.5790, lng:126.9690, sits:["혼밥", "데이트"], price:"", summary:"매일 메뉴가 바뀌는 작은 카레집(2023년 기사)", wait:TBD, resv:TBD, addr:TBD },
+  { id:61, area:"서촌", name:"안주마을", cat:"주점", lat:37.5820, lng:126.9755, sits:["팀 회식", "데이트"], price:"", summary:"병어회가 대표 메뉴", wait:"웨이팅이 매우 깁니다. 오후 4시 30분에 가도 5시가 넘으면 대기가 생겼다는 후기가 있고, 평일 오픈 시간에 맞추면 대기가 짧았다는 후기도 있습니다.", resv:TBD, addr:"종로구 자하문로1길 5" },
+  { id:62, area:"서촌", name:"누하의 숲", cat:"일본 가정식", lat:37.5760, lng:126.9750, sits:["데이트"], price:"", summary:"일본에서 들여온 식기와 소품", wait:TBD, resv:TBD, addr:TBD },
+  { id:63, area:"서촌", name:"서촌식당", cat:"한식", lat:37.5818, lng:126.9625, sits:["혼밥"], price:"", summary:"맛은 평범하다는 평, 현금 계산 시 할인 후기", wait:"점심에 손님이 많고 약간의 웨이팅이 있습니다.", resv:TBD, addr:"종로구 자하문로17길 12 1층" },
 ];
 
 const state = { area:"성수", sit:"전체", sel:null };
