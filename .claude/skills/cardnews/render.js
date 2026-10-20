@@ -34,7 +34,7 @@ function mark(t) {
   // logo.svg의 배경색(포인트)과 X 색(흰색)을 테마에 맞게 바꿔 끼운다.
   return logoSvg
     .replace(/<title>[\s\S]*?<\/title>/, '')
-    .replace(/width="64" height="64"/, 'width="84" height="84"')
+    .replace(/width="64" height="64"/, 'width="128" height="128"')
     .replace(new RegExp(L.accent, 'gi'), '@@BG@@')
     .replace(/#ffffff/gi, '@@FG@@')
     .replace(/@@BG@@/g, t.mark).replace(/@@FG@@/g, t.markFg);
@@ -57,19 +57,19 @@ function html(c, i, total) {
 <style>
 *{box-sizing:border-box;margin:0}
 html,body{width:1080px;height:1080px}
-body{font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","WenQuanYi Zen Hei",sans-serif;background:${t.bg};color:${t.fg};padding:88px 96px;display:flex;flex-direction:column;overflow:hidden}
+body{font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","WenQuanYi Zen Hei",sans-serif;background:${t.bg};color:${t.fg};padding:72px 96px;display:flex;flex-direction:column;overflow:hidden}
 .top{display:flex;align-items:center;justify-content:space-between}
-.brand{display:flex;align-items:center;gap:20px;font-family:"Noto Serif KR","Nanum Myeongjo",serif;font-weight:700;font-size:52px}
-.pg{font-size:30px;color:${t.muted};letter-spacing:.06em}
-.main{flex:1;display:flex;flex-direction:column;justify-content:center;gap:36px;padding-block:56px}
-.label{font-size:32px;font-weight:500;letter-spacing:.08em;color:${t.accent}}
-h1{font-family:"Noto Serif KR","Nanum Myeongjo",serif;font-weight:700;font-size:86px;line-height:1.3;text-wrap:balance;word-break:keep-all}
-p.lead{font-size:44px;line-height:1.6;color:${t.muted};word-break:keep-all}
+.brand{display:flex;align-items:center;gap:28px;font-family:"Noto Serif KR","Nanum Myeongjo",serif;font-weight:700;font-size:80px}
+.pg{font-size:38px;color:${t.muted};letter-spacing:.06em}
+.main{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:36px;padding-block:40px}
+.label{font-size:42px;font-weight:500;letter-spacing:.08em;color:${t.accent}}
+h1{font-family:"Noto Serif KR","Nanum Myeongjo",serif;font-weight:700;font-size:104px;line-height:1.28;text-wrap:balance;word-break:keep-all}
+p.lead{font-size:54px;line-height:1.55;color:${t.muted};word-break:keep-all}
 .list{display:flex;flex-direction:column;border-top:2px solid ${t.line}}
-.item{display:flex;align-items:center;gap:28px;padding:22px 0;border-bottom:2px solid ${t.line};font-size:44px;font-weight:500}
-.dot{width:20px;height:20px;border-radius:50%;background:${t.accent};flex:none}
-.foot{font-size:32px;color:${t.muted}}
-.btn{display:inline-block;align-self:flex-start;background:${t.fg};color:${t.bg};font-size:44px;font-weight:500;padding:26px 44px;border-radius:18px}
+.item{display:flex;align-items:center;gap:28px;padding:24px 0;border-bottom:2px solid ${t.line};font-size:54px;font-weight:500}
+.dot{width:24px;height:24px;border-radius:50%;background:${t.accent};flex:none}
+.foot{font-size:38px;color:${t.muted}}
+.btn{display:inline-block;align-self:flex-start;background:${t.fg};color:${t.bg};font-size:54px;font-weight:500;padding:28px 52px;border-radius:22px}
 </style>
 <body><div class="top"><div class="brand">${mark(t)}<span>${esc(brand.name)}</span></div><div class="pg">${i + 1} / ${total}</div></div>
 <div class="main">${body(c)}</div><div class="foot">${esc(c.foot || '')}</div></body></html>`;
@@ -87,7 +87,7 @@ p.lead{font-size:44px;line-height:1.6;color:${t.muted};word-break:keep-all}
     fs.writeFileSync(f, html(cards[i], i, cards.length));
     await page.goto('file://' + f, { waitUntil: 'networkidle' });
     await page.evaluate(() => document.fonts.ready);
-    const fit = await page.evaluate(() => document.documentElement.scrollHeight <= 1080 && document.body.scrollHeight <= 1080);
+    const fit = await page.evaluate(() => { const m = document.querySelector('.main'); return m.scrollHeight <= m.clientHeight + 1; });
     if (!fit) console.warn(`경고: ${i + 1}번 카드 내용이 1080px를 넘칩니다. 글을 줄이세요.`);
     await page.screenshot({ path: path.join(outDir, `card-${String(i + 1).padStart(2, '0')}.png`) });
   }
