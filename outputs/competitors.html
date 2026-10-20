@@ -1,0 +1,130 @@
+<title>경쟁 서비스 비교</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap">
+<style>
+  /* 레이아웃: 제목과 설명 아래에 5열 비교표 한 장. 넓은 화면에서는 칸마다 한 줄, 좁은 화면에서는 표를 가로로 밀어 보거나 줄바꿈 */
+  :root {
+    --bg: #f2f5f8;
+    --fg: #14202c;
+    --muted: #51606f;
+    --line: #cfd8e1;
+    --head-bg: #e1e9f3;
+    --cell: #fbfcfd;
+    --accent: #1b5ec9;
+    --warn: #8a5a00;
+    --warn-bg: #fbeccb;
+    --font-display: "Noto Serif KR", "Nanum Myeongjo", serif;
+    --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1620; --fg: #e5ebf1; --muted: #9aa9b8; --line: #263444;
+      --head-bg: #1a2736; --cell: #142030; --accent: #7aa9ff;
+      --warn: #f2c970; --warn-bg: #3a2c0c; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1620; --fg: #e5ebf1; --muted: #9aa9b8; --line: #263444;
+    --head-bg: #1a2736; --cell: #142030; --accent: #7aa9ff;
+    --warn: #f2c970; --warn-bg: #3a2c0c; color-scheme: dark;
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    padding-block: 2.5rem 3rem;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  main { max-width: 90rem; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+  header { display: flex; flex-direction: column; gap: 0.5rem; }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 5.5vw, 2.125rem);
+    line-height: 1.35;
+    margin: 0;
+  }
+  .sub { margin: 0; color: var(--muted); max-width: 44rem; }
+  .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9375rem; }
+  th, td { padding: 0.875rem 1rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); background: var(--cell); }
+  tr:last-child th, tr:last-child td { border-bottom: 0; }
+  thead th {
+    background: var(--head-bg);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  tbody th { font-family: var(--font-display); font-weight: 600; font-size: 1.0625rem; white-space: nowrap; }
+  td { min-width: 14rem; }
+  td.ours { color: var(--fg); }
+  a { color: var(--accent); text-underline-offset: 0.15em; }
+  td a.src { font-size: 0.8125rem; margin-left: 0.4rem; white-space: nowrap; }
+  .tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: var(--warn);
+    background: var(--warn-bg);
+    padding: 0 0.4rem;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .notes { margin: 0; padding-left: 1.25rem; color: var(--muted); font-size: 0.875rem; display: flex; flex-direction: column; gap: 0.25rem; }
+  .notes li { max-width: 60rem; }
+  @media (min-width: 64rem) { td { white-space: nowrap; } }
+  @media (max-width: 40rem) { body { padding-block: 1.75rem 2.5rem; } }
+</style>
+
+<main>
+  <header>
+    <h1>경쟁 서비스 비교</h1>
+    <p class="sub">아이디어 검증을 돕는 서비스 3곳과 우리 서비스(소규모 사업자·프리랜서용 단계별 진단 도구)를 비교했습니다.</p>
+  </header>
+
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr><th>서비스명</th><th>대상 고객</th><th>핵심 기능</th><th>가격</th><th>우리와 다른 점</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">ValidatorAI</th>
+          <td>누구나 이용 가능, 신청서·코호트 불필요 <a class="src" href="https://moge.ai/ko/product/validator-ai">출처</a></td>
+          <td>시장·재무·법적 쟁점·경쟁 분석과 AI 멘토 챗봇 <a class="src" href="https://moge.ai/ko/product/validator-ai">출처</a></td>
+          <td>무료 또는 $49 <span class="tag">확인 필요</span> <a class="src" href="https://preuve.ai/blog/best-startup-validation-tools-2026.md">출처</a></td>
+          <td class="ours">분석·챗봇 중심, 우리는 단계별 질문과 다음 할 일 제안 <a class="src" href="https://moge.ai/ko/product/validator-ai">출처</a></td>
+        </tr>
+        <tr>
+          <th scope="row">CheckMyIdea</th>
+          <td><span class="tag">확인 필요</span></td>
+          <td>약 60초 만에 시장 필요·차별화·리스크·가격 전략·다음 단계 리포트 <a class="src" href="https://ai.g2.com/marketplace/tools/checkmyidea">출처</a></td>
+          <td>$4.99(단건), $14.99 플랜, Pro는 문의 <a class="src" href="https://ai.g2.com/marketplace/tools/checkmyidea">출처</a></td>
+          <td class="ours">리포트 생성 중심, 우리는 월 구독으로 진행 점수와 알림 제공 <a class="src" href="https://ai.g2.com/marketplace/tools/checkmyidea">출처</a></td>
+        </tr>
+        <tr>
+          <th scope="row">WorthBuild</th>
+          <td>1인 창업자·인디해커 <a class="src" href="https://alternativeto.net/software/worthbuild/about">출처</a></td>
+          <td><span class="tag">확인 필요</span></td>
+          <td>월 $10~20, 기능 제한 무료 버전 <a class="src" href="https://alternativeto.net/software/worthbuild/about">출처</a></td>
+          <td class="ours">고객층과 가격대가 가장 가까움, 기능 비교는 <span class="tag">확인 필요</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ul class="notes">
+    <li>우리 서비스 정보는 outputs/idea-brief.md 기준이며, 월 9,900원은 검증 전 가정입니다.</li>
+    <li>공식 사이트는 접속하지 못해 검색으로 확인된 소개 페이지와 비교 글만 근거로 썼습니다. 가격은 자주 바뀌므로 공식 사이트에서 다시 확인해야 합니다.</li>
+    <li>ValidatorAI 가격의 출처(preuve.ai)는 자체 서비스를 1위로 두는 업체의 글입니다.</li>
+    <li>「우리와 다른 점」 칸의 우리 쪽 내용은 idea-brief.md에서, 경쟁 서비스 쪽 내용은 각 칸의 출처 링크에서 가져왔습니다.</li>
+  </ul>
+</main>
