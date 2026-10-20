@@ -1,0 +1,38 @@
+{
+  "name": "먼저확인",
+  "slogan": "만들기 전에, 수요부터.",
+  "description": "소규모 사업자·프리랜서가 새 서비스·상품 아이디어를 단계별 질문으로 검증하도록 돕는 진단 도구",
+  "logo": {
+    "file": "brand/logo.svg",
+    "concept": "둥근 사각형 안의 체크 표시. 만들기 전에 먼저 확인한다는 뜻을 한 획으로 담았다.",
+    "wordmark": "Noto Serif KR 700, 로고 오른쪽에 둔다."
+  },
+  "colors": {
+    "light": {
+      "bg": "#f2f5f8",
+      "fg": "#14202c",
+      "muted": "#51606f",
+      "line": "#cfd8e1",
+      "accent": "#1b5ec9",
+      "accent-soft": "#e1e9f3",
+      "caution": "#8a5a00",
+      "caution-soft": "#fbeccb"
+    },
+    "dark": {
+      "bg": "#0e1620",
+      "fg": "#e5ebf1",
+      "muted": "#9aa9b8",
+      "line": "#263444",
+      "accent": "#7aa9ff",
+      "accent-soft": "#1a2736",
+      "caution": "#f2c970",
+      "caution-soft": "#3a2c0c"
+    }
+  },
+  "typography": {
+    "display": "Noto Serif KR (600, 700)",
+    "body": "IBM Plex Sans KR (400, 500)",
+    "fallback": "Nanum Myeongjo, Apple SD Gothic Neo, Malgun Gothic, serif/sans-serif"
+  },
+  "voice": "짧고 직접적인 문장. 확인되지 않은 내용은 [확인 필요]로 표시한다."
+}
