@@ -2,93 +2,129 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  /* 레이아웃: 위에 동네 개략 지도, 아래에 검증 카드 목록. 넓은 화면에서는 좌우 2단 */
+  /* 레이아웃: 상단 로고, 가로 스크롤 동네 칩, 상황 필터. 본문은 왼쪽 개략 지도와 오른쪽 카드 목록 2단, 좁은 화면에서는 1단 */
   :root {
-    --bg:#f6f5f1; --surface:#ffffff; --fg:#22211f; --muted:#6c6a64; --line:#e2dfd6;
-    --accent:#c2410c; --accent-fg:#ffffff; --map:#ece9df; --grid:#dcd8cb; --warn:#a16207;
-    --display:"Gowun Batang","Noto Serif KR",serif; --body:"Noto Sans KR",system-ui,-apple-system,sans-serif;
+    --bg:#f3f5f2; --surface:#ffffff; --fg:#13201a; --muted:#5f6e66; --line:#dfe5e0;
+    --accent:#0a6b4b; --accent-soft:#e1f1ea; --accent-fg:#ffffff;
+    --warn:#a35a00; --warn-soft:#fdf0dc; --map:#e9efea; --dot:#c4d0c8;
+    --logo:"Noto Sans KR",system-ui,sans-serif; --body:"Noto Sans KR",system-ui,-apple-system,sans-serif;
   }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    --bg:#171614; --surface:#211f1c; --fg:#ece9e1; --muted:#a29f95; --line:#34312b;
-    --accent:#fb923c; --accent-fg:#1a1205; --map:#1d1c19; --grid:#2c2a25; --warn:#fbbf24; color-scheme:dark; } }
+    --bg:#0e1411; --surface:#161f1a; --fg:#e8f0eb; --muted:#97a69d; --line:#26332c;
+    --accent:#4fd1a1; --accent-soft:#16352a; --accent-fg:#06231a;
+    --warn:#f5b04c; --warn-soft:#33260f; --map:#121b16; --dot:#2a3a31; color-scheme:dark; } }
   :root[data-theme="dark"] {
-    --bg:#171614; --surface:#211f1c; --fg:#ece9e1; --muted:#a29f95; --line:#34312b;
-    --accent:#fb923c; --accent-fg:#1a1205; --map:#1d1c19; --grid:#2c2a25; --warn:#fbbf24; color-scheme:dark; }
+    --bg:#0e1411; --surface:#161f1a; --fg:#e8f0eb; --muted:#97a69d; --line:#26332c;
+    --accent:#4fd1a1; --accent-soft:#16352a; --accent-fg:#06231a;
+    --warn:#f5b04c; --warn-soft:#33260f; --map:#121b16; --dot:#2a3a31; color-scheme:dark; }
 
   * { box-sizing:border-box; }
   body { background:var(--bg); color:var(--fg); font-family:var(--body); font-size:15px; line-height:1.55;
-    padding-block:20px 40px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
-  .wrap { max-width:1040px; margin:0 auto; display:grid; gap:16px; }
-  h1 { font-family:var(--display); font-size:28px; line-height:1.2; margin:0; text-wrap:balance; }
-  .sub { color:var(--muted); margin:4px 0 0; }
-  .filters { display:grid; gap:8px; }
-  .row { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
-  .label { font-size:12px; letter-spacing:.08em; color:var(--muted); width:44px; flex:none; align-self:flex-start; padding-top:8px; }
-  #areas, #sits { flex:1; min-width:0; }
-  button { font:inherit; }
-  .chip { border:1px solid var(--line); background:var(--surface); color:var(--fg); border-radius:999px; padding:6px 14px; cursor:pointer; }
-  .chip[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--accent-fg); font-weight:700; }
+    padding-block:20px 48px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+  .wrap { max-width:1080px; margin:0 auto; display:grid; gap:18px; }
+  button { font:inherit; color:inherit; }
   :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 
-  .grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start; }
+  .top { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  .logo { font-family:var(--logo); font-weight:700; font-size:32px; line-height:1; margin:0; color:var(--accent); letter-spacing:-.03em; }
+  .tagline { margin:0; color:var(--muted); }
+
+  .bar { display:grid; gap:10px; }
+  .scroller { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+  @media (min-width:761px) { .scroller.areas { flex-wrap:wrap; overflow:visible; } }
+  .chip { flex:none; border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:7px 14px; cursor:pointer; font-size:14px; display:inline-flex; gap:6px; align-items:center; }
+  .chip small { font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .chip[aria-pressed="true"] { background:var(--fg); border-color:var(--fg); color:var(--bg); font-weight:700; }
+  .chip[aria-pressed="true"] small { color:var(--bg); opacity:.7; }
+  .seg { display:inline-flex; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:3px; gap:2px; max-width:100%; overflow-x:auto; }
+  .seg button { border:0; background:none; border-radius:9px; padding:6px 14px; cursor:pointer; font-size:14px; white-space:nowrap; }
+  .seg button[aria-pressed="true"] { background:var(--accent); color:var(--accent-fg); font-weight:700; }
+
+  .head-row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  .head-row h2 { margin:0; font-size:20px; text-wrap:balance; }
+  .count { color:var(--muted); font-size:14px; font-variant-numeric:tabular-nums; }
+
+  .grid { display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr); gap:18px; align-items:start; }
   @media (max-width:760px) { .grid { grid-template-columns:minmax(0,1fr); } }
-  .mapbox { background:var(--map); border:1px solid var(--line); border-radius:6px; overflow:hidden; position:sticky; top:12px; }
+  .mapbox { background:var(--map); border:1px solid var(--line); border-radius:18px; overflow:hidden; position:sticky; top:12px; }
   @media (max-width:760px) { .mapbox { position:static; } }
   svg { display:block; width:100%; height:auto; }
-  .gridline { stroke:var(--grid); stroke-width:1; }
-  .area-name { fill:var(--muted); font-family:var(--display); font-size:15px; }
+  .area-name { fill:var(--fg); font-weight:700; font-size:16px; }
   .note { fill:var(--muted); font-size:10px; }
-  .pin { cursor:pointer; }
-  .pin circle { fill:var(--accent); stroke:var(--surface); stroke-width:2; }
-  .pin text { fill:var(--accent-fg); font-size:12px; font-weight:700; text-anchor:middle; dominant-baseline:central; pointer-events:none; }
+  .pin { cursor:pointer; outline:none; }
+  .pin circle { fill:var(--accent); stroke:var(--surface); stroke-width:2.5; }
+  .pin text { fill:var(--accent-fg); font-size:12px; font-weight:700; text-anchor:middle; dominant-baseline:central; pointer-events:none; font-variant-numeric:tabular-nums; }
   .pin.stale circle { fill:var(--surface); stroke:var(--warn); stroke-width:2.5; }
   .pin.stale text { fill:var(--warn); }
   .pin.sel circle { stroke:var(--fg); stroke-width:3; }
+  .pin:focus-visible circle { stroke:var(--fg); stroke-width:3; }
+  .lbl rect { fill:var(--fg); }
+  .lbl text { fill:var(--bg); font-size:11px; font-weight:700; text-anchor:middle; dominant-baseline:central; }
+  .legend { display:flex; gap:14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line); background:var(--surface); font-size:12px; color:var(--muted); }
+  .legend i { display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:-2px; margin-right:5px; }
+  .legend .on { background:var(--accent); }
+  .legend .off { border:2px solid var(--warn); }
 
   .list { display:grid; gap:10px; }
-  .card { background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:12px 14px; }
-  .card.sel { border-color:var(--accent); }
-  .head { display:flex; gap:10px; align-items:flex-start; width:100%; background:none; border:0; padding:0; color:inherit; text-align:left; cursor:pointer; }
-  .num { flex:none; width:24px; height:24px; border-radius:50%; background:var(--accent); color:var(--accent-fg); font-size:13px; font-weight:700; display:grid; place-items:center; margin-top:1px; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
+  .card.sel { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+  .head { display:flex; gap:12px; align-items:flex-start; width:100%; background:none; border:0; padding:0; text-align:left; cursor:pointer; }
+  .num { flex:none; width:28px; height:28px; border-radius:50%; background:var(--accent); color:var(--accent-fg); font-size:13px; font-weight:700; display:grid; place-items:center; font-variant-numeric:tabular-nums; }
   .num.stale { background:none; border:2px solid var(--warn); color:var(--warn); }
-  .title { min-width:0; }
-  .title b { display:block; font-size:16px; }
-  .meta { color:var(--muted); font-size:13px; }
-  .tags { display:flex; gap:4px; flex-wrap:wrap; margin-top:6px; }
-  .tag { font-size:12px; padding:1px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); }
-  .tag.ad { background:var(--warn); border-color:var(--warn); color:var(--bg); font-weight:700; }
-  .tag.stale { border-color:var(--warn); color:var(--warn); }
-  dl { margin:10px 0 0 34px; display:grid; gap:8px; }
-  dt { font-size:12px; color:var(--muted); letter-spacing:.05em; }
-  dd { margin:0; }
-  .empty { color:var(--muted); padding:20px; text-align:center; border:1px dashed var(--line); border-radius:6px; }
-  footer { color:var(--muted); font-size:12px; }
-  footer a, .maplink { color:var(--accent); }
-  .maplink { font-weight:700; text-decoration:none; }
-  .maplink:hover { text-decoration:underline; }
-  footer p { margin:0 0 8px; }
+  .info { min-width:0; display:grid; gap:2px; }
+  .name { font-size:17px; font-weight:700; line-height:1.3; }
+  .sum { color:var(--muted); font-size:14px; }
+  .tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .tag { font-size:12px; padding:2px 9px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-weight:500; }
+  .tag.cat { background:var(--bg); color:var(--fg); border:1px solid var(--line); }
+  .tag.ad { background:var(--warn); color:var(--surface); font-weight:700; }
+  .tag.stale { background:var(--warn-soft); color:var(--warn); }
+  .facts { margin:14px 0 0; padding-top:14px; border-top:1px dashed var(--line); display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 16px; }
+  @media (max-width:480px) { .facts { grid-template-columns:minmax(0,1fr); } }
+  .facts .full { grid-column:1 / -1; }
+  dt { font-size:12px; color:var(--muted); letter-spacing:.04em; margin-bottom:2px; }
+  dd { margin:0; overflow-wrap:anywhere; }
+  dd.tbd { color:var(--muted); }
+  .wait { background:var(--accent-soft); border-radius:12px; padding:10px 12px; }
+  .wait dt { color:var(--accent); font-weight:700; }
+  .maplink { display:inline-block; margin-top:2px; padding:8px 14px; border-radius:999px; background:var(--accent); color:var(--accent-fg); font-weight:700; font-size:14px; text-decoration:none; }
+  .maplink:hover { filter:brightness(1.1); }
+  .empty { color:var(--muted); padding:28px 16px; text-align:center; border:1px dashed var(--line); border-radius:16px; background:var(--surface); }
+
+  footer { color:var(--muted); font-size:12px; display:grid; gap:8px; }
+  footer p { margin:0; }
+  footer a { color:var(--accent); }
+  @media (prefers-reduced-motion: no-preference) { .chip, .seg button { transition:background .15s, color .15s; } }
 </style>
 
 <div class="wrap">
-  <header>
-    <h1>몽몽</h1>
-    <p class="sub">가본 사람만 아는 동네 맛집. 웨이팅 팁과 예약 요령까지.</p>
+  <header class="top">
+    <h1 class="logo">몽몽</h1>
+    <p class="tagline">웨이팅 팁과 예약 요령까지 담은 동네 맛집 큐레이션</p>
   </header>
 
-  <div class="filters">
-    <div class="row" role="group" aria-label="동네"><span class="label">동네</span><span id="areas" class="row"></span></div>
-    <div class="row" role="group" aria-label="상황"><span class="label">상황</span><span id="sits" class="row"></span></div>
+  <div class="bar">
+    <div class="scroller areas" id="areas" role="group" aria-label="동네"></div>
+    <div class="seg" id="sits" role="group" aria-label="상황"></div>
+  </div>
+
+  <div class="head-row">
+    <h2 id="title"></h2>
+    <span class="count" id="count"></span>
   </div>
 
   <div class="grid">
-    <div class="mapbox"><svg id="map" viewBox="0 0 400 320" role="img" aria-label="동네 개략 지도"></svg></div>
+    <div class="mapbox">
+      <svg id="map" viewBox="0 0 400 320" role="img" aria-label="동네 개략 지도"></svg>
+      <div class="legend"><span><i class="on"></i>검증 완료</span><span><i class="off"></i>현장 검증 전 · 90일 경과</span></div>
+    </div>
     <div class="list" id="list"></div>
   </div>
 
   <footer>
-    <p>가게 이름과 요약은 2026년 10월 웹 검색 결과를 정리한 것이고, 직접 방문해 검증한 정보가 아닙니다. 영업 여부와 웨이팅은 달라졌을 수 있으니 방문 전에 가게 공식 채널이나 예약 앱에서 확인하세요. 상황 분류(데이트·혼밥·팀 회식)는 메뉴 성격을 보고 붙인 추정입니다. 지도 위 핀은 실제 좌표가 아니라 동네 안의 임의 배치이므로 정확한 위치는 각 카드의 네이버 지도 링크로 확인하세요. 속이 빈 핀은 현장 검증 전이거나 검증 후 90일이 지난 곳입니다.</p>
+    <p>가게 이름과 요약은 2026년 10월 웹 검색 결과를 정리한 것이고, 직접 방문해 검증한 정보가 아닙니다. 영업 여부와 웨이팅은 달라졌을 수 있으니 방문 전에 가게 공식 채널이나 예약 앱에서 확인하세요. 상황 분류(데이트·혼밥·팀 회식)는 메뉴 성격을 보고 붙인 추정입니다. 지도 위 핀은 실제 좌표가 아니라 동네 안의 임의 배치이므로 정확한 위치는 각 카드의 네이버 지도 링크로 확인하세요.</p>
     <p>참고: <a href="https://v.daum.net/v/Wt3NayGMqU?f=p" target="_blank" rel="noopener">성수 직장인 맛집(다음)</a> · <a href="https://hotplacehunter.co.kr/sns/article/65272/" target="_blank" rel="noopener">연남 맛집(핫플헌터)</a> · <a href="https://www.esquirekorea.co.kr/article/54691" target="_blank" rel="noopener">락희돈(에스콰이어, 2021)</a> · <a href="https://v.daum.net/v/Qmij7Vme6v" target="_blank" rel="noopener">판교 직장인 맛집(다음)</a> · <a href="https://polle.com/place/500mzp/%EC%8A%A4%EC%8B%9C%20%EA%B0%80%EC%98%A4" target="_blank" rel="noopener">스시 가오(폴레)</a> · <a href="https://polle.com/place/3bVz8S/%EC%8A%88%ED%8D%BC%ED%83%80%EC%9D%B4" target="_blank" rel="noopener">슈퍼타이(폴레)</a> · <a href="https://www.siksinhot.com/toplists/best/102766_hongdae" target="_blank" rel="noopener">홍대(식신)</a> · <a href="https://hotplacehunter.co.kr/?p=61871" target="_blank" rel="noopener">강남(핫플헌터)</a> · <a href="https://v.daum.net/v/97WmhwphUm" target="_blank" rel="noopener">한남(다음)</a> · <a href="https://jab-guyver.co.kr/5011" target="_blank" rel="noopener">건대(블로그)</a> · <a href="https://hotplacehunter.co.kr/?p=62226" target="_blank" rel="noopener">을지로(핫플헌터)</a> · <a href="https://polle.com/place/4c7Mth/%EA%B8%B0%EB%9F%AC%EA%B8%B0%20%EB%91%A5%EC%A7%80" target="_blank" rel="noopener">익선동(폴레)</a> · <a href="https://mediahub.seoul.go.kr/archives/2004130" target="_blank" rel="noopener">망원(서울시 미디어허브)</a> · <a href="https://polle.com/place/2oapIV/%EC%86%94%EC%86%A5" target="_blank" rel="noopener">송리단길(폴레)</a> · <a href="https://hotplacehunter.co.kr/sns/article/68999/" target="_blank" rel="noopener">압구정(핫플헌터)</a> · <a href="https://www.gqkorea.co.kr/?p=210180" target="_blank" rel="noopener">서촌(GQ)</a> · <a href="https://polle.com/place/1CE52f/%EB%AA%A9%ED%96%A5%EC%9B%90" target="_blank" rel="noopener">목향원(폴레)</a></p>
   </footer>
 </div>
@@ -112,13 +148,13 @@ const AREAS = {
 };
 const SITS = ["전체", "데이트", "혼밥", "팀 회식"];
 const STALE_DAYS = 90;
-const TODAY = new Date("2026-10-20");
+const TODAY = new Date();
 
 const TBD = "확인 필요";
 const PLACES = [
   // 성수
   { id:1, area:"성수", name:"도도한면", cat:"우동", lat:37.5421, lng:127.0560, sits:["혼밥"], price:"",
-    summary:"갈치 우동이 대표, 매일 한정 수량", wait:"매일 긴 웨이팅. 오픈런이 필수라는 평가가 많습니다.", resv:TBD, addr:"성동구 연무장길 41-17" },
+    summary:"갈치 우동이 대표, 매일 한정 수량", wait:"매일 긴 웨이팅. 오픈런이 필수라는 소개가 있습니다.", resv:TBD, addr:"성동구 연무장길 41-17" },
   { id:2, area:"성수", name:"만학", cat:"파스타", lat:37.5433, lng:127.0590, sits:["데이트"], price:"",
     summary:"파스타 맛집으로 소개됨", wait:"주말에는 오픈 전부터 웨이팅. 일찍 가는 편이 좋다는 후기가 있습니다.", resv:TBD, addr:TBD },
   { id:3, area:"성수", name:"bd 버거", cat:"버거", lat:37.5435, lng:127.0535, sits:["혼밥","데이트"], price:"",
@@ -126,7 +162,7 @@ const PLACES = [
   { id:4, area:"성수", name:"도죠", cat:"일식", lat:37.5448, lng:127.0520, sits:["혼밥"], price:"",
     summary:"가라아게가 추천 메뉴, 번화가에서 조금 떨어져 한적", wait:TBD, resv:TBD, addr:"성동구 성수이로 126" },
   { id:5, area:"성수", name:"성수장", cat:"중식", lat:37.5460, lng:127.0580, sits:["팀 회식"], price:"",
-    summary:"간짜장과 탕수육이 추천 메뉴", wait:TBD, resv:"배달 앱에 없어서 전화 주문이 필요합니다.", addr:TBD },
+    summary:"간짜장과 탕수육이 추천 메뉴, 배달 앱에 없어 전화 주문", wait:TBD, resv:TBD, addr:TBD },
   // 연남
   { id:6, area:"연남", name:"형제특수부위 연남점", cat:"고기", lat:37.5598, lng:126.9246, sits:["팀 회식","데이트"], price:"",
     summary:"가브리살·항정살·갈매기살, 2개 층으로 넓음", wait:"인기 고깃집이라 웨이팅 대비가 필요합니다. 매일 15:00~01:00 영업(라스트오더 00:30).", resv:TBD, addr:"마포구 동교로 258 1·2층" },
@@ -146,7 +182,7 @@ const PLACES = [
   { id:13, area:"판교", name:"스시 가오", cat:"초밥", lat:37.3935, lng:127.1098, sits:["혼밥"], price:"",
     summary:"점심 특선: 미니라멘+초밥 5피스 (후기상 9천원)", wait:"웨이팅이 있지만 회전이 빨라 금방 빠진다는 후기가 있습니다.", resv:TBD, addr:"판교역 일대" },
   { id:14, area:"판교", name:"슈퍼타이", cat:"태국식", lat:37.3962, lng:127.1120, sits:["혼밥","팀 회식"], price:"",
-    summary:"태국 음식 점심 맛집", wait:"평일 12시 45분에 20분 기다렸다는 후기가 있습니다.", resv:TBD, addr:"판교역 일대" },
+    summary:"태국 음식점, 점심 웨이팅 후기가 있음", wait:"평일 12시 45분에 20분 기다렸다는 후기가 있습니다.", resv:TBD, addr:"판교역 일대" },
   { id:15, area:"판교", name:"비즐 돈까스", cat:"돈까스", lat:37.3950, lng:127.1140, sits:["팀 회식","혼밥"], price:"",
     summary:"평일 점심에 일찍 만석", wait:"평일 11:30에도 이미 만석이라 캐치테이블로 웨이팅했다는 후기가 있습니다.", resv:"캐치테이블은 메뉴를 먼저 골라야 예약됩니다. 단체는 메뉴를 미리 정해 두세요.", addr:"판교역 일대" },
 
@@ -186,7 +222,7 @@ const PLACES = [
   { id:48, area:"망원", name:"돼지국밥 송정", cat:"돼지국밥", lat:37.5588, lng:126.8949, sits:["혼밥"], price:"", summary:"국밥집", wait:"웨이팅을 걸어두고 오픈 시간에 입장했다는 후기가 있습니다.", resv:TBD, addr:"마포구 월드컵로17길 38" },
   { id:49, area:"망원", name:"망원 이치젠", cat:"일식", lat:37.5528, lng:126.8954, sits:["데이트"], price:"", summary:"후기에서 만족도가 높다는 평가", wait:TBD, resv:TBD, addr:TBD },
   { id:50, area:"송리단길", name:"본디", cat:"돼지갈비", lat:37.5100, lng:127.1070, sits:["팀 회식", "데이트"], price:"", summary:"호르몬동 전문점 단디의 세컨브랜드", wait:"평일에도 웨이팅이 상당합니다.", resv:"캐치테이블 원격줄서기를 쓰면 도착하자마자 입장했다는 후기가 있습니다.", addr:TBD },
-  { id:51, area:"송리단길", name:"서보", cat:"족발덮밥·새우국밥", lat:37.5130, lng:127.1135, sits:["혼밥"], price:"", summary:"대사관 쉐프가 직접 운영", wait:TBD, resv:"캐치테이블 원격 줄서기가 가능합니다.", addr:TBD },
+  { id:51, area:"송리단길", name:"서보", cat:"족발덮밥·새우국밥", lat:37.5130, lng:127.1135, sits:["혼밥"], price:"", summary:"대사관 셰프가 직접 운영", wait:TBD, resv:"캐치테이블 원격 줄서기가 가능합니다.", addr:TBD },
   { id:52, area:"송리단길", name:"고도식", cat:"돼지 알등심", lat:37.5070, lng:127.1130, sits:["데이트", "팀 회식"], price:"", summary:"직원이 직접 구워줌, 테이블당 2인 한정 메뉴", wait:"방송에서 웨이팅이 길다고 소개됐습니다.", resv:TBD, addr:TBD },
   { id:53, area:"송리단길", name:"갓잇", cat:"타코·파히타", lat:37.5128, lng:127.1005, sits:["데이트"], price:"", summary:"발렛 서비스 제공", wait:"웨이팅이 있었다는 후기가 있습니다.", resv:TBD, addr:TBD },
   { id:54, area:"송리단길", name:"솔솥", cat:"솥밥", lat:37.5068, lng:127.1010, sits:["혼밥"], price:"", summary:"대기는 있지만 회전이 빠르다는 평, 가격 대비 호불호", wait:"대기가 있지만 회전이 빠르다는 평이 있습니다.", resv:TBD, addr:TBD },
@@ -209,63 +245,87 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">"
 const age = p => p.verified ? Math.floor((TODAY - new Date(p.verified)) / 86400000) : null;
 const isStale = p => age(p) === null || age(p) > STALE_DAYS;
 const staleLabel = p => age(p) === null ? "현장 검증 전" : `검증 ${age(p)}일 지남`;
+const inArea = a => PLACES.filter(p => p.area === a);
 
-function chips(el, items, key) {
-  el.innerHTML = "";
-  items.forEach(v => {
+function buildChips() {
+  const areas = $("areas"), sits = $("sits");
+  Object.keys(AREAS).forEach(a => {
     const b = document.createElement("button");
-    b.className = "chip"; b.type = "button"; b.textContent = v;
-    b.setAttribute("aria-pressed", String(state[key] === v));
-    b.onclick = () => { state[key] = v; state.sel = null; render(); };
-    el.appendChild(b);
+    b.className = "chip"; b.type = "button"; b.dataset.v = a;
+    b.innerHTML = `${esc(a)} <small>${inArea(a).length}</small>`;
+    b.onclick = () => { state.area = a; state.sel = null; render(); b.scrollIntoView({ inline:"center", block:"nearest" }); };
+    areas.appendChild(b);
   });
+  SITS.forEach(s => {
+    const b = document.createElement("button");
+    b.type = "button"; b.dataset.v = s; b.textContent = s;
+    b.onclick = () => { state.sit = s; state.sel = null; render(); };
+    sits.appendChild(b);
+  });
+}
+
+function syncChips() {
+  document.querySelectorAll("#areas .chip").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === state.area)));
+  document.querySelectorAll("#sits button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === state.sit)));
 }
 
 function drawMap(items) {
   const a = AREAS[state.area], W = 400, H = 320;
-  const lngSpan = a.span, latSpan = a.span * H / W * 0.79;
-  let g = "";
-  for (let x = 0; x <= W; x += 50) g += `<line class="gridline" x1="${x}" y1="0" x2="${x}" y2="${H}"/>`;
-  for (let y = 0; y <= H; y += 50) g += `<line class="gridline" x1="0" y1="${y}" x2="${W}" y2="${y}"/>`;
-  g += `<text class="area-name" x="14" y="26">${esc(state.area)}</text>`;
-  g += `<text class="note" x="${W - 12}" y="${H - 10}" text-anchor="end">개략도 · 대략적 위치</text>`;
+  const latSpan = a.span * H / W * 0.79;
+  let g = `<defs><pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="var(--dot)"/></pattern></defs>
+    <rect width="${W}" height="${H}" fill="url(#dots)"/>
+    <text class="area-name" x="16" y="30">${esc(state.area)}</text>
+    <text class="note" x="${W - 12}" y="${H - 10}" text-anchor="end">개략도 · 임의 배치</text>`;
+  let lbl = "";
   items.forEach((p, i) => {
-    const x = W / 2 + (p.lng - a.lng) / lngSpan * W;
+    const x = W / 2 + (p.lng - a.lng) / a.span * W;
     const y = H / 2 - (p.lat - a.lat) / latSpan * H;
-    g += `<g class="pin${isStale(p) ? " stale" : ""}${state.sel === p.id ? " sel" : ""}" data-id="${p.id}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" tabindex="0" role="button" aria-label="${esc(p.name)}">
-      <circle r="13"/><text>${i + 1}</text></g>`;
+    const sel = state.sel === p.id;
+    g += `<g class="pin${isStale(p) ? " stale" : ""}${sel ? " sel" : ""}" data-id="${p.id}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" tabindex="0" role="button" aria-label="${i + 1}번 ${esc(p.name)}"><circle r="14"/><text>${i + 1}</text></g>`;
+    if (sel) {
+      const w = Math.min(p.name.length * 11 + 18, W - 8), lx = Math.max(4 + w / 2, Math.min(W - 4 - w / 2, x)), ly = y > 44 ? y - 28 : y + 28;
+      lbl = `<g class="lbl" transform="translate(${lx.toFixed(1)} ${ly.toFixed(1)})"><rect x="${-w / 2}" y="-11" width="${w}" height="22" rx="11"/><text>${esc(p.name)}</text></g>`;
+    }
   });
-  $("map").innerHTML = g;
+  $("map").innerHTML = g + lbl;
   $("map").querySelectorAll(".pin").forEach(el => {
-    const pick = () => { state.sel = +el.dataset.id; render(); const c = document.querySelector(`[data-card="${state.sel}"]`); if (c) c.scrollIntoView({ block:"nearest", behavior:"smooth" }); };
+    const pick = () => { state.sel = +el.dataset.id; render(); const pin = document.querySelector(`.pin[data-id="${state.sel}"]`); if (pin && document.activeElement !== pin && el.matches(":focus-visible")) pin.focus(); const c = document.querySelector(`[data-card="${state.sel}"]`); if (c) c.scrollIntoView({ block:"nearest", behavior:"smooth" }); };
     el.onclick = pick;
-    el.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } };
+    el.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); const pin = document.querySelector(`.pin[data-id="${state.sel}"]`); if (pin) pin.focus(); } };
   });
 }
+
+const fact = (label, val, cls = "") => `<div class="${cls}"><dt>${label}</dt><dd class="${val === TBD ? "tbd" : ""}">${esc(val)}</dd></div>`;
 
 function drawList(items) {
   const list = $("list");
-  if (!items.length) { list.innerHTML = '<div class="empty">조건에 맞는 장소가 없습니다. 다른 상황을 골라 보세요.</div>'; return; }
+  if (!items.length) { list.innerHTML = '<div class="empty">이 조건에 맞는 장소가 아직 없습니다. 다른 상황을 골라 보세요.</div>'; return; }
   list.innerHTML = items.map((p, i) => {
     const open = state.sel === p.id, st = isStale(p);
-    return `<div class="card${open ? " sel" : ""}" data-card="${p.id}">
+    const link = `https://map.naver.com/p/search/${encodeURIComponent(p.area + " " + p.name)}`;
+    return `<article class="card${open ? " sel" : ""}" data-card="${p.id}">
       <button class="head" type="button" data-id="${p.id}" aria-expanded="${open}">
         <span class="num${st ? " stale" : ""}">${i + 1}</span>
-        <span class="title"><b>${esc(p.name)}</b><span class="meta">${esc(p.cat)} · ${esc(p.summary)}</span>
-          <span class="tags">${p.sits.map(s => `<span class="tag">${esc(s)}</span>`).join("")}${p.ad ? '<span class="tag ad">협찬</span>' : ""}${st ? `<span class="tag stale">${staleLabel(p)}</span>` : ""}</span></span>
+        <span class="info"><span class="name">${esc(p.name)}</span><span class="sum">${esc(p.summary)}</span>
+          <span class="tags"><span class="tag cat">${esc(p.cat)}</span>${p.sits.map(s => `<span class="tag">${esc(s)}</span>`).join("")}${p.ad ? '<span class="tag ad">협찬</span>' : ""}${st ? `<span class="tag stale">${staleLabel(p)}</span>` : ""}</span></span>
       </button>
-      ${open ? `<dl><div><dt>웨이팅 팁</dt><dd>${esc(p.wait)}</dd></div><div><dt>예약 요령</dt><dd>${esc(p.resv)}</dd></div><div><dt>주소</dt><dd>${esc(p.addr)}</dd></div><div><dt>마지막 검증</dt><dd>${esc(p.verified || "아직 직접 방문하지 않음")}</dd></div><div><a class="maplink" href="https://map.naver.com/p/search/${encodeURIComponent(p.area + ' ' + p.name)}" target="_blank" rel="noopener">네이버 지도에서 보기 ↗</a></div></dl>` : ""}
-    </div>`;
+      ${open ? `<dl class="facts">${fact("웨이팅 팁", p.wait, "full wait")}${fact("예약 요령", p.resv, "full")}${fact("주소", p.addr)}${fact("마지막 검증", p.verified || "아직 직접 방문하지 않음")}<div class="full"><a class="maplink" href="${link}" target="_blank" rel="noopener">네이버 지도에서 보기 ↗</a></div></dl>` : ""}
+    </article>`;
   }).join("");
-  list.querySelectorAll(".head").forEach(b => b.onclick = () => { const id = +b.dataset.id; state.sel = state.sel === id ? null : id; render(); });
+  list.querySelectorAll(".head").forEach(b => b.onclick = () => {
+    const id = +b.dataset.id; state.sel = state.sel === id ? null : id; render();
+    const nb = document.querySelector(`.head[data-id="${id}"]`); if (nb) nb.focus({ preventScroll:true });
+  });
 }
 
 function render() {
-  chips($("areas"), Object.keys(AREAS), "area");
-  chips($("sits"), SITS, "sit");
-  const items = PLACES.filter(p => p.area === state.area && (state.sit === "전체" || p.sits.includes(state.sit)));
+  syncChips();
+  const items = inArea(state.area).filter(p => state.sit === "전체" || p.sits.includes(state.sit));
+  $("title").textContent = state.sit === "전체" ? state.area : `${state.area} · ${state.sit}`;
+  $("count").textContent = `${items.length}곳`;
   drawMap(items);
   drawList(items);
 }
+buildChips();
 render();
 </script>
