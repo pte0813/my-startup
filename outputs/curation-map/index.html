@@ -4,162 +4,216 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  /* 레이아웃: 상단 로고, 가로 스크롤 동네 칩, 상황 필터. 본문은 왼쪽 개략 지도와 오른쪽 카드 목록 2단, 좁은 화면에서는 1단 */
+  /* 레이아웃: 모바일은 한 번에 한 화면(목록 → 상세, 지도는 토글), 넓은 화면은 좌측 목록 + 우측 지도/상세 패널 */
   :root {
-    --bg:#f3f5f2; --surface:#ffffff; --fg:#13201a; --muted:#5f6e66; --line:#dfe5e0;
-    --accent:#0a6b4b; --accent-soft:#e1f1ea; --accent-fg:#ffffff;
-    --warn:#a35a00; --warn-soft:#fdf0dc; --map:#e9efea; --dot:#c4d0c8;
-    --logo:"Noto Sans KR",system-ui,sans-serif; --body:"Noto Sans KR",system-ui,-apple-system,sans-serif;
+    --bg:#f7f8f6; --surface:#ffffff; --fg:#111a15; --muted:#56635b; --line:#e3e8e4;
+    --accent:#0a6b4b; --accent-soft:#e3f2ea; --accent-fg:#ffffff;
+    --warn:#9a5200; --warn-soft:#fdeed8; --map:#eaf0ec; --dot:#c3cfc8;
+    --font:"Noto Sans KR",system-ui,-apple-system,sans-serif;
   }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    --bg:#0e1411; --surface:#161f1a; --fg:#e8f0eb; --muted:#97a69d; --line:#26332c;
+    --bg:#0e1411; --surface:#161f1a; --fg:#eef4f0; --muted:#a3b2a9; --line:#26332c;
     --accent:#4fd1a1; --accent-soft:#16352a; --accent-fg:#06231a;
     --warn:#f5b04c; --warn-soft:#33260f; --map:#121b16; --dot:#2a3a31; color-scheme:dark; } }
   :root[data-theme="dark"] {
-    --bg:#0e1411; --surface:#161f1a; --fg:#e8f0eb; --muted:#97a69d; --line:#26332c;
+    --bg:#0e1411; --surface:#161f1a; --fg:#eef4f0; --muted:#a3b2a9; --line:#26332c;
     --accent:#4fd1a1; --accent-soft:#16352a; --accent-fg:#06231a;
     --warn:#f5b04c; --warn-soft:#33260f; --map:#121b16; --dot:#2a3a31; color-scheme:dark; }
 
   * { box-sizing:border-box; }
-  body { background:var(--bg); color:var(--fg); font-family:var(--body); font-size:15px; line-height:1.55;
-    padding-block:20px 48px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
-  .wrap { max-width:1080px; margin:0 auto; display:grid; gap:18px; }
-  button { font:inherit; color:inherit; }
-  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  body { background:var(--bg); color:var(--fg); font-family:var(--font); font-size:16px; line-height:1.6;
+    padding-block:14px 56px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+  body::before { content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); background:var(--bg); z-index:30; }
+  button, input, select { font:inherit; color:inherit; }
+  button { cursor:pointer; }
+  :focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+  .app { max-width:1120px; margin:0 auto; }
+  .muted { color:var(--muted); }
 
-  .top { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
-  .logo { font-family:var(--logo); font-weight:700; font-size:32px; line-height:1; margin:0; color:var(--accent); letter-spacing:-.03em; }
-  .tagline { margin:0; color:var(--muted); }
+  /* 상단 */
+  .brand { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; padding-bottom:12px; }
+  .logo { margin:0; font-size:28px; font-weight:700; letter-spacing:-.03em; color:var(--accent); line-height:1.2; }
+  .tagline { margin:0; color:var(--muted); font-size:14px; }
 
-  .bar { display:grid; gap:10px; }
-  .scroller { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
-  @media (min-width:761px) { .scroller.areas { flex-wrap:wrap; overflow:visible; } }
-  .chip { flex:none; border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:7px 14px; cursor:pointer; font-size:14px; display:inline-flex; gap:6px; align-items:center; }
-  .chip small { font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  /* 단계 필터 (고정) */
+  .filters { padding:6px 0 14px; display:grid; gap:12px; border-bottom:1px solid var(--line); }
+  .step { display:grid; gap:6px; }
+  .step-label { font-size:13px; font-weight:700; color:var(--muted); }
+  .scroller { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
+  .scroller::-webkit-scrollbar { display:none; }
+  .chip { flex:none; min-height:44px; border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:0 16px; display:inline-flex; gap:6px; align-items:center; font-size:15px; white-space:nowrap; }
+  .chip small { color:var(--muted); font-size:13px; font-variant-numeric:tabular-nums; }
   .chip[aria-pressed="true"] { background:var(--fg); border-color:var(--fg); color:var(--bg); font-weight:700; }
-  .chip[aria-pressed="true"] small { color:var(--bg); opacity:.7; }
-  .seg { display:inline-flex; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:3px; gap:2px; max-width:100%; overflow-x:auto; }
-  .seg button { border:0; background:none; border-radius:9px; padding:6px 14px; cursor:pointer; font-size:14px; white-space:nowrap; }
-  .seg button[aria-pressed="true"] { background:var(--accent); color:var(--accent-fg); font-weight:700; }
+  .chip[aria-pressed="true"] small { color:var(--bg); opacity:.75; }
+  .chip.sit[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--accent-fg); }
+  @media (min-width:900px) { .scroller.areas { flex-wrap:wrap; overflow:visible; } }
 
-  .head-row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; }
-  .head-row h2 { margin:0; font-size:20px; text-wrap:balance; }
-  .count { color:var(--muted); font-size:14px; font-variant-numeric:tabular-nums; }
+  /* 결과 헤더 */
+  .results-head { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:16px 0 10px; flex-wrap:wrap; }
+  .results-head h2 { margin:0; font-size:20px; line-height:1.3; text-wrap:balance; }
+  .results-head h2 small { font-size:15px; color:var(--muted); font-weight:500; margin-left:6px; }
+  .seg { display:inline-flex; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:3px; }
+  .seg button { border:0; background:none; border-radius:9px; min-height:38px; padding:0 18px; font-size:15px; }
+  .seg button[aria-pressed="true"] { background:var(--fg); color:var(--bg); font-weight:700; }
+  @media (min-width:900px) { .seg { display:none; } }
 
-  .grid { display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr); gap:18px; align-items:start; }
-  @media (max-width:760px) { .grid { grid-template-columns:minmax(0,1fr); } }
-  .mapbox { background:var(--map); border:1px solid var(--line); border-radius:18px; overflow:hidden; position:sticky; top:12px; }
-  @media (max-width:760px) { .mapbox { position:static; } }
+  /* 본문 배치 */
+  .main { display:block; }
+  @media (min-width:900px) {
+    .main { display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr); gap:28px; align-items:start; }
+    .side { position:sticky; top:16px; max-height:calc(100vh - 32px); overflow:auto; }
+  }
+  /* 모바일: 한 번에 한 화면 */
+  @media (max-width:899px) {
+    .app[data-view="list"] .side, .app[data-view="map"] .listpane { display:none; }
+    .app[data-detail="1"] .listpane, .app[data-detail="1"] .filters, .app[data-detail="1"] .results-head, .app[data-detail="1"] .brand { display:none; }
+    .app[data-detail="1"] .side { display:block; }
+    .app[data-detail="1"] .mappane { display:none; }
+    .app[data-detail="0"] .detailpane { display:none; }
+  }
+  @media (min-width:900px) {
+    .app[data-detail="1"] .mappane, .app[data-detail="0"] .detailpane { display:none; }
+  }
+
+  /* 목록 카드 */
+  .list { display:grid; gap:12px; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:16px; }
+  .card.cur { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+  .cardbtn { display:grid; gap:10px; width:100%; text-align:left; background:none; border:0; padding:16px; border-radius:16px; }
+  .c-top { display:flex; gap:12px; align-items:flex-start; }
+  .c-num { flex:none; width:30px; height:30px; border-radius:50%; background:var(--accent); color:var(--accent-fg); font-weight:700; font-size:14px; display:grid; place-items:center; font-variant-numeric:tabular-nums; }
+  .c-num.off { background:var(--surface); border:2px solid var(--warn); color:var(--warn); }
+  .c-main { min-width:0; flex:1; }
+  .c-name { font-size:19px; font-weight:700; line-height:1.35; }
+  .c-sub { color:var(--muted); font-size:15px; }
+  .c-rate { flex:none; text-align:right; font-size:14px; color:var(--muted); font-variant-numeric:tabular-nums; line-height:1.3; }
+  .c-rate b { display:block; font-size:16px; color:var(--warn); }
+  .c-wait { margin:0; background:var(--accent-soft); border-radius:10px; padding:8px 12px; font-size:15px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .c-wait b { color:var(--accent); margin-right:6px; }
+  .c-wait.none { background:var(--bg); color:var(--muted); }
+  .c-wait.none b { color:var(--muted); }
+  .tags { display:flex; gap:6px; flex-wrap:wrap; }
+  .tag { font-size:13px; padding:2px 10px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-weight:500; line-height:1.6; }
+  .tag.cat { background:var(--bg); color:var(--fg); border:1px solid var(--line); }
+  .tag.ad { background:var(--warn); color:var(--surface); font-weight:700; }
+  .tag.stale { background:var(--warn-soft); color:var(--warn); }
+
+  /* 지도 */
+  .mapbox { background:var(--map); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
   svg { display:block; width:100%; height:auto; }
   .area-name { fill:var(--fg); font-weight:700; font-size:16px; }
   .note { fill:var(--muted); font-size:10px; }
   .pin { cursor:pointer; outline:none; }
   .pin circle { fill:var(--accent); stroke:var(--surface); stroke-width:2.5; }
-  .pin text { fill:var(--accent-fg); font-size:12px; font-weight:700; text-anchor:middle; dominant-baseline:central; pointer-events:none; font-variant-numeric:tabular-nums; }
-  .pin.stale circle { fill:var(--surface); stroke:var(--warn); stroke-width:2.5; }
+  .pin text { fill:var(--accent-fg); font-size:12px; font-weight:700; text-anchor:middle; dominant-baseline:central; pointer-events:none; }
+  .pin.stale circle { fill:var(--surface); stroke:var(--warn); }
   .pin.stale text { fill:var(--warn); }
-  .pin.sel circle { stroke:var(--fg); stroke-width:3; }
-  .pin:focus-visible circle { stroke:var(--fg); stroke-width:3; }
+  .pin.sel circle { stroke:var(--fg); stroke-width:3.5; }
+  .pin:focus-visible circle { stroke:var(--fg); stroke-width:3.5; }
   .lbl rect { fill:var(--fg); }
   .lbl text { fill:var(--bg); font-size:11px; font-weight:700; text-anchor:middle; dominant-baseline:central; }
-  .legend { display:flex; gap:14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line); background:var(--surface); font-size:12px; color:var(--muted); }
-  .legend i { display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:-2px; margin-right:5px; }
+  .legend { display:flex; gap:14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line); background:var(--surface); font-size:13px; color:var(--muted); }
+  .legend i { display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:-1px; margin-right:6px; }
   .legend .on { background:var(--accent); }
   .legend .off { border:2px solid var(--warn); }
+  .mapsum { margin-top:12px; }
+  .hint { margin:12px 0 0; color:var(--muted); font-size:14px; text-align:center; }
 
-  .list { display:grid; gap:10px; }
-  .card { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
-  .card.sel { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
-  .head { display:flex; gap:12px; align-items:flex-start; width:100%; background:none; border:0; padding:0; text-align:left; cursor:pointer; }
-  .num { flex:none; width:28px; height:28px; border-radius:50%; background:var(--accent); color:var(--accent-fg); font-size:13px; font-weight:700; display:grid; place-items:center; font-variant-numeric:tabular-nums; }
-  .num.stale { background:none; border:2px solid var(--warn); color:var(--warn); }
-  .info { min-width:0; display:grid; gap:2px; }
-  .name { font-size:17px; font-weight:700; line-height:1.3; }
-  .sum { color:var(--muted); font-size:14px; }
-  .tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
-  .tag { font-size:12px; padding:2px 9px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-weight:500; }
-  .tag.cat { background:var(--bg); color:var(--fg); border:1px solid var(--line); }
-  .tag.ad { background:var(--warn); color:var(--surface); font-weight:700; }
-  .tag.stale { background:var(--warn-soft); color:var(--warn); }
-  .facts { margin:14px 0 0; padding-top:14px; border-top:1px dashed var(--line); display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 16px; }
-  @media (max-width:480px) { .facts { grid-template-columns:minmax(0,1fr); } }
-  .facts .full { grid-column:1 / -1; }
-  dt { font-size:12px; color:var(--muted); letter-spacing:.04em; margin-bottom:2px; }
+  /* 상세 */
+  .detail { background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+  .dbar { position:sticky; top:env(safe-area-inset-top, 0px); z-index:15; display:flex; align-items:center; gap:8px; padding:8px 12px; background:var(--surface); border-bottom:1px solid var(--line); }
+  .back { min-height:44px; border:0; background:none; font-weight:700; color:var(--accent); padding:0 8px; font-size:16px; }
+  .crumb { color:var(--muted); font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+  .dbody { padding:18px 16px 24px; display:grid; gap:20px; }
+  .dhead h2 { margin:0 0 4px; font-size:26px; line-height:1.3; text-wrap:balance; }
+  .dhead p { margin:0 0 10px; color:var(--muted); }
+  .dsec { display:grid; gap:10px; }
+  .dsec h3 { margin:0; font-size:17px; display:flex; align-items:baseline; gap:8px; }
+  .dsec h3 .when { font-size:13px; font-weight:500; color:var(--muted); }
+  .info { margin:0; display:grid; gap:12px; }
+  .info > div { background:var(--bg); border-radius:12px; padding:12px 14px; }
+  .info > div.key { background:var(--accent-soft); }
+  dt { font-size:13px; font-weight:700; color:var(--muted); margin-bottom:2px; }
+  .key dt { color:var(--accent); }
   dd { margin:0; overflow-wrap:anywhere; }
   dd.tbd { color:var(--muted); }
-  .wait { background:var(--accent-soft); border-radius:12px; padding:10px 12px; }
-  .wait dt { color:var(--accent); font-weight:700; }
-  .maplink { display:inline-block; margin-top:2px; padding:8px 14px; border-radius:999px; background:var(--accent); color:var(--accent-fg); font-weight:700; font-size:14px; text-decoration:none; }
-  .maplink:hover { filter:brightness(1.1); }
-  .links { display:flex; gap:6px; flex-wrap:wrap; }
-  .links .maplink { margin:0; padding:6px 12px; font-size:13px; background:var(--surface); color:var(--accent); border:1px solid var(--line); }
-  .links .maplink.main { background:var(--accent); color:var(--accent-fg); border-color:var(--accent); }
-  .empty { color:var(--muted); padding:28px 16px; text-align:center; border:1px dashed var(--line); border-radius:16px; background:var(--surface); }
+  .src { font-size:13px; color:var(--muted); margin:0; }
+  .btnrow { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn { min-height:48px; border:0; border-radius:999px; padding:0 22px; background:var(--accent); color:var(--accent-fg); font-weight:700; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; font-size:16px; }
+  .btn:disabled { opacity:.6; cursor:default; }
+  .btn.ghost { background:var(--surface); color:var(--accent); border:1px solid var(--line); }
+  .btn.sm { min-height:40px; padding:0 16px; font-size:14px; }
+  .btn.full { width:100%; }
+  .pager { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .pager .btn { justify-content:space-between; min-width:0; }
+  .pager .btn span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
-  footer { color:var(--muted); font-size:12px; display:grid; gap:8px; }
-  footer p { margin:0; }
-  footer a { color:var(--accent); }
-  @media (prefers-reduced-motion: no-preference) { .chip, .seg button { transition:background .15s, color .15s; } }
-
-  .rate-line { font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums; }
-  .rate-line b { color:var(--warn); }
-  .rate-line.none { font-style:normal; }
-  .reviews { margin-top:14px; padding-top:14px; border-top:1px dashed var(--line); display:grid; gap:10px; }
-  .reviews h3 { margin:0; font-size:15px; }
-  .reviews h3 small { color:var(--muted); font-weight:400; }
-  .muted { color:var(--muted); margin:0; font-size:14px; }
+  /* 후기 */
   .rvlist { list-style:none; margin:0; padding:0; display:grid; gap:10px; }
-  .rv { background:var(--bg); border-radius:12px; padding:10px 12px; display:grid; gap:4px; }
-  .rv-top { display:flex; gap:6px; flex-wrap:wrap; align-items:center; font-size:13px; }
+  .rv { background:var(--bg); border-radius:12px; padding:12px 14px; display:grid; gap:4px; }
+  .rv-top { display:flex; gap:6px; flex-wrap:wrap; align-items:center; font-size:14px; }
   .rv-date { color:var(--muted); font-variant-numeric:tabular-nums; }
   .stars { color:var(--warn); letter-spacing:1px; }
   .rv-text, .rv-tip { margin:0; overflow-wrap:anywhere; }
-  .rv-tip { font-size:14px; color:var(--muted); }
-  .rv-tip b { color:var(--accent); font-weight:700; margin-right:4px; }
-  .link-btn { justify-self:start; background:none; border:0; padding:4px 0; color:var(--muted); font-size:13px; text-decoration:underline; cursor:pointer; }
-  .btn { justify-self:start; border:0; border-radius:999px; padding:9px 18px; background:var(--accent); color:var(--accent-fg); font-weight:700; cursor:pointer; }
-  .btn:disabled { opacity:.6; cursor:default; }
-  .btn.ghost { background:var(--surface); color:var(--accent); border:1px solid var(--line); }
-  .addbtn { justify-self:start; }
-  .rvform { display:grid; gap:12px; background:var(--accent-soft); border-radius:14px; padding:14px; }
-  .rvform h4 { margin:0; font-size:15px; }
+  .rv-tip { font-size:15px; color:var(--muted); }
+  .rv-tip b { color:var(--accent); margin-right:4px; }
+  .link-btn { justify-self:start; background:none; border:0; padding:8px 0; color:var(--muted); font-size:14px; text-decoration:underline; min-height:36px; }
+  .rvform { display:grid; gap:14px; background:var(--accent-soft); border-radius:14px; padding:16px; }
+  .rvform h4 { margin:0; font-size:17px; }
   .field { display:grid; gap:4px; min-width:0; }
-  .flabel { font-size:12px; color:var(--muted); }
+  .flabel { font-size:14px; font-weight:700; color:var(--muted); }
   .two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
   @media (max-width:480px) { .two { grid-template-columns:minmax(0,1fr); } }
-  input[type="text"], input[type="date"], input[type="number"], select { width:100%; font:inherit; color:var(--fg); background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:9px 11px; min-width:0; }
-  .check { display:flex; gap:8px; align-items:flex-start; font-size:14px; }
-  .checks { display:flex; gap:14px; flex-wrap:wrap; }
+  input[type="text"], input[type="date"], input[type="number"], select { width:100%; min-height:46px; color:var(--fg); background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:0 12px; min-width:0; }
+  .check { display:flex; gap:10px; align-items:flex-start; font-size:15px; }
+  .check input { width:20px; height:20px; margin-top:3px; accent-color:var(--accent); }
+  .checks { display:flex; gap:16px; flex-wrap:wrap; }
   .rate { display:flex; gap:2px; }
-  .star { background:none; border:0; font-size:28px; line-height:1; padding:2px 4px; color:var(--line); cursor:pointer; }
+  .star { background:none; border:0; font-size:34px; line-height:1; min-width:44px; min-height:44px; color:var(--line); padding:0; }
   .star.on { color:var(--warn); }
   .actions { display:flex; gap:8px; flex-wrap:wrap; }
-  .err { margin:0; color:var(--warn); font-weight:700; font-size:14px; }
-  .toast { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(20px + env(safe-area-inset-bottom, 0px)); background:var(--fg); color:var(--bg); padding:10px 16px; border-radius:999px; font-size:14px; z-index:20; max-width:calc(100vw - 32px); }
+  .err { margin:0; color:var(--warn); font-weight:700; }
+  .toast { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(20px + env(safe-area-inset-bottom, 0px)); background:var(--fg); color:var(--bg); padding:12px 18px; border-radius:999px; font-size:15px; z-index:40; max-width:calc(100vw - 32px); }
+  .empty { color:var(--muted); padding:32px 16px; text-align:center; border:1px dashed var(--line); border-radius:16px; background:var(--surface); }
+  .addwrap { margin-bottom:12px; display:grid; gap:12px; }
+
+  footer { margin-top:32px; color:var(--muted); font-size:13px; display:grid; gap:8px; }
+  footer p { margin:0; }
+  footer a { color:var(--accent); }
+  @media (prefers-reduced-motion: no-preference) { .chip, .seg button, .card { transition:background .15s, border-color .15s, color .15s; } }
 </style>
 
-<div class="wrap">
-  <header class="top">
+<div class="app" id="app" data-view="list" data-detail="0">
+  <header class="brand">
     <h1 class="logo">몽몽</h1>
-    <p class="tagline">웨이팅 팁과 예약 요령까지 담은 동네 맛집 큐레이션</p>
+    <p class="tagline">웨이팅 팁과 예약 요령까지, 동네 맛집 큐레이션</p>
   </header>
 
-  <div class="bar">
-    <div class="scroller areas" id="areas" role="group" aria-label="동네"></div>
-    <div class="seg" id="sits" role="group" aria-label="상황"></div>
+  <div class="filters" id="filters">
+    <div class="step"><span class="step-label" id="lb-area">1. 어느 동네로 갈까요?</span><div class="scroller areas" id="areas" role="group" aria-labelledby="lb-area"></div></div>
+    <div class="step"><span class="step-label" id="lb-sit">2. 어떤 자리인가요?</span><div class="scroller" id="sits" role="group" aria-labelledby="lb-sit"></div></div>
   </div>
 
-  <div class="head-row">
+  <div class="results-head">
     <h2 id="title"></h2>
-    <span class="count" id="count"></span>
+    <div class="seg" id="viewseg" role="group" aria-label="보기 방식"><button type="button" data-v="list">목록</button><button type="button" data-v="map">지도</button></div>
   </div>
 
-  <div class="grid">
-    <div class="mapbox">
-      <svg id="map" viewBox="0 0 400 320" role="img" aria-label="동네 개략 지도"></svg>
-      <div class="legend"><span><i class="on"></i>후기로 검증됨 · 90일 이내</span><span><i class="off"></i>현장 검증 전 · 90일 경과</span></div>
-    </div>
-    <div class="list" id="list"></div>
+  <div class="main">
+    <section class="listpane" aria-label="가게 목록">
+      <div id="addzone"></div>
+      <div class="list" id="list"></div>
+    </section>
+    <aside class="side" id="side">
+      <div class="mappane">
+        <div class="mapbox">
+          <svg id="map" viewBox="0 0 400 320" role="img" aria-label="동네 개략 지도"></svg>
+          <div class="legend"><span><i class="on"></i>후기로 검증됨 · 90일 이내</span><span><i class="off"></i>검증 전 · 90일 경과</span></div>
+        </div>
+        <div class="mapsum" id="mapsum"></div>
+      </div>
+      <div class="detailpane" id="detail"></div>
+    </aside>
   </div>
 
   <footer>
@@ -190,17 +244,18 @@ const STALE_DAYS = 90;
 const TBD = "확인 필요";
 const OFFS = [[0, 0], [0.003, 0.0065], [-0.003, 0.006], [0.0028, -0.0065], [-0.0032, -0.006]];
 
-const state = { area:"성수", sit:"전체", sel:null, writing:null, adding:false, delArm:null };
+const state = { area:"성수", sit:"전체", view:"list", detail:null, sel:null, writing:null, adding:false, delArm:null };
 let PLACES = [], REVIEWS = [];
 let status = "loading";            // loading | ok | nodb | error
 let db = null, me = null, canEdit = false, canWrite = null;
-let draft = null, addDraft = null;
+let draft = null, addDraft = null, listScroll = 0;
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const todayStr = () => new Date().toLocaleDateString("sv-SE");
 const daysAgo = d => Math.floor((new Date(todayStr()) - new Date(d)) / 86400000);
 const stars = n => "★".repeat(n) + "☆".repeat(5 - n);
+const desktop = () => window.matchMedia("(min-width:900px)").matches;
 
 function statsOf(p) {
   const rs = REVIEWS.filter(r => r.placeId === p.id).sort((a, b) => (b.visited || "").localeCompare(a.visited || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
@@ -208,84 +263,113 @@ function statsOf(p) {
   return { rs, n: rs.length, avg, verified: rs.length ? rs[0].visited : null, ad: rs.some(r => r.ad) };
 }
 const isStale = st => st.verified === null || daysAgo(st.verified) > STALE_DAYS;
-const staleLabel = st => st.verified === null ? "현장 검증 전" : `검증 ${daysAgo(st.verified)}일 지남`;
+const staleLabel = st => st.verified === null ? "검증 전" : `검증 ${daysAgo(st.verified)}일 전`;
 const inArea = a => PLACES.filter(p => p.area === a);
+const visibleItems = () => inArea(state.area).filter(p => state.sit === "전체" || (p.sits || []).includes(state.sit));
+const known = v => v && v !== TBD;
 
+function waitLine(p, st) {
+  const w = st.rs.find(r => r.wait != null);
+  if (w) return `최근 방문 실제 대기 ${w.wait}분 (${w.visited})`;
+  return known(p.wait) ? p.wait : null;
+}
+
+/* 필터 */
 function buildChips() {
-  const areas = $("areas"), sits = $("sits");
   Object.keys(AREAS).forEach(a => {
     const b = document.createElement("button");
-    b.className = "chip"; b.type = "button"; b.dataset.v = a;
-    b.innerHTML = `${esc(a)} <small></small>`;
-    b.onclick = () => { state.area = a; state.sel = null; state.writing = null; render(); b.scrollIntoView({ inline:"center", block:"nearest" }); };
-    areas.appendChild(b);
+    b.className = "chip"; b.type = "button"; b.dataset.v = a; b.innerHTML = `${esc(a)} <small></small>`;
+    b.onclick = () => { state.area = a; state.detail = null; state.sel = null; state.writing = null; render(); b.scrollIntoView({ inline:"center", block:"nearest" }); };
+    $("areas").appendChild(b);
   });
   SITS.forEach(s => {
     const b = document.createElement("button");
-    b.type = "button"; b.dataset.v = s; b.textContent = s;
-    b.onclick = () => { state.sit = s; state.sel = null; state.writing = null; render(); };
-    sits.appendChild(b);
+    b.className = "chip sit"; b.type = "button"; b.dataset.v = s; b.textContent = s;
+    b.onclick = () => { state.sit = s; state.detail = null; state.sel = null; state.writing = null; render(); };
+    $("sits").appendChild(b);
   });
+  $("viewseg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; state.view = b.dataset.v; render(); });
 }
 function syncChips() {
   document.querySelectorAll("#areas .chip").forEach(b => {
     b.setAttribute("aria-pressed", String(b.dataset.v === state.area));
     b.querySelector("small").textContent = status === "ok" ? inArea(b.dataset.v).length : "";
   });
-  document.querySelectorAll("#sits button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === state.sit)));
+  document.querySelectorAll("#sits .chip").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === state.sit)));
+  document.querySelectorAll("#viewseg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === state.view)));
 }
 
+/* 목록 */
+function cardHtml(p, i) {
+  const st = statsOf(p), stale = isStale(st), w = waitLine(p, st);
+  return `<article class="card${state.detail === p.id ? " cur" : ""}" data-card="${esc(p.id)}">
+    <button class="cardbtn" type="button" data-act="open" data-id="${esc(p.id)}" aria-label="${esc(p.name)} 자세히 보기">
+      <span class="c-top"><span class="c-num${stale ? " off" : ""}">${i + 1}</span>
+        <span class="c-main"><span class="c-name">${esc(p.name)}</span><br><span class="c-sub">${esc(p.summary)}</span></span>
+        <span class="c-rate">${st.n ? `<b>★ ${st.avg.toFixed(1)}</b>후기 ${st.n}` : "후기 없음"}</span></span>
+      <span class="c-wait${w ? "" : " none"}"><b>웨이팅</b>${w ? esc(w) : "정보를 확인하는 중입니다"}</span>
+      <span class="tags"><span class="tag cat">${esc(p.cat)}</span>${(p.sits || []).map(s => `<span class="tag">${esc(s)}</span>`).join("")}${st.ad ? '<span class="tag ad">협찬 후기 포함</span>' : ""}${stale ? `<span class="tag stale">${staleLabel(st)}</span>` : ""}</span>
+    </button></article>`;
+}
+
+function drawList(items) {
+  let body = "";
+  if (status === "loading") body = '<div class="empty">가게를 불러오는 중입니다…</div>';
+  else if (status === "nodb") body = '<div class="empty">저장소에 연결하지 못했습니다.<br>로그인한 상태에서 공유 링크로 다시 열어 주세요.</div>';
+  else if (status === "error") body = '<div class="empty">데이터를 불러오지 못했습니다.<br>잠시 뒤 새로고침해 주세요.</div>';
+  else if (!PLACES.length) body = '<div class="empty">아직 등록된 가게가 없습니다.</div>';
+  else if (!items.length) body = `<div class="empty">${esc(state.area)}에는 ‘${esc(state.sit)}’에 맞는 가게가 아직 없습니다.<br><button type="button" class="btn ghost sm" style="margin-top:12px" data-act="allsit">전체 상황 보기</button></div>`;
+  else body = items.map(cardHtml).join("");
+  $("list").innerHTML = body;
+  $("addzone").innerHTML = canEdit && status === "ok"
+    ? `<div class="addwrap">${state.adding ? addFormHtml() : '<button type="button" class="btn ghost sm" data-act="addopen">+ 가게 추가 (에디터)</button>'}</div>` : "";
+}
+
+/* 지도 */
 function drawMap(items) {
-  const a = AREAS[state.area], W = 400, H = 320;
-  const latSpan = a.span * H / W * 0.79;
+  const a = AREAS[state.area], W = 400, H = 320, latSpan = a.span * H / W * 0.79;
   let g = `<defs><pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="var(--dot)"/></pattern></defs>
     <rect width="${W}" height="${H}" fill="url(#dots)"/>
     <text class="area-name" x="16" y="30">${esc(state.area)}</text>
     <text class="note" x="${W - 12}" y="${H - 10}" text-anchor="end">개략도 · 임의 배치</text>`;
   let lbl = "";
   items.forEach((p, i) => {
-    const x = W / 2 + (p.lng - a.lng) / a.span * W;
-    const y = H / 2 - (p.lat - a.lat) / latSpan * H;
-    const sel = state.sel === p.id;
-    g += `<g class="pin${isStale(statsOf(p)) ? " stale" : ""}${sel ? " sel" : ""}" data-id="${esc(p.id)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" tabindex="0" role="button" aria-label="${i + 1}번 ${esc(p.name)}"><circle r="14"/><text>${i + 1}</text></g>`;
+    const x = W / 2 + (p.lng - a.lng) / a.span * W, y = H / 2 - (p.lat - a.lat) / latSpan * H, sel = state.sel === p.id;
+    g += `<g class="pin${isStale(statsOf(p)) ? " stale" : ""}${sel ? " sel" : ""}" data-id="${esc(p.id)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" tabindex="0" role="button" aria-label="${i + 1}번 ${esc(p.name)}"><circle r="15"/><text>${i + 1}</text></g>`;
     if (sel) {
-      const w = Math.min(p.name.length * 11 + 18, W - 8), lx = Math.max(4 + w / 2, Math.min(W - 4 - w / 2, x)), ly = y > 44 ? y - 28 : y + 28;
+      const w = Math.min(p.name.length * 11 + 18, W - 8), lx = Math.max(4 + w / 2, Math.min(W - 4 - w / 2, x)), ly = y > 44 ? y - 30 : y + 30;
       lbl = `<g class="lbl" transform="translate(${lx.toFixed(1)} ${ly.toFixed(1)})"><rect x="${-w / 2}" y="-11" width="${w}" height="22" rx="11"/><text>${esc(p.name)}</text></g>`;
     }
   });
   $("map").innerHTML = g + lbl;
+  const sel = items.find(p => p.id === state.sel);
+  if (sel) {
+    const st = statsOf(sel), w = waitLine(sel, st);
+    $("mapsum").innerHTML = `<article class="card"><div class="cardbtn" style="cursor:default">
+      <span class="c-top"><span class="c-num${isStale(st) ? " off" : ""}">${items.indexOf(sel) + 1}</span><span class="c-main"><span class="c-name">${esc(sel.name)}</span><br><span class="c-sub">${esc(sel.summary)}</span></span><span class="c-rate">${st.n ? `<b>★ ${st.avg.toFixed(1)}</b>후기 ${st.n}` : "후기 없음"}</span></span>
+      <span class="c-wait${w ? "" : " none"}"><b>웨이팅</b>${w ? esc(w) : "정보를 확인하는 중입니다"}</span>
+      <button type="button" class="btn full" data-act="open" data-id="${esc(sel.id)}">자세히 보기</button></div></article>`;
+  } else $("mapsum").innerHTML = status === "ok" && items.length ? '<p class="hint">핀을 눌러 가게를 미리 볼 수 있어요.</p>' : "";
   $("map").querySelectorAll(".pin").forEach(el => {
-    const pick = (kb) => {
-      state.sel = el.dataset.id; state.writing = null; render();
-      if (kb) { const pin = document.querySelector(`.pin[data-id="${CSS.escape(state.sel)}"]`); if (pin) pin.focus(); }
-      const c = document.querySelector(`[data-card="${CSS.escape(state.sel)}"]`); if (c) c.scrollIntoView({ block:"nearest", behavior:"smooth" });
-    };
+    const pick = kb => { state.sel = el.dataset.id; render(); if (kb) { const pin = document.querySelector(`.pin[data-id="${CSS.escape(state.sel)}"]`); if (pin) pin.focus(); } };
     el.onclick = () => pick(false);
     el.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(true); } };
   });
 }
 
-const fact = (label, val, cls = "") => `<div class="${cls}"><dt>${label}</dt><dd class="${val === TBD ? "tbd" : ""}">${esc(val)}</dd></div>`;
-
+/* 후기 */
 function reviewHtml(r) {
-  const mine = me && r.uid === me;
-  const canDel = mine || canEdit;
-  const arm = state.delArm === r.id;
-  return `<li class="rv">
-    <div class="rv-top"><span class="stars" role="img" aria-label="별점 ${r.rating}점">${stars(r.rating)}</span><span class="rv-date">${esc(r.visited)}</span>
+  const mine = me && r.uid === me, arm = state.delArm === r.id;
+  return `<li class="rv"><div class="rv-top"><span class="stars" role="img" aria-label="별점 ${r.rating}점">${stars(r.rating)}</span><span class="rv-date">${esc(r.visited)} 방문</span>
       ${r.wait != null ? `<span class="tag">실제 대기 ${esc(r.wait)}분</span>` : ""}${r.ad ? '<span class="tag ad">협찬·초대</span>' : ""}${mine ? '<span class="tag">내 후기</span>' : ""}</div>
-    <p class="rv-text">${esc(r.text)}</p>
-    ${r.tip ? `<p class="rv-tip"><b>예약·웨이팅 팁</b> ${esc(r.tip)}</p>` : ""}
-    ${canDel ? `<button type="button" class="link-btn" data-act="del" data-rid="${esc(r.id)}">${arm ? "한 번 더 누르면 삭제됩니다" : "삭제"}</button>` : ""}
-  </li>`;
+    <p class="rv-text">${esc(r.text)}</p>${r.tip ? `<p class="rv-tip"><b>예약·웨이팅 팁</b>${esc(r.tip)}</p>` : ""}
+    ${(mine || canEdit) ? `<button type="button" class="link-btn" data-act="del" data-rid="${esc(r.id)}">${arm ? "한 번 더 누르면 삭제됩니다" : "삭제"}</button>` : ""}</li>`;
 }
-
 function formHtml(p) {
   const d = draft, today = todayStr();
   return `<form class="rvform" data-pid="${esc(p.id)}" novalidate>
     <h4>${esc(p.name)} 후기 쓰기</h4>
-    <div class="field"><span class="flabel" id="rl-rating">별점</span>
-      <div class="rate" role="radiogroup" aria-labelledby="rl-rating">${[1,2,3,4,5].map(n => `<button type="button" class="star${d.rating >= n ? " on" : ""}" role="radio" aria-checked="${d.rating === n}" aria-label="${n}점" data-act="rate" data-v="${n}">★</button>`).join("")}</div></div>
+    <div class="field"><span class="flabel" id="rl-rating">별점</span><div class="rate" role="radiogroup" aria-labelledby="rl-rating">${[1,2,3,4,5].map(n => `<button type="button" class="star${d.rating >= n ? " on" : ""}" role="radio" aria-checked="${d.rating === n}" aria-label="${n}점" data-act="rate" data-v="${n}">★</button>`).join("")}</div></div>
     <div class="two">
       <div class="field"><label class="flabel" for="rv-visited">방문일</label><input id="rv-visited" data-f="visited" type="date" max="${today}" value="${esc(d.visited)}"></div>
       <div class="field"><label class="flabel" for="rv-wait">실제 대기 시간(분)</label><input id="rv-wait" data-f="wait" type="number" min="0" max="600" inputmode="numeric" placeholder="없으면 비워 두세요" value="${esc(d.wait)}"></div>
@@ -297,107 +381,103 @@ function formHtml(p) {
     <div class="actions"><button type="submit" class="btn" ${d.saving ? "disabled" : ""}>${d.saving ? "저장 중…" : "후기 저장"}</button><button type="button" class="btn ghost" data-act="cancel">취소</button></div>
   </form>`;
 }
-
 function addFormHtml() {
   const d = addDraft;
-  return `<form class="rvform addform" id="addform" novalidate>
-    <h4>가게 추가 (에디터 전용)</h4>
-    <div class="two">
-      <div class="field"><label class="flabel" for="ad-area">동네</label><select id="ad-area" data-g="area">${Object.keys(AREAS).map(a => `<option${a === d.area ? " selected" : ""}>${esc(a)}</option>`).join("")}</select></div>
-      <div class="field"><label class="flabel" for="ad-cat">종류</label><input id="ad-cat" data-g="cat" type="text" maxlength="20" placeholder="예: 파스타" value="${esc(d.cat)}"></div>
-    </div>
+  return `<form class="rvform" id="addform" novalidate><h4>가게 추가 (에디터 전용)</h4>
+    <div class="two"><div class="field"><label class="flabel" for="ad-area">동네</label><select id="ad-area" data-g="area">${Object.keys(AREAS).map(a => `<option${a === d.area ? " selected" : ""}>${esc(a)}</option>`).join("")}</select></div>
+      <div class="field"><label class="flabel" for="ad-cat">종류</label><input id="ad-cat" data-g="cat" type="text" maxlength="20" placeholder="예: 파스타" value="${esc(d.cat)}"></div></div>
     <div class="field"><label class="flabel" for="ad-name">가게 이름</label><input id="ad-name" data-g="name" type="text" maxlength="60" value="${esc(d.name)}"></div>
-    <div class="field"><span class="flabel" id="al-sits">어울리는 상황</span>
-      <div class="checks" role="group" aria-labelledby="al-sits">${SITS.slice(1).map(s => `<label class="check"><input type="checkbox" data-g="sit" value="${esc(s)}" ${d.sits.includes(s) ? "checked" : ""}> ${esc(s)}</label>`).join("")}</div></div>
+    <div class="field"><span class="flabel" id="al-sits">어울리는 상황</span><div class="checks" role="group" aria-labelledby="al-sits">${SITS.slice(1).map(s => `<label class="check"><input type="checkbox" data-g="sit" value="${esc(s)}" ${d.sits.includes(s) ? "checked" : ""}> ${esc(s)}</label>`).join("")}</div></div>
     <div class="field"><label class="flabel" for="ad-sum">한 줄 소개</label><input id="ad-sum" data-g="summary" type="text" maxlength="120" value="${esc(d.summary)}"></div>
     <div class="field"><label class="flabel" for="ad-addr">주소 (선택)</label><input id="ad-addr" data-g="addr" type="text" maxlength="120" value="${esc(d.addr)}"></div>
     ${d.err ? `<p class="err" role="alert">${esc(d.err)}</p>` : ""}
-    <div class="actions"><button type="submit" class="btn" ${d.saving ? "disabled" : ""}>${d.saving ? "저장 중…" : "가게 저장"}</button><button type="button" class="btn ghost" data-act="addcancel">취소</button></div>
-  </form>`;
+    <div class="actions"><button type="submit" class="btn" ${d.saving ? "disabled" : ""}>${d.saving ? "저장 중…" : "가게 저장"}</button><button type="button" class="btn ghost" data-act="addcancel">취소</button></div></form>`;
 }
 
-function drawList(items) {
-  const list = $("list");
-  const addBtn = canEdit && status === "ok" ? `<button type="button" class="btn ghost addbtn" data-act="addopen">+ 가게 추가</button>` : "";
-  const addForm = state.adding ? addFormHtml() : "";
-  let body = "";
-  if (status === "loading") body = '<div class="empty">불러오는 중…</div>';
-  else if (status === "nodb") body = '<div class="empty">저장소에 연결하지 못했습니다. 로그인한 상태에서 공유 링크로 다시 열어 주세요. 저장한 파일로 열면 동작하지 않습니다.</div>';
-  else if (status === "error") body = '<div class="empty">데이터를 불러오지 못했습니다. 잠시 뒤 새로고침해 주세요.</div>';
-  else if (!PLACES.length) body = '<div class="empty">아직 등록된 가게가 없습니다.</div>';
-  else if (!items.length) body = '<div class="empty">이 조건에 맞는 장소가 아직 없습니다. 다른 상황을 골라 보세요.</div>';
-  else body = items.map((p, i) => {
-    const open = state.sel === p.id, st = statsOf(p), stale = isStale(st);
-    const q = encodeURIComponent(p.area + " " + p.name), qn = encodeURIComponent(p.name);
-    const links = [
-      ["네이버 지도", `https://map.naver.com/p/search/${q}`, true],
-      ["카카오맵", `https://map.kakao.com/?q=${q}`],
-      ["구글 지도", `https://www.google.com/maps/search/?api=1&query=${q}`],
-      ["다이닝코드", `https://www.diningcode.com/list.dc?query=${q}`],
-      ["캐치테이블", `https://www.google.com/search?q=${qn}+${encodeURIComponent(p.area)}+캐치테이블`],
-    ].map(([t, u, main]) => `<a class="maplink${main ? " main" : ""}" href="${u}" target="_blank" rel="noopener">${t} ↗</a>`).join("");
-    const rating = st.n ? `<span class="rate-line"><b>★ ${st.avg.toFixed(1)}</b> 후기 ${st.n}</span>` : `<span class="rate-line none">몽몽 후기 아직 없음</span>`;
-    return `<article class="card${open ? " sel" : ""}" data-card="${esc(p.id)}">
-      <button class="head" type="button" data-act="toggle" data-id="${esc(p.id)}" aria-expanded="${open}">
-        <span class="num${stale ? " stale" : ""}">${i + 1}</span>
-        <span class="info"><span class="name">${esc(p.name)}</span><span class="sum">${esc(p.summary)}</span>${rating}
-          <span class="tags"><span class="tag cat">${esc(p.cat)}</span>${(p.sits || []).map(s => `<span class="tag">${esc(s)}</span>`).join("")}${st.ad ? '<span class="tag ad">협찬 후기 포함</span>' : ""}${stale ? `<span class="tag stale">${staleLabel(st)}</span>` : ""}</span></span>
-      </button>
-      ${open ? `<dl class="facts">${fact("웨이팅 팁 (웹 검색 기준)", p.wait || TBD, "full wait")}${fact("예약 요령", p.resv || TBD, "full")}${fact("주소", p.addr || TBD)}${fact("마지막 검증", st.verified || "아직 직접 방문하지 않음")}
-        <div class="full"><dt>리뷰·위치·예약 확인</dt><dd class="links">${links}</dd></div></dl>
-        <section class="reviews" aria-label="몽몽 후기"><h3>몽몽 후기 <small>${st.n}</small></h3>
-          ${st.n ? `<ul class="rvlist">${st.rs.map(reviewHtml).join("")}</ul>` : '<p class="muted">직접 다녀온 뒤 첫 후기를 남겨 보세요. 후기를 남기면 검증일이 갱신됩니다.</p>'}
-          ${state.writing === p.id && draft ? formHtml(p) : (canWrite === false ? '<p class="muted">후기는 편집 권한이 있는 사람만 남길 수 있습니다.</p>' : `<button type="button" class="btn" data-act="write" data-id="${esc(p.id)}">후기 쓰기</button>`)}
-        </section>` : ""}
-    </article>`;
-  }).join("");
-  const keep = document.activeElement && list.contains(document.activeElement) && document.activeElement.id
-    ? { id: document.activeElement.id, s: document.activeElement.selectionStart, e: document.activeElement.selectionEnd } : null;
-  list.innerHTML = addBtn + addForm + body;
-  if (keep) { const el = document.getElementById(keep.id); if (el) { el.focus({ preventScroll:true }); try { if (keep.s != null) el.setSelectionRange(keep.s, keep.e); } catch (e) {} } }
+/* 상세 (가기 전 → 찾아가기 → 다녀온 뒤) */
+function drawDetail(items) {
+  const el = $("detail");
+  const p = PLACES.find(x => x.id === state.detail);
+  if (!p) { el.innerHTML = ""; return; }
+  const st = statsOf(p), stale = isStale(st), idx = items.findIndex(x => x.id === p.id);
+  const prev = idx > 0 ? items[idx - 1] : null, next = idx >= 0 && idx < items.length - 1 ? items[idx + 1] : null;
+  const q = encodeURIComponent(p.area + " " + p.name), qn = encodeURIComponent(p.name);
+  const more = [["카카오맵", `https://map.kakao.com/?q=${q}`], ["구글 지도", `https://www.google.com/maps/search/?api=1&query=${q}`], ["다이닝코드", `https://www.diningcode.com/list.dc?query=${q}`], ["캐치테이블", `https://www.google.com/search?q=${qn}+${encodeURIComponent(p.area)}+캐치테이블`]]
+    .map(([t, u]) => `<a class="btn ghost sm" href="${u}" target="_blank" rel="noopener">${t} ↗</a>`).join("");
+  const w = waitLine(p, st);
+  el.innerHTML = `<article class="detail" aria-label="${esc(p.name)} 상세">
+    <div class="dbar"><button type="button" class="back" data-act="back" id="backbtn">← ${desktop() ? "지도로" : "목록으로"}</button><span class="crumb">${esc(p.area)} › ${esc(state.sit)} › ${esc(p.name)}</span></div>
+    <div class="dbody">
+      <div class="dhead"><h2>${esc(p.name)}</h2><p>${esc(p.cat)} · ${esc(p.summary)}</p>
+        <div class="tags">${(p.sits || []).map(s => `<span class="tag">${esc(s)}</span>`).join("")}${st.n ? `<span class="tag">★ ${st.avg.toFixed(1)} · 후기 ${st.n}</span>` : ""}${st.ad ? '<span class="tag ad">협찬 후기 포함</span>' : ""}${stale ? `<span class="tag stale">${staleLabel(st)}</span>` : ""}</div></div>
+      <section class="dsec"><h3>가기 전에 <span class="when">웨이팅·예약</span></h3>
+        <dl class="info"><div class="key"><dt>웨이팅 팁</dt><dd class="${w ? "" : "tbd"}">${esc(w || TBD)}</dd></div>
+          <div><dt>예약 요령</dt><dd class="${known(p.resv) ? "" : "tbd"}">${esc(p.resv || TBD)}</dd></div></dl>
+        <p class="src">${st.verified ? `마지막 방문 검증 ${esc(st.verified)}` : "웹 검색 기준 정보이며 아직 직접 방문하지 않았습니다. 방문 전 공식 채널에서 확인하세요."}</p></section>
+      <section class="dsec"><h3>찾아가기 <span class="when">위치·리뷰</span></h3>
+        <dl class="info"><div><dt>주소</dt><dd class="${known(p.addr) ? "" : "tbd"}">${esc(p.addr || TBD)}</dd></div></dl>
+        <a class="btn full" href="https://map.naver.com/p/search/${q}" target="_blank" rel="noopener">네이버 지도에서 열기 ↗</a>
+        <div class="btnrow">${more}</div></section>
+      <section class="dsec" aria-label="몽몽 후기"><h3>다녀온 뒤 <span class="when">몽몽 후기 ${st.n}</span></h3>
+        ${st.n ? `<ul class="rvlist">${st.rs.map(reviewHtml).join("")}</ul>` : '<p class="muted" style="margin:0">아직 후기가 없습니다. 다녀온 뒤 첫 후기를 남기면 검증일이 갱신됩니다.</p>'}
+        ${state.writing === p.id && draft ? formHtml(p) : (canWrite === false ? '<p class="muted" style="margin:0">후기는 편집 권한이 있는 사람만 남길 수 있습니다.</p>' : `<button type="button" class="btn" data-act="write" data-id="${esc(p.id)}">후기 쓰기</button>`)}</section>
+      ${prev || next ? `<nav class="pager" aria-label="다른 가게"><button type="button" class="btn ghost" data-act="open" data-id="${prev ? esc(prev.id) : ""}" ${prev ? "" : "disabled"}>‹ <span>${prev ? esc(prev.name) : "처음입니다"}</span></button><button type="button" class="btn ghost" data-act="open" data-id="${next ? esc(next.id) : ""}" ${next ? "" : "disabled"}><span>${next ? esc(next.name) : "마지막입니다"}</span> ›</button></nav>` : ""}
+    </div></article>`;
 }
 
 function render() {
+  const items = visibleItems();
   syncChips();
-  const items = inArea(state.area).filter(p => state.sit === "전체" || (p.sits || []).includes(state.sit));
-  $("title").textContent = state.sit === "전체" ? state.area : `${state.area} · ${state.sit}`;
-  $("count").textContent = status === "ok" ? `${items.length}곳` : "";
-  drawMap(status === "ok" ? items : []);
+  const app = $("app"); app.dataset.view = state.view; app.dataset.detail = state.detail ? "1" : "0";
+  $("title").innerHTML = status === "ok" ? `${esc(state.area)}${state.sit === "전체" ? "" : " · " + esc(state.sit)}<small>${items.length}곳</small>` : esc(state.area);
   drawList(items);
+  drawMap(status === "ok" ? items : []);
+  drawDetail(items);
 }
 
-/* 이벤트: 목록 영역에서 한 번만 연결 */
-$("list").addEventListener("click", async e => {
-  const t = e.target.closest("[data-act]"); if (!t) return;
+/* 이동 */
+function openDetail(id) {
+  if (!state.detail) listScroll = window.scrollY;
+  state.detail = id; state.sel = id; state.writing = null; state.delArm = null; draft = null;
+  render(); window.scrollTo({ top:0 });
+  const side = $("side"); side.scrollTop = 0;
+  const b = $("backbtn"); if (b) b.focus({ preventScroll:true });
+}
+function closeDetail() {
+  const id = state.detail; state.detail = null; state.writing = null; draft = null;
+  if (!desktop()) state.view = "list";
+  render();
+  if (!desktop()) window.scrollTo({ top:listScroll });
+  const c = document.querySelector(`.cardbtn[data-id="${CSS.escape(id || "")}"]`); if (c) c.focus({ preventScroll:true });
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape" && state.detail) closeDetail(); });
+
+function alert_(msg) { document.querySelectorAll(".toast").forEach(t => t.remove()); const n = document.createElement("div"); n.className = "toast"; n.setAttribute("role", "status"); n.textContent = msg; document.body.appendChild(n); setTimeout(() => n.remove(), 3500); }
+
+$("app").addEventListener("click", async e => {
+  const t = e.target.closest("[data-act]"); if (!t || t.disabled) return;
   const act = t.dataset.act;
-  if (act === "toggle") {
-    const id = t.dataset.id; state.sel = state.sel === id ? null : id; state.writing = null; state.delArm = null; render();
-    const nb = document.querySelector(`.head[data-id="${CSS.escape(id)}"]`); if (nb) nb.focus({ preventScroll:true });
-  } else if (act === "write") {
-    state.writing = t.dataset.id; draft = { rating:0, visited:todayStr(), wait:"", text:"", tip:"", ad:false, err:"", saving:false }; render();
-    const f = $("rv-text"); if (f) f.focus();
-  } else if (act === "cancel") { state.writing = null; draft = null; render(); }
+  if (act === "open") { if (t.dataset.id) openDetail(t.dataset.id); }
+  else if (act === "back") closeDetail();
+  else if (act === "allsit") { state.sit = "전체"; render(); }
+  else if (act === "write") { state.writing = t.dataset.id; draft = { rating:0, visited:todayStr(), wait:"", text:"", tip:"", ad:false, err:"", saving:false }; render(); const f = $("rv-text"); if (f) f.scrollIntoView({ block:"center" }); if (f) f.focus({ preventScroll:true }); }
+  else if (act === "cancel") { state.writing = null; draft = null; render(); }
   else if (act === "rate") { draft.rating = +t.dataset.v; draft.err = ""; render(); const b = document.querySelector(`.star[data-v="${draft.rating}"]`); if (b) b.focus({ preventScroll:true }); }
   else if (act === "del") {
     const rid = t.dataset.rid;
     if (state.delArm !== rid) { state.delArm = rid; render(); setTimeout(() => { if (state.delArm === rid) { state.delArm = null; render(); } }, 4000); return; }
     state.delArm = null;
     try { await db.doc("reviews/" + rid).delete(); } catch (err) { alert_(`삭제하지 못했습니다 (${err.code || "오류"})`); }
-  } else if (act === "addopen") { state.adding = true; addDraft = { area:state.area, cat:"", name:"", sits:[], summary:"", addr:"", err:"", saving:false }; render(); const f = $("ad-name"); if (f) f.focus(); }
+  }
+  else if (act === "addopen") { state.adding = true; addDraft = { area:state.area, cat:"", name:"", sits:[], summary:"", addr:"", err:"", saving:false }; render(); const f = $("ad-name"); if (f) f.focus(); }
   else if (act === "addcancel") { state.adding = false; addDraft = null; render(); }
 });
-function alert_(msg) { document.querySelectorAll(".toast").forEach(t => t.remove()); const n = document.createElement("div"); n.className = "toast"; n.setAttribute("role", "status"); n.textContent = msg; document.body.appendChild(n); setTimeout(() => n.remove(), 3500); }
-
-$("list").addEventListener("input", e => {
+$("app").addEventListener("input", e => {
   const f = e.target.dataset.f, g = e.target.dataset.g;
   if (f && draft) { draft[f] = e.target.type === "checkbox" ? e.target.checked : e.target.value; if (draft.err) { draft.err = ""; const er = document.querySelector(".rvform .err"); if (er) er.remove(); } }
-  if (g && addDraft) {
-    if (g === "sit") addDraft.sits = [...document.querySelectorAll('[data-g="sit"]:checked')].map(x => x.value);
-    else addDraft[g] = e.target.value;
-  }
+  if (g && addDraft) { if (g === "sit") addDraft.sits = [...document.querySelectorAll('[data-g="sit"]:checked')].map(x => x.value); else addDraft[g] = e.target.value; }
 });
-
-$("list").addEventListener("submit", async e => {
+$("app").addEventListener("submit", async e => {
   e.preventDefault();
   if (e.target.id === "addform") return saveAdd();
   const pid = e.target.dataset.pid, d = draft;
@@ -417,7 +497,6 @@ $("list").addEventListener("submit", async e => {
     fail(err.code === "invalid_argument" ? "이 링크에서는 후기를 남길 권한이 없습니다." : err.code === "quota_exceeded" ? "저장 공간이 가득 찼습니다." : "저장하지 못했습니다. 잠시 뒤 다시 시도해 주세요.");
   }
 });
-
 async function saveAdd() {
   const d = addDraft; if (!d || d.saving) return;
   const fail = m => { d.err = m; render(); };
@@ -444,11 +523,17 @@ async function init() {
     db = dbm;
     if (user) { me = await user.id(); canEdit = !!(await user.canEdit()); canWrite = await user.can("data.write"); }
     let got = 0;
-    const done = () => { if (++got === 2) { status = "ok"; } render(); };
+    const done = () => { if (++got === 2) status = "ok"; render(); };
     const fail = () => { status = "error"; render(); };
-    db.collection("places").onSnapshot(s => { PLACES = s.docs.map(d => ({ ...d.data(), id:d.id })).sort((a, b) => (a.order || 0) - (b.order || 0)); got < 2 ? done() : render(); }, fail);
-    db.collection("reviews").onSnapshot(s => { REVIEWS = s.docs.map(d => ({ ...d.data(), id:d.id })); got < 2 ? done() : render(); }, fail);
+    db.collection("places").onSnapshot(s => { PLACES = s.docs.map(d => ({ ...d.data(), id:d.id })).sort((a, b) => (a.order || 0) - (b.order || 0)); got < 2 ? done() : renderKeep(); }, fail);
+    db.collection("reviews").onSnapshot(s => { REVIEWS = s.docs.map(d => ({ ...d.data(), id:d.id })); got < 2 ? done() : renderKeep(); }, fail);
   } catch (e) { status = "nodb"; render(); }
+}
+/* 다른 사람의 저장으로 갱신될 때 입력 중인 칸의 포커스·커서를 유지 */
+function renderKeep() {
+  const a = document.activeElement, keep = a && a.id && $("app").contains(a) ? { id:a.id, s:a.selectionStart, e:a.selectionEnd } : null;
+  render();
+  if (keep) { const el = document.getElementById(keep.id); if (el) { el.focus({ preventScroll:true }); try { if (keep.s != null) el.setSelectionRange(keep.s, keep.e); } catch (x) {} } }
 }
 init();
 </script>
