@@ -17,3 +17,4 @@
 | 2026-10-20 | /cardnews로 사전신청 오픈 이벤트 카드뉴스 3장 제작 (글자 더 크게, 로고 크게), 수정사항을 스킬에 반영 | outputs/cardnews-2/에 card-01~03.png, caption.md 작성, render.js 글자·로고 확대와 넘침 검사 수정, 할인 조건·기간·계정명 [확인 필요] |
 | 2026-10-20 | 카드뉴스 색을 짙은 파랑에서 하늘색 계열로 변경 | outputs/cardnews-3/에 같은 내용의 하늘색 3장+caption.md 작성, brand.json에 cardnews 팔레트 추가, 스킬 반영 (cardnews-1·2는 그대로) |
 | 2026-10-20 | 브랜드 전체를 하늘색 계열로 변경 | brand.json·logo.svg·brand-kit·intro·lean-canvas·competitors 색 교체, 작은 글씨용 진한 하늘색(accent-text) 추가, 미리보기 4개 갱신 (이전 카드뉴스 1·2는 그대로) |
+| 2026-10-20 | 랜딩페이지용 .env.example 만들고 .env로 복사 | .env.example(SUPABASE_URL, SUPABASE_ANON_KEY, SITE_NAME)과 .env 생성, .env는 .gitignore에 등록해 저장소에서 제외 |
