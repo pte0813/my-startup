@@ -91,6 +91,9 @@
   .wait dt { color:var(--accent); font-weight:700; }
   .maplink { display:inline-block; margin-top:2px; padding:8px 14px; border-radius:999px; background:var(--accent); color:var(--accent-fg); font-weight:700; font-size:14px; text-decoration:none; }
   .maplink:hover { filter:brightness(1.1); }
+  .links { display:flex; gap:6px; flex-wrap:wrap; }
+  .links .maplink { margin:0; padding:6px 12px; font-size:13px; background:var(--surface); color:var(--accent); border:1px solid var(--line); }
+  .links .maplink.main { background:var(--accent); color:var(--accent-fg); border-color:var(--accent); }
   .empty { color:var(--muted); padding:28px 16px; text-align:center; border:1px dashed var(--line); border-radius:16px; background:var(--surface); }
 
   footer { color:var(--muted); font-size:12px; display:grid; gap:8px; }
@@ -302,14 +305,21 @@ function drawList(items) {
   if (!items.length) { list.innerHTML = '<div class="empty">이 조건에 맞는 장소가 아직 없습니다. 다른 상황을 골라 보세요.</div>'; return; }
   list.innerHTML = items.map((p, i) => {
     const open = state.sel === p.id, st = isStale(p);
-    const link = `https://map.naver.com/p/search/${encodeURIComponent(p.area + " " + p.name)}`;
+    const q = encodeURIComponent(p.area + " " + p.name), qn = encodeURIComponent(p.name);
+    const links = [
+      ["네이버 지도", `https://map.naver.com/p/search/${q}`, true],
+      ["카카오맵", `https://map.kakao.com/?q=${q}`],
+      ["구글 지도", `https://www.google.com/maps/search/?api=1&query=${q}`],
+      ["다이닝코드", `https://www.diningcode.com/list.dc?query=${q}`],
+      ["캐치테이블", `https://www.google.com/search?q=${qn}+${encodeURIComponent(p.area)}+캐치테이블`],
+    ].map(([t, u, main]) => `<a class="maplink${main ? " main" : ""}" href="${u}" target="_blank" rel="noopener">${t} ↗</a>`).join("");
     return `<article class="card${open ? " sel" : ""}" data-card="${p.id}">
       <button class="head" type="button" data-id="${p.id}" aria-expanded="${open}">
         <span class="num${st ? " stale" : ""}">${i + 1}</span>
         <span class="info"><span class="name">${esc(p.name)}</span><span class="sum">${esc(p.summary)}</span>
           <span class="tags"><span class="tag cat">${esc(p.cat)}</span>${p.sits.map(s => `<span class="tag">${esc(s)}</span>`).join("")}${p.ad ? '<span class="tag ad">협찬</span>' : ""}${st ? `<span class="tag stale">${staleLabel(p)}</span>` : ""}</span></span>
       </button>
-      ${open ? `<dl class="facts">${fact("웨이팅 팁", p.wait, "full wait")}${fact("예약 요령", p.resv, "full")}${fact("주소", p.addr)}${fact("마지막 검증", p.verified || "아직 직접 방문하지 않음")}<div class="full"><a class="maplink" href="${link}" target="_blank" rel="noopener">네이버 지도에서 보기 ↗</a></div></dl>` : ""}
+      ${open ? `<dl class="facts">${fact("웨이팅 팁", p.wait, "full wait")}${fact("예약 요령", p.resv, "full")}${fact("주소", p.addr)}${fact("마지막 검증", p.verified || "아직 직접 방문하지 않음")}<div class="full"><dt>리뷰·위치·예약 확인</dt><dd class="links">${links}</dd></div></dl>` : ""}
     </article>`;
   }).join("");
   list.querySelectorAll(".head").forEach(b => b.onclick = () => {
