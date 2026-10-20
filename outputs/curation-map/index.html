@@ -1,127 +1,179 @@
-<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>실패 없는 선택</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#fff; --fg:#1f2328; --muted:#6b7280; --line:#e5e7eb; --accent:#e8590c; --warn:#b45309; --chip:#f3f4f6; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg:#16181d; --fg:#e8e8ea; --muted:#9aa0aa; --line:#2c3037; --accent:#ff8a4c; --warn:#fbbf24; --chip:#242830; }
+  /* 레이아웃: 위에 동네 개략 지도, 아래에 검증 카드 목록. 넓은 화면에서는 좌우 2단 */
+  :root {
+    --bg:#f6f5f1; --surface:#ffffff; --fg:#22211f; --muted:#6c6a64; --line:#e2dfd6;
+    --accent:#c2410c; --accent-fg:#ffffff; --map:#ece9df; --grid:#dcd8cb; --warn:#a16207;
+    --display:"Gowun Batang","Noto Serif KR",serif; --body:"Noto Sans KR",system-ui,-apple-system,sans-serif;
   }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif; }
-  header { padding:12px 16px; border-bottom:1px solid var(--line); }
-  h1 { margin:0 0 8px; font-size:18px; }
-  .row { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
-  button.chip { border:1px solid var(--line); background:var(--chip); color:var(--fg); border-radius:999px; padding:6px 12px; font-size:14px; cursor:pointer; }
-  button.chip[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
-  main { display:grid; grid-template-columns:1fr 380px; height:calc(100vh - 118px); }
-  #map { height:100%; min-height:300px; }
-  #list { overflow:auto; border-left:1px solid var(--line); }
-  .card { padding:14px 16px; border-bottom:1px solid var(--line); cursor:pointer; }
-  .card.active { background:var(--chip); }
-  .card h2 { margin:0 0 4px; font-size:16px; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg:#171614; --surface:#211f1c; --fg:#ece9e1; --muted:#a29f95; --line:#34312b;
+    --accent:#fb923c; --accent-fg:#1a1205; --map:#1d1c19; --grid:#2c2a25; --warn:#fbbf24; color-scheme:dark; } }
+  :root[data-theme="dark"] {
+    --bg:#171614; --surface:#211f1c; --fg:#ece9e1; --muted:#a29f95; --line:#34312b;
+    --accent:#fb923c; --accent-fg:#1a1205; --map:#1d1c19; --grid:#2c2a25; --warn:#fbbf24; color-scheme:dark; }
+
+  * { box-sizing:border-box; }
+  body { background:var(--bg); color:var(--fg); font-family:var(--body); font-size:15px; line-height:1.55;
+    padding-block:20px 40px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+  .wrap { max-width:1040px; margin:0 auto; display:grid; gap:16px; }
+  h1 { font-family:var(--display); font-size:28px; line-height:1.2; margin:0; text-wrap:balance; }
+  .sub { color:var(--muted); margin:4px 0 0; }
+  .filters { display:grid; gap:8px; }
+  .row { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .label { font-size:12px; letter-spacing:.08em; color:var(--muted); width:44px; }
+  button { font:inherit; }
+  .chip { border:1px solid var(--line); background:var(--surface); color:var(--fg); border-radius:999px; padding:6px 14px; cursor:pointer; }
+  .chip[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--accent-fg); font-weight:700; }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start; }
+  @media (max-width:760px) { .grid { grid-template-columns:minmax(0,1fr); } }
+  .mapbox { background:var(--map); border:1px solid var(--line); border-radius:6px; overflow:hidden; position:sticky; top:12px; }
+  @media (max-width:760px) { .mapbox { position:static; } }
+  svg { display:block; width:100%; height:auto; }
+  .gridline { stroke:var(--grid); stroke-width:1; }
+  .area-name { fill:var(--muted); font-family:var(--display); font-size:15px; }
+  .note { fill:var(--muted); font-size:10px; }
+  .pin { cursor:pointer; }
+  .pin circle { fill:var(--accent); stroke:var(--surface); stroke-width:2; }
+  .pin text { fill:var(--accent-fg); font-size:12px; font-weight:700; text-anchor:middle; dominant-baseline:central; pointer-events:none; }
+  .pin.stale circle { fill:var(--surface); stroke:var(--warn); stroke-width:2.5; }
+  .pin.stale text { fill:var(--warn); }
+  .pin.sel circle { stroke:var(--fg); stroke-width:3; }
+
+  .list { display:grid; gap:10px; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:12px 14px; }
+  .card.sel { border-color:var(--accent); }
+  .head { display:flex; gap:10px; align-items:flex-start; width:100%; background:none; border:0; padding:0; color:inherit; text-align:left; cursor:pointer; }
+  .num { flex:none; width:24px; height:24px; border-radius:50%; background:var(--accent); color:var(--accent-fg); font-size:13px; font-weight:700; display:grid; place-items:center; margin-top:1px; }
+  .num.stale { background:none; border:2px solid var(--warn); color:var(--warn); }
+  .title { min-width:0; }
+  .title b { display:block; font-size:16px; }
   .meta { color:var(--muted); font-size:13px; }
-  .tag { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; background:var(--chip); margin-right:4px; }
-  .tag.ad { background:var(--warn); color:#fff; }
-  .tag.stale { color:var(--warn); border:1px solid var(--warn); background:transparent; }
-  .detail { margin-top:10px; font-size:14px; line-height:1.5; }
-  .detail b { display:block; font-size:12px; color:var(--muted); margin-top:8px; }
-  .empty { padding:24px 16px; color:var(--muted); }
-  footer { padding:8px 16px; font-size:12px; color:var(--muted); }
-  @media (max-width: 760px) {
-    main { grid-template-columns:1fr; grid-template-rows:260px auto; height:auto; }
-    #list { border-left:0; border-top:1px solid var(--line); }
-  }
+  .tags { display:flex; gap:4px; flex-wrap:wrap; margin-top:6px; }
+  .tag { font-size:12px; padding:1px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); }
+  .tag.ad { background:var(--warn); border-color:var(--warn); color:var(--bg); font-weight:700; }
+  .tag.stale { border-color:var(--warn); color:var(--warn); }
+  dl { margin:10px 0 0 34px; display:grid; gap:8px; }
+  dt { font-size:12px; color:var(--muted); letter-spacing:.05em; }
+  dd { margin:0; }
+  .empty { color:var(--muted); padding:20px; text-align:center; border:1px dashed var(--line); border-radius:6px; }
+  footer { color:var(--muted); font-size:12px; }
 </style>
-</head>
-<body>
-<header>
-  <h1>실패 없는 선택 · 로컬 큐레이션 맵</h1>
-  <div class="row" id="areaFilter" aria-label="동네"></div>
-  <div class="row" id="sitFilter" aria-label="상황"></div>
-</header>
-<main>
-  <div id="map" role="application" aria-label="지도"></div>
-  <div id="list"></div>
-</main>
-<footer>샘플 데이터입니다. 협찬 표기·검증일 90일 초과 경고 포함.</footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="data.js"></script>
+<div class="wrap">
+  <header>
+    <h1>실패 없는 선택</h1>
+    <p class="sub">가본 사람만 아는 동네 맛집. 웨이팅 팁과 예약 요령까지.</p>
+  </header>
+
+  <div class="filters">
+    <div class="row" role="group" aria-label="동네"><span class="label">동네</span><span id="areas" class="row"></span></div>
+    <div class="row" role="group" aria-label="상황"><span class="label">상황</span><span id="sits" class="row"></span></div>
+  </div>
+
+  <div class="grid">
+    <div class="mapbox"><svg id="map" viewBox="0 0 400 320" role="img" aria-label="동네 개략 지도"></svg></div>
+    <div class="list" id="list"></div>
+  </div>
+
+  <footer>표시된 장소는 모두 샘플 데이터입니다. 속이 빈 핀은 마지막 검증 후 90일이 지난 곳입니다. 지도는 위치 관계만 보여주는 개략도입니다.</footer>
+</div>
+
 <script>
+const AREAS = {
+  "성수": { lat: 37.5445, lng: 127.0557, span: 0.0075 },
+  "연남": { lat: 37.5625, lng: 126.9255, span: 0.0075 },
+  "판교": { lat: 37.3947, lng: 127.1112, span: 0.0075 },
+};
+const SITS = ["전체", "데이트", "혼밥", "팀 회식"];
 const STALE_DAYS = 90;
-const SITUATIONS = ["전체", "데이트", "혼밥", "팀 회식"];
-const state = { area: "성수", sit: "전체", selected: null };
-const markers = new Map();
-let map = null;
+const TODAY = new Date("2026-10-20");
 
-const daysSince = d => Math.floor((Date.now() - new Date(d)) / 86400000);
+const PLACES = [
+  { id:1, area:"성수", name:"[샘플] 성수 파스타집", cat:"양식", lat:37.5446, lng:127.0560, sits:["데이트"], price:"₩₩₩", verified:"2026-10-05", ad:false,
+    summary:"조용한 2층 창가석이 포인트", wait:"토요일 18시 기준 60분 이상. 평일 17:30 입장을 추천합니다.", resv:"캐치테이블 오픈 2주 전 10시. 창가석은 메모에 요청하세요." },
+  { id:2, area:"성수", name:"[샘플] 성수 국밥", cat:"한식", lat:37.5430, lng:127.0540, sits:["혼밥"], price:"₩", verified:"2026-09-12", ad:false,
+    summary:"바 좌석이 많아 혼자 가기 편함", wait:"점심 12시 전후 20분. 11시 30분 전에 도착하면 대기가 없습니다.", resv:"예약 불가, 현장 웨이팅." },
+  { id:3, area:"성수", name:"[샘플] 성수 고깃집", cat:"고기", lat:37.5460, lng:127.0580, sits:["팀 회식"], price:"₩₩₩", verified:"2026-06-01", ad:true,
+    summary:"단체룸 12명까지, 환기 좋음", wait:"금요일 저녁은 예약 필수.", resv:"전화 예약, 단체룸은 3일 전까지." },
+  { id:4, area:"연남", name:"[샘플] 연남 브런치", cat:"브런치", lat:37.5630, lng:126.9250, sits:["데이트","혼밥"], price:"₩₩", verified:"2026-10-10", ad:false,
+    summary:"주말 오전이 가장 여유로움", wait:"일요일 11시 이후 40분.", resv:"네이버 예약. 당일 취소분은 오전 9시에 열립니다." },
+  { id:5, area:"연남", name:"[샘플] 연남 이자카야", cat:"주점", lat:37.5615, lng:126.9270, sits:["팀 회식","데이트"], price:"₩₩₩", verified:"2026-08-20", ad:false,
+    summary:"8명 이하 모임에 맞는 룸", wait:"20시 이후 입장은 대기 가능성이 높습니다.", resv:"인스타 DM 예약만 가능." },
+  { id:6, area:"판교", name:"[샘플] 판교 한식 정식", cat:"한식", lat:37.3950, lng:127.1100, sits:["팀 회식","혼밥"], price:"₩₩", verified:"2026-10-15", ad:false,
+    summary:"점심 정식 회전이 빠름", wait:"12시 10분이 피크, 12시 50분 이후는 한산합니다.", resv:"6인 이상 점심 예약 가능(전화)." },
+  { id:7, area:"판교", name:"[샘플] 판교 라멘", cat:"일식", lat:37.3935, lng:127.1125, sits:["혼밥"], price:"₩₩", verified:"2026-05-02", ad:false,
+    summary:"카운터석 중심, 10분 안에 식사 가능", wait:"점심 평균 15분. 키오스크 선결제.", resv:"예약 불가." },
+];
+
+const state = { area:"성수", sit:"전체", sel:null };
+const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const age = p => Math.floor((TODAY - new Date(p.verified)) / 86400000);
+const isStale = p => age(p) > STALE_DAYS;
 
 function chips(el, items, key) {
   el.innerHTML = "";
   items.forEach(v => {
     const b = document.createElement("button");
-    b.className = "chip"; b.textContent = v;
-    b.setAttribute("aria-pressed", state[key] === v);
-    b.onclick = () => { state[key] = v; state.selected = null; render(true); };
+    b.className = "chip"; b.type = "button"; b.textContent = v;
+    b.setAttribute("aria-pressed", String(state[key] === v));
+    b.onclick = () => { state[key] = v; state.sel = null; render(); };
     el.appendChild(b);
   });
 }
 
-function visible() {
-  return PLACES.filter(p => p.area === state.area && (state.sit === "전체" || p.situations.includes(state.sit)));
-}
-
-function render(recenter) {
-  chips(document.getElementById("areaFilter"), Object.keys(AREAS), "area");
-  chips(document.getElementById("sitFilter"), SITUATIONS, "sit");
-  const items = visible();
-
-  const list = document.getElementById("list");
-  list.innerHTML = items.length ? "" : '<div class="empty">조건에 맞는 장소가 없습니다.</div>';
-  items.forEach(p => {
-    const age = daysSince(p.verified);
-    const open = state.selected === p.id;
-    const el = document.createElement("div");
-    el.className = "card" + (open ? " active" : "");
-    el.innerHTML = `
-      <h2>${esc(p.name)}</h2>
-      <div class="meta">${esc(p.category)} · ${esc(p.price)} · ${esc(p.summary)}</div>
-      <div style="margin-top:6px">
-        ${p.situations.map(s => `<span class="tag">${esc(s)}</span>`).join("")}
-        ${p.sponsored ? '<span class="tag ad">협찬</span>' : ""}
-        ${age > STALE_DAYS ? `<span class="tag stale">검증 ${age}일 지남</span>` : ""}
-      </div>
-      ${open ? `<div class="detail">
-        <b>웨이팅 팁</b>${esc(p.waiting)}
-        <b>예약 요령</b>${esc(p.reservation)}
-        <b>마지막 검증</b>${esc(p.verified)}
-      </div>` : ""}`;
-    el.onclick = () => { state.selected = open ? null : p.id; render(false); };
-    list.appendChild(el);
+function drawMap(items) {
+  const a = AREAS[state.area], W = 400, H = 320;
+  const lngSpan = a.span, latSpan = a.span * H / W * 0.8;
+  let g = "";
+  for (let x = 0; x <= W; x += 50) g += `<line class="gridline" x1="${x}" y1="0" x2="${x}" y2="${H}"/>`;
+  for (let y = 0; y <= H; y += 50) g += `<line class="gridline" x1="0" y1="${y}" x2="${W}" y2="${y}"/>`;
+  g += `<text class="area-name" x="14" y="26">${esc(state.area)}</text>`;
+  g += `<text class="note" x="${W - 12}" y="${H - 10}" text-anchor="end">개략도 · 위치 관계만 표시</text>`;
+  items.forEach((p, i) => {
+    const x = W / 2 + (p.lng - a.lng) / lngSpan * W;
+    const y = H / 2 - (p.lat - a.lat) / latSpan * H;
+    g += `<g class="pin${isStale(p) ? " stale" : ""}${state.sel === p.id ? " sel" : ""}" data-id="${p.id}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" tabindex="0" role="button" aria-label="${esc(p.name)}">
+      <circle r="13"/><text>${i + 1}</text></g>`;
   });
-
-  if (!map) return;
-  markers.forEach(m => m.remove()); markers.clear();
-  items.forEach(p => {
-    const m = L.marker([p.lat, p.lng]).addTo(map).bindTooltip(p.name);
-    m.on("click", () => { state.selected = p.id; render(false); });
-    markers.set(p.id, m);
+  $("map").innerHTML = g;
+  $("map").querySelectorAll(".pin").forEach(el => {
+    const pick = () => { state.sel = +el.dataset.id; render(); const c = document.querySelector(`[data-card="${state.sel}"]`); if (c) c.scrollIntoView({ block:"nearest", behavior:"smooth" }); };
+    el.onclick = pick;
+    el.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } };
   });
-  const sel = items.find(p => p.id === state.selected);
-  if (sel) map.panTo([sel.lat, sel.lng]);
-  else if (recenter) map.setView(AREAS[state.area].center, AREAS[state.area].zoom);
 }
 
-if (window.L) {
-  map = L.map("map").setView(AREAS[state.area].center, AREAS[state.area].zoom);
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
+function drawList(items) {
+  const list = $("list");
+  if (!items.length) { list.innerHTML = '<div class="empty">조건에 맞는 장소가 없습니다. 다른 상황을 골라 보세요.</div>'; return; }
+  list.innerHTML = items.map((p, i) => {
+    const open = state.sel === p.id, st = isStale(p);
+    return `<div class="card${open ? " sel" : ""}" data-card="${p.id}">
+      <button class="head" type="button" data-id="${p.id}" aria-expanded="${open}">
+        <span class="num${st ? " stale" : ""}">${i + 1}</span>
+        <span class="title"><b>${esc(p.name)}</b><span class="meta">${esc(p.cat)} · ${esc(p.price)} · ${esc(p.summary)}</span>
+          <span class="tags">${p.sits.map(s => `<span class="tag">${esc(s)}</span>`).join("")}${p.ad ? '<span class="tag ad">협찬</span>' : ""}${st ? `<span class="tag stale">검증 ${age(p)}일 지남</span>` : ""}</span></span>
+      </button>
+      ${open ? `<dl><div><dt>웨이팅 팁</dt><dd>${esc(p.wait)}</dd></div><div><dt>예약 요령</dt><dd>${esc(p.resv)}</dd></div><div><dt>마지막 검증</dt><dd>${esc(p.verified)}</dd></div></dl>` : ""}
+    </div>`;
+  }).join("");
+  list.querySelectorAll(".head").forEach(b => b.onclick = () => { const id = +b.dataset.id; state.sel = state.sel === id ? null : id; render(); });
 }
-render(true);
+
+function render() {
+  chips($("areas"), Object.keys(AREAS), "area");
+  chips($("sits"), SITS, "sit");
+  const items = PLACES.filter(p => p.area === state.area && (state.sit === "전체" || p.sits.includes(state.sit)));
+  drawMap(items);
+  drawList(items);
+}
+render();
 </script>
-</body>
-</html>
