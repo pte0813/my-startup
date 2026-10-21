@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+/* 디자인 토큰: 어두운 화면이 기본이고, 시스템 설정이나 사용자가 고른 밝은 화면으로 바뀐다. */
+:root {
+  --bg: #101216;
+  --surface: #1a1d24;
+  --surface2: #232731;
+  --fg: #f4f5f7;
+  --muted: #9ba2af;
+  --line: #2b303a;
+  --accent: #f08a77;
+  --accent-soft: #3a2420;
+  --accent-fg: #1c0f0b;
+  --star: #f2b632;
+  --star-off: #3a3f4a;
+  --thumb-s: 42%;
+  --thumb-l: 26%;
+  --thumb-fg: #f4f5f7;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --surface2: #eef0f4;
+    --fg: #14171c;
+    --muted: #5b6471;
+    --line: #e1e4ea;
+    --accent: #bd3722;
+    --accent-soft: #fdebe7;
+    --accent-fg: #ffffff;
+    --star: #e5a500;
+    --star-off: #d5d9e0;
+    --thumb-s: 75%;
+    --thumb-l: 88%;
+    --thumb-fg: #2b2118;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface2: #eef0f4;
+  --fg: #14171c;
+  --muted: #5b6471;
+  --line: #e1e4ea;
+  --accent: #bd3722;
+  --accent-soft: #fdebe7;
+  --accent-fg: #ffffff;
+  --star: #e5a500;
+  --star-off: #d5d9e0;
+  --thumb-s: 75%;
+  --thumb-l: 88%;
+  --thumb-fg: #2b2118;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-fg: var(--accent-fg);
+  --color-star: var(--star);
+  --color-star-off: var(--star-off);
+  --font-sans: var(--font-noto), "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+
+html {
+  background: var(--bg);
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-noto), "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+}
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.thumb-tile {
+  background: hsl(var(--h) var(--thumb-s) var(--thumb-l));
+  color: var(--thumb-fg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tap { transition: background-color 0.15s, color 0.15s, border-color 0.15s; }
+}
