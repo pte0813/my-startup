@@ -138,7 +138,7 @@ await step("PWA: 매니페스트·아이콘·서비스 워커·오프라인 화�
   assert.equal(await page.evaluate(() => !!navigator.serviceWorker.controller), true);
   await page.context().setOffline(true);
   await page.goto(`${BASE}/list`).catch(() => {});
-  await page.getByRole("heading", { name: /인터넷에 연결되어 있지 않아요/ }).waitFor();
+  await page.getByRole("heading", { name: /인터넷에 연결되어 있지 않습니다/ }).waitFor();
   await page.context().setOffline(false);
   problems.splice(0, problems.length, ...problems.filter((m) => !m.includes("ERR_INTERNET_DISCONNECTED"))); // 일부러 끊은 연결의 오류는 제외
 });

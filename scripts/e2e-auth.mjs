@@ -54,7 +54,7 @@ await step("방문자: 로그인 메일 요청, 상세에서 로그인 안내", 
   assert.ok((await (await fetch(`http://localhost:${MOCK_PORT}/__log`)).json()).some((l) => l.startsWith("POST /auth/v1/otp")));
   await shot(page, "auth-login-sent");
   await page.goto(`${BASE}/places/1`);
-  await page.getByText("로그인하면 가게를 찜할 수 있어요").waitFor();
+  await page.getByText("로그인하면 가게를 찜할 수 있습니다").waitFor();
   await page.goto(`${BASE}/me`);
   await page.getByRole("link", { name: "로그인" }).waitFor();
   await page.context().close();
@@ -115,7 +115,7 @@ await step("에디터: 입력 오류는 입력값을 유지한 채 안내한다"
   await page.fill("#body", "미래에 다녀온 후기");
   await page.evaluate(() => document.getElementById("visitedOn").removeAttribute("max"));
   await page.getByRole("button", { name: "후기 저장" }).click();
-  await page.getByRole("alert").filter({ hasText: "오늘 이전 날짜" }).waitFor();
+  await page.getByRole("alert").filter({ hasText: "오늘까지의 날짜" }).waitFor();
   assert.equal(await page.inputValue("#body"), "미래에 다녀온 후기");
   assert.equal(mock.db.reviews.length, 0);
   await page.context().close();
