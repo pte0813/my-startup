@@ -204,7 +204,7 @@
   "id": 15,
   "areaSlug": "pangyo",
   "name": "비즐 돈까스",
-  "category": "돈까스",
+  "category": "돈가스",
   "situations": [
    "팀 회식",
    "혼밥"
@@ -390,7 +390,7 @@
   "id": 28,
   "areaSlug": "itaewon-hannam",
   "name": "교카이젠",
-  "category": "돈카츠",
+  "category": "돈가스",
   "situations": [
    "데이트"
   ],
@@ -1481,7 +1481,7 @@
   "id": 104,
   "areaSlug": "gangnam",
   "name": "창고43",
-  "category": "한우 구이",
+  "category": "한우구이",
   "situations": [
    "팀 회식",
    "데이트"
@@ -1810,7 +1810,7 @@
   "id": 127,
   "areaSlug": "konkuk",
   "name": "송림식당",
-  "category": "돼지불백",
+  "category": "불백",
   "situations": [
    "혼밥",
    "팀 회식"
@@ -1882,7 +1882,7 @@
   "id": 132,
   "areaSlug": "euljiro",
   "name": "호반집",
-  "category": "닭 요리",
+  "category": "닭요리",
   "situations": [
    "팀 회식"
   ],
@@ -2152,7 +2152,7 @@
   "id": 151,
   "areaSlug": "mangwon",
   "name": "정광수의 돈까스가게",
-  "category": "돈까스",
+  "category": "돈가스",
   "situations": [
    "혼밥"
   ],
@@ -2166,7 +2166,7 @@
   "id": 152,
   "areaSlug": "mangwon",
   "name": "헤키",
-  "category": "돈까스",
+  "category": "돈가스",
   "situations": [
    "혼밥",
    "데이트"

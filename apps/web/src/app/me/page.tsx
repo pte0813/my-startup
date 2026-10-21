@@ -34,7 +34,7 @@ async function MeBody() {
   if (!session) {
     return (
       <div className="grid gap-3 rounded-[22px] border border-line bg-surface p-[18px]">
-        <p>로그인하면 찜한 가게를 모아 볼 수 있어요.</p>
+        <p>로그인하면 찜한 가게를 모아 볼 수 있습니다.</p>
         <Link href="/login?next=%2Fme" className="tap flex min-h-[50px] items-center justify-center rounded-2xl bg-accent font-bold text-accent-fg">로그인</Link>
       </div>
     );
@@ -64,7 +64,7 @@ async function MeBody() {
       <section aria-labelledby="h-saved">
         <h2 id="h-saved" className="mb-3 text-xl font-black tracking-[-0.03em]">내가 찜한 가게 <span className="text-base font-medium text-muted">{saved.length}</span></h2>
         {saved.length === 0 ? (
-          <p className="rounded-[22px] border border-dashed border-line bg-surface px-4 py-8 text-center text-muted">아직 찜한 가게가 없어요. 가게 상세에서 ♡를 눌러 보세요.</p>
+          <p className="rounded-[22px] border border-dashed border-line bg-surface px-4 py-8 text-center text-muted">아직 찜한 가게가 없습니다. 가게 상세에서 ♡를 눌러 보세요.</p>
         ) : (
           <div className="grid gap-3.5">{saved.map((v) => <PlaceCard key={v.place.id} view={v} />)}</div>
         )}
@@ -74,7 +74,7 @@ async function MeBody() {
         <section aria-labelledby="h-mine">
           <h2 id="h-mine" className="mb-3 text-xl font-black tracking-[-0.03em]">내가 남긴 후기 <span className="text-base font-medium text-muted">{mine.length}</span></h2>
           {mine.length === 0 ? (
-            <p className="rounded-[22px] border border-dashed border-line bg-surface px-4 py-8 text-center text-muted">아직 남긴 후기가 없어요. 가게에 다녀온 뒤 상세 화면에서 남겨 주세요.</p>
+            <p className="rounded-[22px] border border-dashed border-line bg-surface px-4 py-8 text-center text-muted">아직 남긴 후기가 없습니다. 가게에 다녀온 뒤 상세 화면에서 남겨 주세요.</p>
           ) : (
             <ul className="grid gap-2.5">
               {mine.map((r) => (

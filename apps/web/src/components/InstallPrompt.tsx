@@ -86,14 +86,14 @@ export function InstallPrompt({ variant }: { variant: "banner" | "section" }) {
   return (
     <section aria-label="앱으로 설치" className="mb-8 grid gap-2 rounded-[22px] border border-line bg-surface p-4">
       <h2 className="text-[17px] font-black tracking-[-0.03em]">몽몽을 앱처럼 쓰세요</h2>
-      <p className="text-[15px] text-muted">홈 화면에 추가하면 앱처럼 바로 열 수 있어요.</p>
+      <p className="text-[15px] text-muted">홈 화면에 추가하면 앱처럼 바로 열 수 있습니다.</p>
       {deferred ? (
         <button type="button" onClick={install} className="tap min-h-11 justify-self-start rounded-2xl bg-accent px-5 font-bold text-accent-fg">홈 화면에 추가</button>
       ) : (
         <p className="text-[15px]">{HOW_TO[platform]}</p>
       )}
       {variant === "banner" && (
-        <button type="button" onClick={dismiss} className="tap min-h-9 justify-self-start text-sm text-muted underline">나중에 할게요</button>
+        <button type="button" onClick={dismiss} className="tap min-h-9 justify-self-start text-sm text-muted underline">나중에 하기</button>
       )}
     </section>
   );

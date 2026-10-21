@@ -8,7 +8,7 @@ export default function OfflinePage() {
   return (
     <div className="grid justify-items-center gap-3 rounded-[22px] border border-line bg-surface px-5 py-12 text-center">
       <Mascot className="h-24 w-24" />
-      <h1 className="text-2xl font-black tracking-[-0.04em]">인터넷에 연결되어 있지 않아요</h1>
+      <h1 className="text-2xl font-black tracking-[-0.04em]">인터넷에 연결되어 있지 않습니다</h1>
       <p className="text-muted">
         연결을 확인한 뒤 다시 시도해 주세요.
         <br />

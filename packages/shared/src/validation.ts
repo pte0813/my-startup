@@ -2,6 +2,13 @@ import { SITUATIONS, type Situation } from "./types";
 
 export type ValidationResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
+/** 마지막 글자에 받침이 있으면 "은", 없으면 "는". 한글이 아니면 "은(는)". */
+export function josa(word: string): string {
+  const code = word.trim().charCodeAt(word.trim().length - 1);
+  if (code < 0xac00 || code > 0xd7a3) return "은(는)";
+  return (code - 0xac00) % 28 === 0 ? "는" : "은";
+}
+
 export interface ReviewInput {
   rating: number;
   visitedOn: string;
@@ -26,7 +33,7 @@ export function validateReview(raw: Record<string, unknown>, today: string): Val
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) return { ok: false, error: "별점을 골라 주세요." };
 
   const visitedOn = String(raw.visitedOn ?? "");
-  if (!isRealDate(visitedOn) || visitedOn > today) return { ok: false, error: "방문일을 오늘 이전 날짜로 입력해 주세요." };
+  if (!isRealDate(visitedOn) || visitedOn > today) return { ok: false, error: "방문일을 오늘까지의 날짜로 입력해 주세요." };
 
   const body = String(raw.body ?? "").trim();
   if (body.length < 2) return { ok: false, error: "한 줄 후기를 2자 이상 적어 주세요." };
@@ -74,7 +81,7 @@ export function validatePlace(raw: Record<string, unknown>, knownAreaSlugs: stri
   if (situations.length === 0) return { ok: false, error: "어울리는 상황을 하나 이상 골라 주세요." };
   const optional = (v: unknown, max: number, label: string): ValidationResult<string | null> => {
     const t = String(v ?? "").trim();
-    if (t.length > max) return { ok: false, error: `${label}은(는) ${max}자 이하로 적어 주세요.` };
+    if (t.length > max) return { ok: false, error: `${label}${josa(label)} ${max}자 이하로 적어 주세요.` };
     return { ok: true, value: t || null };
   };
   const summary = String(raw.summary ?? "").trim();

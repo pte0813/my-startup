@@ -14,7 +14,7 @@ export async function PlaceActions({ placeId }: { placeId: number }) {
   if (!session) {
     return (
       <p className="text-[15px] text-muted">
-        <Link href={`/login?next=${encodeURIComponent(`/places/${placeId}`)}`} className="font-bold text-accent underline-offset-2 hover:underline">로그인</Link>하면 가게를 찜할 수 있어요.
+        <Link href={`/login?next=${encodeURIComponent(`/places/${placeId}`)}`} className="font-bold text-accent underline-offset-2 hover:underline">로그인</Link>하면 가게를 찜할 수 있습니다.
       </p>
     );
   }

@@ -16,7 +16,7 @@ export default function LoginPage(props: PageProps<"/login">) {
   return (
     <>
       <h1 className="mb-1 text-2xl font-black tracking-[-0.04em]">로그인</h1>
-      <p className="mb-4 text-muted">찜한 가게를 모아 보고, 에디터는 후기를 남길 수 있어요.</p>
+      <p className="mb-4 text-muted">찜한 가게를 모아 보고, 에디터는 후기를 남길 수 있습니다.</p>
       <Suspense fallback={<p className="py-10 text-center text-muted">불러오는 중입니다…</p>}>
         <LoginBody searchParams={props.searchParams} />
       </Suspense>
@@ -33,7 +33,7 @@ async function LoginBody({ searchParams }: { searchParams: SearchParams }) {
       <div className="rounded-[22px] border border-dashed border-line bg-surface px-4 py-8 text-center text-muted">
         로그인 서비스가 아직 연결되지 않았습니다.
         <br />
-        가게 둘러보기는 로그인 없이 쓸 수 있어요.
+        가게 둘러보기는 로그인 없이 쓸 수 있습니다.
       </div>
     );
   }

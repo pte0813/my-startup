@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validatePlace, validateReview } from "./validation";
+import { josa, validatePlace, validateReview } from "./validation";
 
 const today = "2026-10-20";
 const ok = { rating: 4, visitedOn: "2026-10-19", body: "국물이 진해요", waitMinutes: "20", tip: "", sponsored: false };
@@ -61,5 +61,17 @@ describe("validatePlace", () => {
     expect(validatePlace({ ...base, name: "가".repeat(61) }, slugs).ok).toBe(false);
     expect(validatePlace({ ...base, summary: "가".repeat(121) }, slugs).ok).toBe(false);
     expect(validatePlace({ ...base, waitTip: "가".repeat(301) }, slugs).ok).toBe(false);
+  });
+});
+
+describe("조사", () => {
+  it("받침에 따라 은/는을 고른다", () => {
+    expect(josa("웨이팅 팁")).toBe("은");
+    expect(josa("주소")).toBe("는");
+    expect(josa("abc")).toBe("은(는)");
+  });
+  it("긴 값 오류 문장이 자연스럽다", () => {
+    const r = validatePlace({ areaSlug: "seongsu", name: "가", category: "a", situations: ["데이트"], summary: "", waitTip: "", reservationTip: "", address: "가".repeat(121) }, ["seongsu"]);
+    expect(r).toEqual({ ok: false, error: "주소는 120자 이하로 적어 주세요." });
   });
 });
