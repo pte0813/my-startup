@@ -1,0 +1,14 @@
+{
+  "recent_posts": 10,
+  "poll_interval_seconds": 120,
+  "max_replies_per_run": 10,
+  "user_cooldown_seconds": 3600,
+  "delay_between_replies_seconds": 3,
+  "reply_to_existing": false,
+  "rules": [
+    {"keywords": ["가격", "얼마"], "replies": ["{username}님 문의 감사합니다! 가격은 프로필 링크에서 확인하실 수 있어요."]},
+    {"keywords": ["감사", "고마워"], "replies": ["{username}님 감사합니다 :)", "{username}님 응원 덕분이에요!"]},
+    {"regex": "(어디|언제|how|when)", "replies": ["{username}님, 자세한 내용은 곧 공유드릴게요!"]},
+    {"default": true, "replies": ["{username}님 댓글 감사합니다!"]}
+  ]
+}
