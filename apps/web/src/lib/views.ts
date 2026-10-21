@@ -12,12 +12,14 @@ export interface PlaceView {
   wait: string | null;
   stale: boolean;
   staleText: string;
+  /** 후기 작성자 id → 표시 이름 */
+  authors: Record<string, string>;
 }
 
 const areaNames = new Map(AREAS.map((a) => [a.slug, a.name]));
 
 /** 가게에 후기·통계·검증 상태를 붙인다. `today`는 `YYYY-MM-DD`. */
-export function buildPlaceViews(places: Place[], reviews: Review[], today: string): PlaceView[] {
+export function buildPlaceViews(places: Place[], reviews: Review[], today: string, authors: Record<string, string> = {}): PlaceView[] {
   const byPlace = new Map<number, Review[]>();
   for (const r of reviews) {
     const list = byPlace.get(r.placeId);
@@ -35,6 +37,7 @@ export function buildPlaceViews(places: Place[], reviews: Review[], today: strin
       wait: waitLine(place, rs),
       stale: isStale(stats, today),
       staleText: staleLabel(stats, today),
+      authors,
     };
   });
 }

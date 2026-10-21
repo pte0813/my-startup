@@ -4,7 +4,7 @@ import { Stars } from "./Stars";
 import { Thumb } from "./Thumb";
 
 export function PlaceCard({ view }: { view: PlaceView }) {
-  const { place, stats, reviews, wait, stale, staleText, areaName } = view;
+  const { place, stats, reviews, wait, stale, staleText, areaName, authors } = view;
   const latest = reviews[0];
   return (
     <article>
@@ -37,7 +37,7 @@ export function PlaceCard({ view }: { view: PlaceView }) {
             <>
               <div className="flex items-center justify-between gap-2 text-[15px]">
                 <b className="font-bold">
-                  방문자 <Stars rating={latest.rating} />
+                  {(latest.authorId && authors[latest.authorId]) || "에디터"} <Stars rating={latest.rating} />
                 </b>
                 <time className="text-sm tabular-nums text-muted">{latest.visitedOn}</time>
               </div>

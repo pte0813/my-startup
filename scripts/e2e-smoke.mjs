@@ -91,10 +91,41 @@ await step("안내 페이지와 없는 가게", async () => {
 });
 
 await step("모바일에서 가로로 넘치지 않는다", async () => {
-  for (const path of ["/", "/list", "/list?area=itaewon-hannam", "/search", "/places/1", "/about"]) {
+  for (const path of ["/", "/list", "/list?area=itaewon-hannam", "/search", "/places/1", "/about", "/login", "/me"]) {
     await page.goto(BASE + path);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, path);
   }
+});
+
+await step("로그인 기능이 연결되지 않은 환경의 안내(로그인·마이·쓰기 화면)", async () => {
+  await page.goto(`${BASE}/login`);
+  await page.getByText("로그인 서비스가 아직 연결되지 않았습니다").waitFor();
+  await page.goto(`${BASE}/me`);
+  await page.getByText("로그인 서비스가 아직 연결되지 않았습니다").waitFor();
+  await page.goto(`${BASE}/places/1/review/new`);
+  await page.getByText("저장 서비스가 아직 연결되지 않았습니다").waitFor();
+  await page.goto(`${BASE}/admin/places/new`);
+  await page.getByText("저장 서비스가 아직 연결되지 않았습니다").waitFor();
+  await page.goto(`${BASE}/places/1`);
+  await page.getByRole("heading", { name: /가기 전에/ }).waitFor();
+  assert.equal(await page.getByRole("button", { name: /찜/ }).count(), 0);
+  assert.equal(await page.getByRole("link", { name: "후기 쓰기" }).count(), 0);
+  await shot("login-unconfigured");
+});
+
+await step("하단 탭 4개, 마이 탭으로 이동", async () => {
+  await page.goto(BASE);
+  const tabs = page.locator('nav[aria-label="주요 메뉴"] a');
+  assert.deepEqual(await tabs.allTextContents(), ["홈", "검색", "리스트", "마이"]);
+  await tabs.nth(3).click();
+  await page.waitForURL(/\/me/);
+  assert.equal(await page.locator('nav[aria-label="주요 메뉴"] a[aria-current="page"]').textContent(), "마이");
+});
+
+await step("로그인 링크 콜백은 잘못된 코드를 안전하게 처리한다", async () => {
+  const res = await page.request.get(`${BASE}/auth/callback?code=bad&next=//evil.com`, { maxRedirects: 0 });
+  assert.equal(res.status(), 307);
+  assert.match(res.headers()["location"], /\/login\?error=link$/);
 });
 
 await browser.close();

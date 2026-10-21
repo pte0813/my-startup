@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { AREAS } from "@mongmong/shared";
 import { BackButton } from "@/components/BackButton";
 import { PlaceLinks } from "@/components/PlaceLinks";
-import { ReviewItem } from "@/components/ReviewItem";
+import { PlaceActions } from "@/components/PlaceActions";
+import { ReviewListLive, ReviewListStatic } from "@/components/ReviewListLive";
 import { Stars } from "@/components/Stars";
 import { Thumb } from "@/components/Thumb";
 import { getCatalog, getToday } from "@/lib/catalog";
@@ -24,13 +26,30 @@ export async function generateMetadata(props: PageProps<"/places/[id]">): Promis
 
 const known = (v: string | null | undefined): v is string => Boolean(v && v.trim());
 
-export default async function PlacePage(props: PageProps<"/places/[id]">) {
-  const { id } = await props.params;
-  const [{ places, reviews }, today] = await Promise.all([getCatalog(), getToday()]);
+/** 주소의 가게 번호는 요청 시점에 정해지므로 본문은 `<Suspense>` 안에서 읽는다. 목록에 있던 가게는 미리 만들어 두고, 새 가게는 뼈대부터 바로 보여 준다. */
+export default function PlacePage(props: PageProps<"/places/[id]">) {
+  return (
+    <Suspense
+      fallback={
+        <div aria-busy="true" aria-label="가게 정보를 불러오는 중" className="grid gap-5 pt-1">
+          <div className="h-11 w-24 rounded-2xl bg-surface2" />
+          <div className="h-[72px] rounded-[22px] bg-surface2" />
+          <div className="h-48 rounded-[22px] bg-surface2" />
+        </div>
+      }
+    >
+      <PlaceBody params={props.params} />
+    </Suspense>
+  );
+}
+
+async function PlaceBody({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const [{ places, reviews, authors }, today] = await Promise.all([getCatalog(), getToday()]);
   const place = places.find((p) => String(p.id) === id);
   if (!place) notFound();
 
-  const [view] = buildPlaceViews([place], reviews.filter((r) => r.placeId === place.id), today);
+  const [view] = buildPlaceViews([place], reviews.filter((r) => r.placeId === place.id), today, authors);
   const area = AREAS.find((a) => a.slug === place.areaSlug);
   const siblings = places.filter((p) => p.areaSlug === place.areaSlug);
   const idx = siblings.findIndex((p) => p.id === place.id);
@@ -64,6 +83,10 @@ export default async function PlacePage(props: PageProps<"/places/[id]">) {
             </p>
           </div>
         </div>
+
+        <Suspense fallback={null}>
+          <PlaceActions placeId={place.id} />
+        </Suspense>
 
         <section className="grid gap-3 rounded-[22px] border border-line bg-surface p-[18px]" aria-labelledby="h-before">
           <h2 id="h-before" className="flex items-baseline gap-2 text-lg font-black tracking-[-0.03em]">
@@ -102,7 +125,9 @@ export default async function PlacePage(props: PageProps<"/places/[id]">) {
             다녀온 뒤 <span className="text-[13px] font-medium tracking-normal text-muted">몽몽 후기 {stats.reviewCount}</span>
           </h2>
           {view.reviews.length > 0 ? (
-            <ul className="grid gap-2.5">{view.reviews.map((r) => <ReviewItem key={r.id} review={r} />)}</ul>
+            <Suspense fallback={<ReviewListStatic reviews={view.reviews} authors={authors} />}>
+              <ReviewListLive reviews={view.reviews} placeId={place.id} authors={authors} />
+            </Suspense>
           ) : (
             <p className="text-muted">아직 후기가 없습니다. 에디터가 직접 다녀온 뒤 후기를 남기면 검증일이 갱신됩니다.</p>
           )}

@@ -10,6 +10,8 @@ import { createPublicClient } from "./supabase/public";
 export interface Catalog {
   places: Place[];
   reviews: Review[];
+  /** 후기 작성자 id → 표시 이름 (에디터·관리자만) */
+  authors: Record<string, string>;
   /** DB에 연결돼 있으면 "db", 시드 데이터면 "seed" */
   source: "db" | "seed";
 }
@@ -35,19 +37,21 @@ export async function getCatalog(): Promise<Catalog> {
       status: "published",
       sortOrder: s.sortOrder,
     }));
-    return { places, reviews: [], source: "seed" };
+    return { places, reviews: [], authors: {}, source: "seed" };
   }
 
   const sb = createPublicClient();
-  const [placesRes, reviewsRes] = await Promise.all([
+  const [placesRes, reviewsRes, authorsRes] = await Promise.all([
     sb.from("places").select("*").eq("status", "published").order("sort_order"),
     sb.from("reviews").select("*"),
+    sb.from("author_names").select("id, display_name"),
   ]);
   if (placesRes.error) throw new Error(`가게 목록을 불러오지 못했습니다: ${placesRes.error.message}`);
   if (reviewsRes.error) throw new Error(`후기를 불러오지 못했습니다: ${reviewsRes.error.message}`);
   return {
     places: (placesRes.data as PlaceRow[]).map(toPlace),
     reviews: (reviewsRes.data as ReviewRow[]).map(toReview),
+    authors: Object.fromEntries(((authorsRes.data ?? []) as { id: string; display_name: string | null }[]).map((a) => [a.id, a.display_name || "에디터"])),
     source: "db",
   };
 }

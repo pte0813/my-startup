@@ -10,7 +10,10 @@
     "build": "npm run build -w apps/web",
     "lint": "npm run lint -w apps/web",
     "test": "npm run test -w packages/shared && npm run test -w apps/web",
-    "typecheck": "npm run typecheck -w packages/shared && npm run typecheck -w apps/web"
+    "typecheck": "npm run typecheck -w packages/shared && npm run typecheck -w apps/web",
+    "test:db": "bash scripts/test-db.sh",
+    "e2e": "node scripts/e2e-smoke.mjs",
+    "e2e:auth": "node scripts/e2e-auth.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.64.1"

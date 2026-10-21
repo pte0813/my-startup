@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_KR } from "next/font/google";
-import { BottomTabs } from "@/components/BottomTabs";
+import { Suspense } from "react";
+import { TabBarView } from "@/components/BottomTabs";
+import { BottomTabs } from "@/components/BottomTabsClient";
 import { Header } from "@/components/Header";
 import "./globals.css";
 
@@ -27,7 +29,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Header />
           <main className="pt-5">{children}</main>
         </div>
-        <BottomTabs />
+        <Suspense fallback={<TabBarView pathname={null} />}>
+          <BottomTabs />
+        </Suspense>
       </body>
     </html>
   );

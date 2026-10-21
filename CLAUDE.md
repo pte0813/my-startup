@@ -35,7 +35,8 @@ outputs/                 프로토타입·산출물
 | 빌드 | `npm run build` |
 | DB 스키마·RLS 검증 | `bash scripts/test-db.sh` (임시 Postgres 를 띄워 마이그레이션·시드·RLS 를 검사) |
 | 시드 SQL 재생성 | `node scripts/build-seed-sql.mjs` |
-| 브라우저 여정 확인 | `npm run build && npx next start -p 3100 -w apps/web` 후 `node scripts/e2e-smoke.mjs` |
+| 브라우저 여정 확인(읽기) | `npm run build`, `cd apps/web && npx next start -p 3100` 후 `npm run e2e` |
+| 브라우저 여정 확인(로그인 이후) | `npm run e2e:auth` (가짜 Supabase `scripts/mock-supabase.mjs` + Next 개발 서버를 스스로 띄운다) |
 
 ## 코드 규칙
 - TypeScript strict. `any`를 쓰지 않는다. 날짜 문자열은 `YYYY-MM-DD`.
@@ -49,7 +50,8 @@ outputs/                 프로토타입·산출물
 - 외부 서비스(리뷰·사진)의 내용을 가져와 저장하지 않는다. 링크로만 연결한다. 사진은 직접 올린 것만 쓴다.
 
 ## 알려진 제약
-- 이 실행 환경에서는 Supabase·Vercel 접속이 막혀 있다. 쓰기 기능(로그인, 후기·가게 저장)은 접속이 열린 뒤에 실제로 시험한다.
+- 이 실행 환경에서는 Supabase·Vercel 접속이 막혀 있다. 쓰기 기능(로그인, 후기·가게·사진·찜)은 가짜 Supabase(`scripts/mock-supabase.mjs`)로 앱 코드와 API의 맞물림을, 로컬 Postgres(`scripts/test-db.sh`)로 접근 규칙을 시험했다. **실제 Supabase 와의 연결은 아직 시험하지 못했다.** 접속이 열리면 가장 먼저 로그인 메일, 후기 저장, 사진 업로드를 실제로 확인한다.
+- 로그인 상태·권한은 서버에서 `getSession()`(인증 서버 확인)으로만 믿는다. 이 함수와 서버 액션은 요청 시점 데이터라 화면에서는 `<Suspense>` 안에서 부르고 앞에 `await connection()`을 둔다.
 - `next start`를 종료할 때 `pkill -f "next start"`를 쓰지 않는다(셸까지 종료된다). `fuser -k 3100/tcp`를 쓴다.
 - Cache Components 때문에 Next가 이전에 본 화면을 숨겨서 보존한다. 브라우저 테스트에서는 `:visible`로 눈에 보이는 요소만 센다.
 

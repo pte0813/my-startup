@@ -24,8 +24,8 @@ export default function SearchPage(props: PageProps<"/search">) {
 async function SearchBody({ searchParams }: { searchParams: SearchParams }) {
   const raw = (await searchParams).q;
   const q = (Array.isArray(raw) ? raw[0] : raw)?.slice(0, 50) ?? "";
-  const [{ places, reviews }, today] = await Promise.all([getCatalog(), getToday()]);
-  const hits = buildPlaceViews(searchPlaces(places, q), reviews, today);
+  const [{ places, reviews, authors }, today] = await Promise.all([getCatalog(), getToday()]);
+  const hits = buildPlaceViews(searchPlaces(places, q), reviews, today, authors);
   // 추천 검색어: 가게가 많은 종류 순
   const freq = new Map<string, number>();
   for (const p of places) freq.set(p.category, (freq.get(p.category) ?? 0) + 1);

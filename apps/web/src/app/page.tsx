@@ -5,8 +5,8 @@ import { getCatalog, getToday } from "@/lib/catalog";
 import { buildPlaceViews } from "@/lib/views";
 
 export default async function HomePage() {
-  const [{ places, reviews }, today] = await Promise.all([getCatalog(), getToday()]);
-  const views = buildPlaceViews(places, reviews, today);
+  const [{ places, reviews, authors }, today] = await Promise.all([getCatalog(), getToday()]);
+  const views = buildPlaceViews(places, reviews, today, authors);
 
   const rated = views
     .filter((v) => v.stats.reviewCount > 0 && v.stats.avgRating !== null)

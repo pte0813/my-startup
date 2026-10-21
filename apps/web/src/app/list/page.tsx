@@ -28,9 +28,9 @@ async function ListBody({ searchParams }: { searchParams: SearchParams }) {
   const rawSituation = first(sp.situation);
   const situation: Situation | "전체" = (SITUATIONS as readonly string[]).includes(rawSituation ?? "") ? (rawSituation as Situation) : "전체";
 
-  const [{ places, reviews }, today] = await Promise.all([getCatalog(), getToday()]);
+  const [{ places, reviews, authors }, today] = await Promise.all([getCatalog(), getToday()]);
   const counts = countByArea(places);
-  const items = buildPlaceViews(filterPlaces(places, { areaSlug: area.slug, situation }), reviews, today);
+  const items = buildPlaceViews(filterPlaces(places, { areaSlug: area.slug, situation }), reviews, today, authors);
   const href = (a: string, s: string) => `/list?area=${a}${s === "전체" ? "" : `&situation=${encodeURIComponent(s)}`}`;
 
   return (

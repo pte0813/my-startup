@@ -1,10 +1,11 @@
 import type { Review } from "@mongmong/shared";
 import { Stars } from "./Stars";
 
-export function ReviewItem({ review }: { review: Review }) {
+export function ReviewItem({ review, authorName, footer }: { review: Review; authorName?: string; footer?: React.ReactNode }) {
   return (
     <li className="grid gap-1 rounded-[14px] bg-surface2 px-3.5 py-3">
       <div className="flex flex-wrap items-center gap-2 text-sm">
+        {authorName && <b>{authorName}</b>}
         <Stars rating={review.rating} />
         <time className="tabular-nums text-muted">{review.visitedOn} 방문</time>
         {review.waitMinutes !== null && <span className="rounded-full bg-accent-soft px-2 text-xs font-bold text-accent">실제 대기 {review.waitMinutes}분</span>}
@@ -17,6 +18,7 @@ export function ReviewItem({ review }: { review: Review }) {
           {review.tip}
         </p>
       )}
+      {footer}
     </li>
   );
 }
