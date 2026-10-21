@@ -18,6 +18,8 @@ curl -XPOST localhost:3000/webhook -d '{"entry":[{"changes":[{"field":"comments"
 curl -XPOST localhost:3000/webhook -d '{"entry":[{"messaging":[{"sender":{"id":"222"},"postback":{"payload":"FOLLOWED"}}]}]}'
 ```
 
+> 서버 배포는 `DEPLOY.md`(Cloud Run) 참고
+
 ## 2. 실제 연동 순서
 
 1. 인스타 계정을 프로페셔널(비즈니스/크리에이터) 계정으로 전환

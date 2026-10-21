@@ -6,3 +6,4 @@
 | 2026-10-20 | 이력서(.doc) 검토 및 보완 | 지원분야에 맞춰 재구성한 outputs/resume_revised.docx 작성, 확인 필요 항목은 노란 표시 |
 | 2026-10-20 | 인스타 댓글→팔로우 확인→자동 DM 구현 방법 문의 | 공식 API(웹훅+Private Reply) 방식과 노코드 툴 방식 안내 (코드 작성 없음) |
 | 2026-10-20 | 인스타 자동 DM 직접 만들기 | outputs/insta-dm-bot/ 에 웹훅 서버(server.js)·.env.example·README 작성, DRY_RUN 모의 이벤트로 흐름 확인 |
+| 2026-10-21 | 서버 배포 설정 만들기 | Dockerfile·package.json·.dockerignore·DEPLOY.md(Cloud Run 배포 가이드) 추가, 로컬 기동만 확인 |
