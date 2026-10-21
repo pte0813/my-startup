@@ -36,6 +36,7 @@ outputs/                 프로토타입·산출물
 | DB 스키마·RLS 검증 | `bash scripts/test-db.sh` (임시 Postgres 를 띄워 마이그레이션·시드·RLS 를 검사) |
 | 시드 SQL 재생성 | `node scripts/build-seed-sql.mjs` |
 | 브라우저 여정 확인(읽기) | `npm run build`, `cd apps/web && npx next start -p 3100` 후 `npm run e2e` |
+| 접근성 점검(axe) | 운영 서버를 3100 포트에 띄운 뒤 `npm run a11y` (밝은·어두운 테마, 위반 0건 유지) |
 | 브라우저 여정 확인(로그인 이후) | `npm run e2e:auth` (가짜 Supabase `scripts/mock-supabase.mjs` + Next 개발 서버를 스스로 띄운다) |
 
 ## 코드 규칙

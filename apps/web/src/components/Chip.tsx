@@ -12,7 +12,7 @@ export function Chip({ href, selected, count, children }: { href: string; select
       }`}
     >
       {children}
-      {count !== undefined && <small className={`text-[13px] ${selected ? "opacity-75" : "text-muted"}`}>{count}</small>}
+      {count !== undefined && <small className={`text-[13px] ${selected ? "opacity-90" : "text-muted"}`}>{count}</small>}
     </Link>
   );
 }

@@ -12,7 +12,7 @@ export function ReviewForm({ placeId, placeName, today }: { placeId: number; pla
 
   return (
     <form action={action} className="grid gap-4 rounded-[22px] border border-line bg-surface p-[18px]">
-      <h2 className="text-lg font-black tracking-[-0.03em]">{placeName} 후기 쓰기</h2>
+      <h2 className="text-lg font-black tracking-[-0.03em]">{placeName}</h2>
 
       <fieldset className="grid gap-1">
         <legend className="mb-1 text-sm font-bold text-muted">별점</legend>

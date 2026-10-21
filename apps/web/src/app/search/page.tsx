@@ -65,7 +65,7 @@ async function SearchBody({ searchParams }: { searchParams: SearchParams }) {
       ) : (
         <>
           <p className="mb-3 text-[15px] text-muted" aria-live="polite">검색 결과 {hits.length}곳</p>
-          <div className="grid gap-3.5">{hits.map((v) => <PlaceCard key={v.place.id} view={v} />)}</div>
+          <div className="grid gap-3.5">{hits.map((v) => <PlaceCard key={v.place.id} view={v} heading="h2" />)}</div>
         </>
       )}
     </>

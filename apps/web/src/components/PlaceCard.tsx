@@ -3,7 +3,7 @@ import type { PlaceView } from "@/lib/views";
 import { Stars } from "./Stars";
 import { Thumb } from "./Thumb";
 
-export function PlaceCard({ view }: { view: PlaceView }) {
+export function PlaceCard({ view, heading: Heading = "h3" }: { view: PlaceView; heading?: "h2" | "h3" }) {
   const { place, stats, reviews, wait, stale, staleText, areaName, authors } = view;
   const latest = reviews[0];
   return (
@@ -16,7 +16,7 @@ export function PlaceCard({ view }: { view: PlaceView }) {
           <Thumb name={place.name} category={place.category} photoPath={place.photoPath} />
         </div>
         <div className="min-w-0">
-          <h3 className="text-xl font-black leading-snug tracking-[-0.03em]">{place.name}</h3>
+          <Heading className="text-xl font-black leading-snug tracking-[-0.03em]">{place.name}</Heading>
           <p className="text-[15px] text-muted">
             {areaName} · {place.category}
           </p>

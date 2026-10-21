@@ -135,8 +135,8 @@ async function PlaceBody({ params }: { params: Promise<{ id: string }> }) {
 
         {(prev || next) && (
           <nav aria-label="같은 동네의 다른 가게" className="grid grid-cols-2 gap-2">
-            {prev ? <Link href={`/places/${prev.id}`} className="tap flex min-h-[50px] min-w-0 items-center gap-1.5 rounded-2xl bg-surface2 px-4 font-bold">‹ <span className="truncate">{prev.name}</span></Link> : <span className="flex min-h-[50px] items-center rounded-2xl bg-surface2 px-4 font-bold opacity-50">처음입니다</span>}
-            {next ? <Link href={`/places/${next.id}`} className="tap flex min-h-[50px] min-w-0 items-center justify-end gap-1.5 rounded-2xl bg-surface2 px-4 font-bold"><span className="truncate">{next.name}</span> ›</Link> : <span className="flex min-h-[50px] items-center justify-end rounded-2xl bg-surface2 px-4 font-bold opacity-50">마지막입니다</span>}
+            {prev ? <Link href={`/places/${prev.id}`} className="tap flex min-h-[50px] min-w-0 items-center gap-1.5 rounded-2xl bg-surface2 px-4 font-bold">‹ <span className="truncate">{prev.name}</span></Link> : <span className="flex min-h-[50px] items-center rounded-2xl bg-surface2 px-4 font-bold text-muted">처음입니다</span>}
+            {next ? <Link href={`/places/${next.id}`} className="tap flex min-h-[50px] min-w-0 items-center justify-end gap-1.5 rounded-2xl bg-surface2 px-4 font-bold"><span className="truncate">{next.name}</span> ›</Link> : <span className="flex min-h-[50px] items-center justify-end rounded-2xl bg-surface2 px-4 font-bold text-muted">마지막입니다</span>}
           </nav>
         )}
       </div>

@@ -60,7 +60,7 @@ async function ListBody({ searchParams }: { searchParams: SearchParams }) {
           <a href={href(area.slug, "전체")} className="mt-3 inline-flex min-h-10 items-center rounded-2xl bg-surface2 px-4 text-sm font-bold text-fg">전체 상황 보기</a>
         </div>
       ) : (
-        <div className="grid gap-3.5">{items.map((v) => <PlaceCard key={v.place.id} view={v} />)}</div>
+        <div className="grid gap-3.5">{items.map((v) => <PlaceCard key={v.place.id} view={v} heading="h2" />)}</div>
       )}
     </>
   );

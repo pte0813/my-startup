@@ -27,7 +27,10 @@ async function NewReviewBody({ params }: { params: Promise<{ id: string }> }) {
   if (!place) notFound();
 
   const back = (
-    <Link href={`/places/${place.id}`} className="tap mb-4 inline-flex min-h-11 items-center font-bold text-accent">← {place.name}</Link>
+    <>
+      <Link href={`/places/${place.id}`} className="tap mb-2 inline-flex min-h-11 items-center font-bold text-accent">← {place.name}</Link>
+      <h1 className="mb-3 text-xl font-black tracking-[-0.03em]">후기 쓰기</h1>
+    </>
   );
   if (!isSupabaseConfigured()) return <>{back}<p className="text-muted">저장 서비스가 아직 연결되지 않았습니다.</p></>;
   const session = await getSession();
