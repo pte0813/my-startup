@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AREAS, SITUATIONS, countByArea, filterPlaces, findArea, type Situation } from "@mongmong/shared";
+import { ScrollToCurrent } from "@/components/ScrollToCurrent";
 import { Chip } from "@/components/Chip";
 import { PlaceCard } from "@/components/PlaceCard";
 import { getCatalog, getToday } from "@/lib/catalog";
@@ -35,13 +36,13 @@ async function ListBody({ searchParams }: { searchParams: SearchParams }) {
 
   return (
     <>
-      <nav aria-label="동네" className="-mx-4 mb-2.5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
+      <ScrollToCurrent label="동네" className="-mx-4 mb-2.5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
         {AREAS.map((a) => (
           <Chip key={a.slug} href={href(a.slug, situation)} selected={a.slug === area.slug} count={counts[a.slug] ?? 0}>
             {a.name}
           </Chip>
         ))}
-      </nav>
+      </ScrollToCurrent>
       <nav aria-label="상황" className="-mx-4 mb-2.5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
         {["전체", ...SITUATIONS].map((s) => (
           <Chip key={s} href={href(area.slug, s)} selected={s === situation}>

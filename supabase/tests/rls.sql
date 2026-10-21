@@ -35,9 +35,9 @@ end $$;
 
 -- 1. 방문자: 공개 데이터는 읽고, 아무것도 쓰지 못한다
 select pg_temp.as_user(null);
-select pg_temp.expect_rows('select 1 from public.places', 201, '방문자는 게시된 가게 201곳을 본다');
-select pg_temp.expect_rows('select 1 from public.areas', 14, '방문자는 동네 14곳을 본다');
-select pg_temp.expect_rows('select 1 from public.place_stats', 201, '방문자는 집계 뷰를 본다');
+select pg_temp.expect_rows('select 1 from public.places', 461, '방문자는 게시된 가게 461곳을 본다');
+select pg_temp.expect_rows('select 1 from public.areas', 22, '방문자는 동네 22곳을 본다');
+select pg_temp.expect_rows('select 1 from public.place_stats', 461, '방문자는 집계 뷰를 본다');
 select pg_temp.expect_fail('select 1 from public.profiles', '방문자 프로필 조회');
 select pg_temp.expect_fail($$select public.set_user_role('00000000-0000-0000-0000-0000000000b1','admin')$$, '방문자 역할 부여');
 select pg_temp.expect_fail($$insert into public.places (area_slug,name,category,situations) values ('seongsu','방문자가추가','한식',array['혼밥'])$$, '방문자 가게 추가');

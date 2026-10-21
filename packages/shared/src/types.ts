@@ -8,6 +8,10 @@ export interface Area {
   slug: string;
   name: string;
   sortOrder: number;
+  /** 동네 중심 좌표(위도). 현재 위치에서 가까운 동네를 찾는 데만 쓴다. */
+  lat: number;
+  /** 동네 중심 좌표(경도) */
+  lng: number;
 }
 
 export interface Place {

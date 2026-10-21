@@ -17,11 +17,11 @@ page.on("console", (m) => { if (m.type() === "error" && !m.location().url.endsWi
 const shot = async (name) => { if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}.png` }); };
 const step = async (name, fn) => { await fn(); console.log(`✓ ${name}`); };
 
-await step("홈: 제목, 로고, 동네 14곳, 카드", async () => {
+await step("홈: 제목, 로고, 동네 22곳, 카드", async () => {
   await page.goto(BASE);
   assert.match(await page.locator("h1").textContent(), /실패 없는 맛집/);
   assert.equal(await page.locator('header svg[aria-hidden="true"]').count() >= 1, true);
-  assert.equal(await page.locator('section[aria-labelledby="h-area"] a').count(), 14);
+  assert.equal(await page.locator('section[aria-labelledby="h-area"] a').count(), 22);
   assert.ok((await page.locator("article:visible").count()) >= 1);
   await shot("home");
 });
@@ -30,11 +30,11 @@ await step("리스트: 동네·상황 필터가 주소와 목록에 반영된다
   await page.getByRole("link", { name: "리스트", exact: true }).click();
   await page.waitForURL(/\/list/);
   await page.locator('nav[aria-label="동네"] a').first().waitFor();
-  assert.equal(await page.locator('nav[aria-label="동네"] a').count(), 14);
+  assert.equal(await page.locator('nav[aria-label="동네"] a').count(), 22);
   await page.locator('nav[aria-label="동네"]').getByRole("link", { name: /^연남/ }).click();
   await page.waitForURL(/area=yeonnam/);
   await page.locator("p[aria-live]", { hasText: "연남" }).waitFor();
-  assert.match(await page.locator("p[aria-live]").textContent(), /^연남\s+15곳/);
+  assert.match(await page.locator("p[aria-live]").textContent(), /^연남\s+27곳/);
   await page.locator('nav[aria-label="상황"]').getByRole("link", { name: "데이트" }).click();
   await page.waitForURL(/situation=/);
   await page.locator("p[aria-live]", { hasText: "연남 · 데이트" }).waitFor();
@@ -126,6 +126,44 @@ await step("로그인 링크 콜백은 잘못된 코드를 안전하게 처리�
   const res = await page.request.get(`${BASE}/auth/callback?code=bad&next=//evil.com`, { maxRedirects: 0 });
   assert.equal(res.status(), 307);
   assert.match(res.headers()["location"], /\/login\?error=link$/);
+});
+
+await step("리스트: 많은 동네 칩에서도 선택한 칩이 화면 안에 보인다", async () => {
+  await page.goto(`${BASE}/list?area=haenggung`, { waitUntil: "networkidle" });
+  const box = await page.locator('nav[aria-label="동네"] [aria-current="true"]').boundingBox();
+  assert.ok(box && box.x >= 0 && box.x + box.width <= 390, `선택한 칩이 화면 밖에 있습니다: ${JSON.stringify(box)}`);
+});
+
+await step("내 주변: 위치를 허용하면 가까운 동네를, 거부하면 안내를 보여 준다", async () => {
+  const geo = await browser.newContext({ viewport: { width: 390, height: 844 }, geolocation: { latitude: 37.5447, longitude: 127.0557 }, permissions: ["geolocation"] });
+  const gp = await geo.newPage();
+  await gp.goto(BASE, { waitUntil: "networkidle" });
+  await gp.getByRole("button", { name: /내 주변 찾기/ }).click();
+  await gp.getByText("가장 가까운 동네는 성수입니다").waitFor();
+  const links = gp.locator('section[aria-labelledby="h-nearby"] ul a');
+  assert.equal(await links.count(), 3);
+  assert.match(await links.first().textContent(), /^성수\s*약 \d+m? ?·|^성수/);
+  await links.first().click();
+  await gp.waitForURL(/area=seongsu/);
+  await geo.close();
+
+  const far = await browser.newContext({ viewport: { width: 390, height: 844 }, geolocation: { latitude: 35.1796, longitude: 129.0756 }, permissions: ["geolocation"] }); // 부산
+  const fp = await far.newPage();
+  await fp.goto(BASE, { waitUntil: "networkidle" });
+  await fp.getByRole("button", { name: /내 주변 찾기/ }).click();
+  await fp.getByText(/멀리 계신 것 같습니다/).waitFor();
+  await far.close();
+
+  const denied = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  // 헤드리스 브라우저는 권한 창이 뜨지 않고 멈추므로, 사용자가 거부한 상황을 직접 흉내 낸다
+  await denied.addInitScript(() => {
+    navigator.geolocation.getCurrentPosition = (_ok, fail) => fail?.({ code: 1, message: "denied", PERMISSION_DENIED: 1, POSITION_UNAVAILABLE: 2, TIMEOUT: 3 });
+  });
+  const dp = await denied.newPage();
+  await dp.goto(BASE, { waitUntil: "networkidle" });
+  await dp.getByRole("button", { name: /내 주변 찾기/ }).click();
+  await dp.getByRole("alert").filter({ hasText: "위치" }).waitFor();
+  await denied.close();
 });
 
 await step("PWA: 매니페스트·아이콘·서비스 워커·오프라인 화면", async () => {

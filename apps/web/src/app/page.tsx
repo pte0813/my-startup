@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AREAS, countByArea } from "@mongmong/shared";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { NearbyAreas } from "@/components/NearbyAreas";
 import { PlaceCard } from "@/components/PlaceCard";
 import { getCatalog, getToday } from "@/lib/catalog";
 import { buildPlaceViews } from "@/lib/views";
@@ -43,6 +44,8 @@ export default async function HomePage() {
       </div>
 
       <InstallPrompt variant="banner" />
+
+      <NearbyAreas counts={counts} />
 
       {rated.length > 0 && (
         <section className="mb-8" aria-labelledby="h-rated">

@@ -2875,5 +2875,3821 @@
   "reservationTip": null,
   "address": "경복궁 인근",
   "sortOrder": 201
+ },
+ {
+  "id": 202,
+  "areaSlug": "seongsu",
+  "name": "성수다락",
+  "category": "오므라이스",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "오므라이스와 매콤 크림 파스타, 찹스테이크 리조또가 대표 메뉴로 소개된 양식 식당입니다.",
+  "waitTip": null,
+  "reservationTip": "네이버 예약이 가능하다고 안내되어 있습니다.",
+  "address": "서울 성동구 뚝섬로9길 20 2층",
+  "sortOrder": 75
+ },
+ {
+  "id": 203,
+  "areaSlug": "seongsu",
+  "name": "오사이초밥 성수점",
+  "category": "초밥",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "런치 22,000원, 디너 33,000원대 구성으로 소개된 합리적인 가격의 초밥 오마카세입니다.",
+  "waitTip": null,
+  "reservationTip": "네이버 예약이나 캐치테이블로 예약하며, 주차는 어렵다고 안내되어 있습니다.",
+  "address": "서울 성동구 연무장3길 9-14 1층",
+  "sortOrder": 76
+ },
+ {
+  "id": 204,
+  "areaSlug": "seongsu",
+  "name": "성수 스시준",
+  "category": "오마카세",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "기념일 자리로 많이 찾는다고 알려진 스시 오마카세입니다. 월요일은 휴무입니다.",
+  "waitTip": null,
+  "reservationTip": "캐치테이블 앱으로 예약하며, 최소 1~2주 전에는 잡는 편이 좋다는 후기가 있습니다. 브레이크타임은 15:00~17:00입니다.",
+  "address": "서울 성동구 연무장19길 6 1층",
+  "sortOrder": 77
+ },
+ {
+  "id": 205,
+  "areaSlug": "seongsu",
+  "name": "스시 오오모토",
+  "category": "오마카세",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "뚝섬역 근처 건물 4층에 있는 스시 오마카세로, 한 팀당 1병 콜키지 프리라는 소개가 있습니다.",
+  "waitTip": null,
+  "reservationTip": "캐치테이블에서 예약하며, 빈자리가 나면 알림이 와서 선착순으로 잡는 방식이라는 후기가 있습니다.",
+  "address": "서울 성동구 상원1길 39-1 4층",
+  "sortOrder": 78
+ },
+ {
+  "id": 206,
+  "areaSlug": "seongsu",
+  "name": "성수일구",
+  "category": "이자카야",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "뚝도시장 먹자골목에서 늦게까지 문을 여는 이자카야·사시미 술집입니다. 월요일은 휴무입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 성동구 성덕정17길 3-1 1층",
+  "sortOrder": 79
+ },
+ {
+  "id": 207,
+  "areaSlug": "seongsu",
+  "name": "성수포차",
+  "category": "포차",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "새벽 4시까지 운영하는 것으로 알려진 실내 포차입니다. 테이블 수가 많지 않다는 후기가 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 성동구 성덕정17길 4 1층",
+  "sortOrder": 80
+ },
+ {
+  "id": 208,
+  "areaSlug": "seongsu",
+  "name": "카즈",
+  "category": "이자카야",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "일본인 사장님이 운영하는 것으로 소개된 이자카야로, 뚝섬역에서 도보 2분 거리의 지하 매장입니다. 월요일은 휴무입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 성동구 왕십리로10길 18-1 지하",
+  "sortOrder": 81
+ },
+ {
+  "id": 209,
+  "areaSlug": "seongsu",
+  "name": "사위식당 성수점",
+  "category": "낙곱새",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "낙곱새를 13,000원, 2인 세트 33,000원에 내는 가성비 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 82
+ },
+ {
+  "id": 210,
+  "areaSlug": "seongsu",
+  "name": "노이 성수점",
+  "category": "쌀국수",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "진한 육수의 쌀국수로 소개되는 곳입니다.",
+  "waitTip": "인기 시간대에는 웨이팅이 잦다는 소개가 있어 오픈 시간에 맞춰 가는 방법이 권해집니다.",
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 83
+ },
+ {
+  "id": 211,
+  "areaSlug": "seongsu",
+  "name": "성수일미락",
+  "category": "목살",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "소금누룩으로 숙성한 목살과 통삼겹이 대표 메뉴이고, 직원이 끝까지 구워준다고 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 성동구 상원6나길 22-20",
+  "sortOrder": 84
+ },
+ {
+  "id": 212,
+  "areaSlug": "seongsu",
+  "name": "이태리국시 성수",
+  "category": "파스타",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "돌솥에 담아 내는 한식풍 파스타를 파는 곳으로, 바질 해산물 국물파스타 등이 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 85
+ },
+ {
+  "id": 213,
+  "areaSlug": "seongsu",
+  "name": "마야 성수",
+  "category": "스테이크",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "살치살 스테이크와 빠네 파스타 등을 내는 데이트용 양식 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 86
+ },
+ {
+  "id": 214,
+  "areaSlug": "yeonnam",
+  "name": "카쿠시타",
+  "category": "이자카야",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "명란크림우동과 돈페이야끼 등이 호응을 얻는 연남동 이자카야입니다.",
+  "waitTip": "현장에서는 가게 앞 기기에 웨이팅을 등록하며, 한 후기에서는 대기가 20분 정도였다고 합니다.",
+  "reservationTip": "캐치테이블로 예약할 수 있습니다.",
+  "address": "서울 마포구 동교로38길 33-15 지하1층",
+  "sortOrder": 197
+ },
+ {
+  "id": 215,
+  "areaSlug": "yeonnam",
+  "name": "유니의 우아한 식탁",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "파스타와 스테이크를 내는 연남동 양식 식당으로, 브레이크타임 없이 운영한다고 안내됩니다.",
+  "waitTip": null,
+  "reservationTip": "네이버 예약이나 매장 전화(02-6085-7942)로 예약할 수 있습니다.",
+  "address": null,
+  "sortOrder": 198
+ },
+ {
+  "id": 216,
+  "areaSlug": "yeonnam",
+  "name": "라멘롱시즌",
+  "category": "라멘",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "연남동 라멘집으로 캐치테이블 웨이팅이 길기로 알려져 있습니다. 월요일과 화요일은 휴무입니다.",
+  "waitTip": "오픈 전에 미리 캐치테이블 웨이팅을 걸어야 한다는 후기가 있습니다. 오전 11시 30분 오픈으로 알려져 있습니다.",
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 199
+ },
+ {
+  "id": 217,
+  "areaSlug": "yeonnam",
+  "name": "연남물갈비",
+  "category": "삼겹살",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "물갈비와 볶음밥으로 알려진 연남동 고깃집입니다.",
+  "waitTip": "현장 웨이팅이 있다는 후기가 있습니다.",
+  "reservationTip": "네이버 예약이 가능하다는 후기가 있습니다.",
+  "address": null,
+  "sortOrder": 200
+ },
+ {
+  "id": 218,
+  "areaSlug": "yeonnam",
+  "name": "사루카메",
+  "category": "라멘",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "바지락라멘 등을 내는 라멘집으로, 미쉐린 가이드 빕 구르망에 소개되었습니다.",
+  "waitTip": "대기 줄이 길다는 후기가 있습니다.",
+  "reservationTip": "예약 가능 여부는 출처마다 달라 방문 전에 확인이 필요합니다.",
+  "address": "서울 마포구 연남로 15",
+  "sortOrder": 201
+ },
+ {
+  "id": 219,
+  "areaSlug": "yeonnam",
+  "name": "월량관",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "차우셔우, 도삭볶음면, 가지깐풍, 샤오롱바오 등을 내는 연남동 중식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 동교로46길 10",
+  "sortOrder": 202
+ },
+ {
+  "id": 220,
+  "areaSlug": "yeonnam",
+  "name": "소이연남",
+  "category": "쌀국수",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "태국 음식과 쌀국수를 함께 내는 연남동 본점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 203
+ },
+ {
+  "id": 221,
+  "areaSlug": "yeonnam",
+  "name": "소점",
+  "category": "오코노미야키",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "히로시마풍 오코노미야키와 타코야키가 추천 메뉴로 소개되는 작은 가게입니다. 일요일은 휴무로 알려져 있습니다.",
+  "waitTip": "좌석이 8석 정도로 적어 웨이팅이 매우 길다는 후기가 있습니다. 웨이팅이 길면 포장을 이용하는 방법이 소개됩니다.",
+  "reservationTip": "예약보다 현장 이름 등록 방식이라는 후기가 있습니다.",
+  "address": "서울 마포구 성미산로17길 99 1층",
+  "sortOrder": 204
+ },
+ {
+  "id": 222,
+  "areaSlug": "yeonnam",
+  "name": "파델라",
+  "category": "피자",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "가지 루꼴라 피자와 게살 크림 파스타, 명란 크림 파스타 등이 소개되는 연남동 양식 식당입니다.",
+  "waitTip": "일요일 피크 시간에 예약 없이 방문해 자리가 있었다는 후기가 있으나 확실하지는 않습니다.",
+  "reservationTip": "예약이 가능하다고 안내되어 있으며, 주차는 어렵습니다.",
+  "address": "서울 마포구 연남로1길 11",
+  "sortOrder": 205
+ },
+ {
+  "id": 223,
+  "areaSlug": "yeonnam",
+  "name": "모리노팡",
+  "category": "베이커리",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "야끼소바빵 등 일본식 빵을 파는 연남동 빵집입니다. 월요일은 휴무이며 제품이 소진되면 마감합니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 연남로5길 42 1층",
+  "sortOrder": 206
+ },
+ {
+  "id": 224,
+  "areaSlug": "yeonnam",
+  "name": "오코와",
+  "category": "일식",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "가격 대비 구성이 알차다는 후기가 있는 일본 가정식집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 207
+ },
+ {
+  "id": 225,
+  "areaSlug": "yeonnam",
+  "name": "탐키친",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "연남동 파스타 상위권으로 소개되는 양식 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 208
+ },
+ {
+  "id": 226,
+  "areaSlug": "hongdae",
+  "name": "카미야",
+  "category": "돈가스",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "돈가스류와 오코노미소스동(9,500원)이 대표 메뉴로 소개되는 홍대입구 돈가스집입니다.",
+  "waitTip": "도착하자마자 웨이팅 등록부터 해야 할 정도로 대기가 많다는 후기가 있습니다.",
+  "reservationTip": null,
+  "address": "서울 마포구 와우산로21길 28-6",
+  "sortOrder": 101
+ },
+ {
+  "id": 227,
+  "areaSlug": "hongdae",
+  "name": "목로관",
+  "category": "돈마호크",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "짚불 돈마호크가 대표 메뉴이며, 단체석과 개별룸이 있다고 소개되는 고깃집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 어울마당로 126",
+  "sortOrder": 102
+ },
+ {
+  "id": 228,
+  "areaSlug": "hongdae",
+  "name": "오일내 홍대점",
+  "category": "숙성고기",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "숙성 고기가 주력이고 후식으로 돼지바를 준다는 후기가 있는 고깃집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 어울마당로 70 2층",
+  "sortOrder": 103
+ },
+ {
+  "id": 229,
+  "areaSlug": "hongdae",
+  "name": "화랑고기 홍대점",
+  "category": "삼겹살",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "삼겹살과 목살 무한리필(19,800원 구성)을 내며 콜키지 무료라고 소개되는 고깃집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 와우산로23길 40 2층",
+  "sortOrder": 104
+ },
+ {
+  "id": 230,
+  "areaSlug": "hongdae",
+  "name": "도적",
+  "category": "삼겹살",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "두툼한 초벌 칼삼겹이 대표 메뉴이고 1·2층 규모라 단체 수용이 수월하다고 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 어울마당로5길 3",
+  "sortOrder": 105
+ },
+ {
+  "id": 231,
+  "areaSlug": "hongdae",
+  "name": "라멘트럭",
+  "category": "라멘",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "라멘 한 가지 메뉴에 교자와 미니 차슈동 사이드를 내는 상수역 인근 라멘집입니다.",
+  "waitTip": "1호점은 자리가 좁고 대기가 길어 바로 옆 골목의 라멘트럭 랩을 이용하는 편이 낫다는 후기가 있습니다.",
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 106
+ },
+ {
+  "id": 232,
+  "areaSlug": "hongdae",
+  "name": "크레이지카츠",
+  "category": "돈가스",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "한정 수량의 특로스카츠정식이 대표 메뉴이며, 서울 3대 돈가스집으로 불린다는 소개가 있습니다.",
+  "waitTip": "캐치테이블로 미리 웨이팅을 걸고 메뉴를 고르는 방식이라는 후기가 있습니다. 대기는 20분 정도였다는 후기도 있습니다.",
+  "reservationTip": null,
+  "address": "서울 마포구 포은로2나길 44",
+  "sortOrder": 107
+ },
+ {
+  "id": 233,
+  "areaSlug": "hongdae",
+  "name": "홍홍 합정점",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "탕수육과 해물짬뽕이 평이 좋다고 소개되는 합정 중식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 108
+ },
+ {
+  "id": 234,
+  "areaSlug": "hongdae",
+  "name": "우동키노야 합정점",
+  "category": "우동",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "장어튀김 붓카케우동과 명란 붓카케우동, 규동이 대표 메뉴로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 109
+ },
+ {
+  "id": 235,
+  "areaSlug": "hongdae",
+  "name": "만평우동 홍대점",
+  "category": "우동",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "우동과 돈부리를 파는 홍대 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 110
+ },
+ {
+  "id": 236,
+  "areaSlug": "hongdae",
+  "name": "담택",
+  "category": "라멘",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "시오 라멘으로 미쉐린 가이드에 소개된 합정 쪽 라멘집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 동교로12안길 51",
+  "sortOrder": 111
+ },
+ {
+  "id": 237,
+  "areaSlug": "hongdae",
+  "name": "생어거스틴 합정점",
+  "category": "태국음식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "푸팟퐁커리와 파인애플 볶음밥 등을 내는 태국요리 전문점으로, 룸이 있다고 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": "예약이 가능하다고 안내되어 있습니다.",
+  "address": null,
+  "sortOrder": 112
+ },
+ {
+  "id": 238,
+  "areaSlug": "pangyo",
+  "name": "사위식당 판교점",
+  "category": "낙곱새",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "낙지·곱창·새우를 볶아 먹는 낙곱새가 대표 메뉴인 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 성남시 분당구 판교역로 152 알파돔타워 2층",
+  "sortOrder": 91
+ },
+ {
+  "id": 239,
+  "areaSlug": "pangyo",
+  "name": "우몽블랙 판교점",
+  "category": "한우구이",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "숙성 한우를 내는 모임형 한우 전문점으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 성남시 분당구 판교역로 145 라스트리트 알파리움타워 2동 111·112호",
+  "sortOrder": 92
+ },
+ {
+  "id": 240,
+  "areaSlug": "pangyo",
+  "name": "오봉집 판교유스페이스점",
+  "category": "한식",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "유스페이스 안에 있는 한식 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 성남시 분당구 대왕판교로 670 B동 2층 213호",
+  "sortOrder": 93
+ },
+ {
+  "id": 241,
+  "areaSlug": "pangyo",
+  "name": "시올돈 판교유스페이스점",
+  "category": "돈가스",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "돈가스와 카레를 내는 유스페이스 지하 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 성남시 분당구 대왕판교로 660 지하1층 B113호",
+  "sortOrder": 94
+ },
+ {
+  "id": 242,
+  "areaSlug": "pangyo",
+  "name": "소호정 티벨리점",
+  "category": "국수",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "안동국시를 내는 곳으로 점심 식사에 알맞다고 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 성남시 분당구 대왕판교로 670 유스페이스2관 지하1층 B117호",
+  "sortOrder": 95
+ },
+ {
+  "id": 243,
+  "areaSlug": "pangyo",
+  "name": "이치규 아브뉴프랑 판교점",
+  "category": "규카츠",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "규카츠와 채끝살 요리를 내는 아브뉴프랑 2층 식당입니다.",
+  "waitTip": null,
+  "reservationTip": "예약이 가능하다고 소개되어 있습니다. 방문 전 예약 페이지에서 확인해 보세요.",
+  "address": "경기 성남시 분당구 동판교로177번길 25 2층 220호",
+  "sortOrder": 96
+ },
+ {
+  "id": 244,
+  "areaSlug": "pangyo",
+  "name": "고반식당 판교아브뉴프랑점",
+  "category": "삼겹살",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "삼겹살과 목살을 내는 고깃집으로 데이트 코스로도 언급됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 성남시 분당구 동판교로177번길 25",
+  "sortOrder": 97
+ },
+ {
+  "id": 245,
+  "areaSlug": "pangyo",
+  "name": "세시셀라",
+  "category": "브런치",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "아브뉴프랑 1층에 있는 브런치 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 성남시 분당구 동판교로177번길 25 1층 125호",
+  "sortOrder": 98
+ },
+ {
+  "id": 246,
+  "areaSlug": "pangyo",
+  "name": "해미옥",
+  "category": "해물칼국수",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "점심 한정 해물칼국수 런치 메뉴가 알려진 식당입니다.",
+  "waitTip": "점심시간에 대기줄이 생길 수 있다는 소개가 있습니다. 여유 있는 시간대를 권합니다.",
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 99
+ },
+ {
+  "id": 247,
+  "areaSlug": "pangyo",
+  "name": "카츠쇼쿠도우",
+  "category": "돈가스",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "돈카츠 정식에 밥·샐러드·장국이 함께 나오는 곳으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 100
+ },
+ {
+  "id": 248,
+  "areaSlug": "pangyo",
+  "name": "선순대",
+  "category": "순대국",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "맑은 국물의 순대국을 내는 삼환하이펙스 인근 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 101
+ },
+ {
+  "id": 249,
+  "areaSlug": "pangyo",
+  "name": "차고145",
+  "category": "한우구이",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "판교역 인근 한우 전문점으로 콜키지 프리와 대형 룸이 있다고 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 102
+ },
+ {
+  "id": 250,
+  "areaSlug": "gangnam",
+  "name": "스시마이우 강남CGV점",
+  "category": "회전초밥",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "회전초밥 전문점으로 점심 특가로 알려져 있습니다.",
+  "waitTip": "점심시간에 직장인들로 붐빈다고 소개됩니다.",
+  "reservationTip": null,
+  "address": "서울 강남구 강남대로102길 14 장연빌딩",
+  "sortOrder": 111
+ },
+ {
+  "id": 251,
+  "areaSlug": "gangnam",
+  "name": "국제수입식당",
+  "category": "삼겹살",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "삼겹살 1인분 4,900원을 내세운 것으로 소개된 고깃집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 112
+ },
+ {
+  "id": 252,
+  "areaSlug": "gangnam",
+  "name": "중앙해장",
+  "category": "곱창전골",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "대치동의 곱창전골 전문점으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 113
+ },
+ {
+  "id": 253,
+  "areaSlug": "gangnam",
+  "name": "별하곱창 논현본점",
+  "category": "곱창",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "신논현역 가까이에 있는 곱창 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 강남대로122길 10 1층",
+  "sortOrder": 114
+ },
+ {
+  "id": 254,
+  "areaSlug": "gangnam",
+  "name": "홍보각",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "노보텔 강남 안에 있는 중식당으로 짬뽕이 알려져 있습니다.",
+  "waitTip": "주말에는 미리 예약하는 것이 좋다는 안내가 있습니다.",
+  "reservationTip": "캐치테이블 앱이나 전화로 예약할 수 있다고 안내되어 있습니다. 브레이크타임은 15:00~18:00입니다.",
+  "address": null,
+  "sortOrder": 115
+ },
+ {
+  "id": 255,
+  "areaSlug": "gangnam",
+  "name": "한우부티크 강남점",
+  "category": "한우구이",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "전 좌석 프라이빗 룸과 와인 페어링이 특징인 한우 식당입니다.",
+  "waitTip": null,
+  "reservationTip": "캐치테이블로 예약할 수 있다고 소개됩니다.",
+  "address": null,
+  "sortOrder": 116
+ },
+ {
+  "id": 256,
+  "areaSlug": "gangnam",
+  "name": "바다해장집 강남점",
+  "category": "해장국",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "셀프 코너를 운영하는 해장국 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": "예약이 가능하다고 소개되어 있습니다.",
+  "address": null,
+  "sortOrder": 117
+ },
+ {
+  "id": 257,
+  "areaSlug": "gangnam",
+  "name": "강남교자",
+  "category": "칼국수",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "칼국수와 만두를 내는 식당으로 손님이 많은 편입니다.",
+  "waitTip": "손님이 많아 대기가 생길 수 있다는 후기가 있습니다.",
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 118
+ },
+ {
+  "id": 258,
+  "areaSlug": "gangnam",
+  "name": "미엔아이 천등",
+  "category": "우육면",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "대만식 우육면을 내는 강남의 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 119
+ },
+ {
+  "id": 259,
+  "areaSlug": "gangnam",
+  "name": "더 리버사이드 호텔 카와베",
+  "category": "일식",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "호텔 안에 있는 일식당으로 룸이 5개 있다고 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": "네이버·캐치테이블·전화로 예약할 수 있다고 소개되어 있습니다.",
+  "address": null,
+  "sortOrder": 120
+ },
+ {
+  "id": 260,
+  "areaSlug": "gangnam",
+  "name": "김선생조개찜",
+  "category": "조개찜",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "논현동의 조개찜 전문점으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": "전화나 네이버 예약을 이용하는 곳으로 소개되며 주차는 어렵다고 알려져 있습니다. 최신 정보는 확인해 보세요.",
+  "address": null,
+  "sortOrder": 121
+ },
+ {
+  "id": 261,
+  "areaSlug": "apgujeong",
+  "name": "꽃돌이네 정육식당",
+  "category": "한우구이",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "24시간 운영한다고 안내되는 정육식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 언주로174길 29 지상1층 103호",
+  "sortOrder": 181
+ },
+ {
+  "id": 262,
+  "areaSlug": "apgujeong",
+  "name": "로바 압구정",
+  "category": "일식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "현대백화점 압구정 본점 5층에 있는 식당으로 프라이빗 모임에 알맞다고 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 압구정로 165 현대백화점 본점 5층",
+  "sortOrder": 182
+ },
+ {
+  "id": 263,
+  "areaSlug": "apgujeong",
+  "name": "압구정화차",
+  "category": "닭구이",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "닭구이와 누룽지를 내는 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 압구정로28길 9 우남빌딩 1층",
+  "sortOrder": 183
+ },
+ {
+  "id": 264,
+  "areaSlug": "apgujeong",
+  "name": "성덕",
+  "category": "딤섬",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "딤섬 전문점으로 압구정역 인근 저녁 식사 목록에 오른 곳입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 184
+ },
+ {
+  "id": 265,
+  "areaSlug": "apgujeong",
+  "name": "경복궁 압구정점",
+  "category": "갈비",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "생갈비를 내는 식당으로 손님 접대 장소로 꼽힙니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 185
+ },
+ {
+  "id": 266,
+  "areaSlug": "apgujeong",
+  "name": "시추안하우스 압구정점",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "사천 요리를 내는 중식당으로 회식 장소로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 186
+ },
+ {
+  "id": 267,
+  "areaSlug": "apgujeong",
+  "name": "샤브인서울 압구정로데오점",
+  "category": "샤브샤브",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "개별룸이 있는 샤브샤브 전문점으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 187
+ },
+ {
+  "id": 268,
+  "areaSlug": "apgujeong",
+  "name": "마일드하이클럽",
+  "category": "브런치",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "압구정로데오 데이트 장소로 꼽히는 브런치 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 188
+ },
+ {
+  "id": 269,
+  "areaSlug": "apgujeong",
+  "name": "피양옥",
+  "category": "평양냉면",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "평양냉면을 내는 압구정역 인근 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 189
+ },
+ {
+  "id": 270,
+  "areaSlug": "apgujeong",
+  "name": "다운타우너 청담",
+  "category": "햄버거",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "수제 버거 전문점으로 로데오 일대에서 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 도산대로53길 14 1층",
+  "sortOrder": 190
+ },
+ {
+  "id": 271,
+  "areaSlug": "apgujeong",
+  "name": "울프강 스테이크하우스 청담",
+  "category": "스테이크",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "기념일 스테이크 식사 장소로 소개되는 청담의 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 191
+ },
+ {
+  "id": 272,
+  "areaSlug": "itaewon-hannam",
+  "name": "부자피자",
+  "category": "피자",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "이태원에서 줄이 길기로 알려진 피자집입니다.",
+  "waitTip": "대기가 매우 긴 편으로 알려져 있어 시간 여유를 두고 가는 것이 좋습니다. 날짜와 시간대에 따라 차이가 큽니다.",
+  "reservationTip": null,
+  "address": "서울 용산구 이태원로55가길 28",
+  "sortOrder": 121
+ },
+ {
+  "id": 273,
+  "areaSlug": "itaewon-hannam",
+  "name": "소설한남",
+  "category": "한식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "모수서울 출신 셰프의 요리를 런치·디너 코스로 내는 한식당입니다.",
+  "waitTip": null,
+  "reservationTip": "예약제로 운영한다고 소개되어 있습니다. 문의 전화는 02-797-5995이며 월·화요일은 휴무로 알려져 있습니다.",
+  "address": "서울 용산구 한남대로20길 21-18",
+  "sortOrder": 122
+ },
+ {
+  "id": 274,
+  "areaSlug": "itaewon-hannam",
+  "name": "한남 북엇국",
+  "category": "북엇국",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "북엇국과 미역국, 비빔밥류에 부침개 안주까지 내는 한남오거리 인근 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 용산구 독서당로 65-7",
+  "sortOrder": 123
+ },
+ {
+  "id": 275,
+  "areaSlug": "itaewon-hannam",
+  "name": "바토스 이태원점",
+  "category": "타코",
+  "situations": [
+   "데이트",
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "갈비·새우 타코와 부리또를 내는 이태원의 멕시칸 식당으로 야외석이 인기라는 소개가 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 124
+ },
+ {
+  "id": 276,
+  "areaSlug": "itaewon-hannam",
+  "name": "어제의카레",
+  "category": "카레",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "이태원에서 카레로 높은 평가를 받는 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 125
+ },
+ {
+  "id": 277,
+  "areaSlug": "itaewon-hannam",
+  "name": "이태리국시 한남",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "숯불대창돌솥파스타 등 창의적인 파스타를 내는 한남동 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 126
+ },
+ {
+  "id": 278,
+  "areaSlug": "itaewon-hannam",
+  "name": "월간식당",
+  "category": "파스타",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "크림 라구 파스타, 가지라자냐 등을 내는 한남동 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 127
+ },
+ {
+  "id": 279,
+  "areaSlug": "itaewon-hannam",
+  "name": "타키 한남점",
+  "category": "이자카야",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "80년대 일본 이자카야 분위기의 인테리어에 갓김치 라구파스타 등을 내는 한남동 술집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 128
+ },
+ {
+  "id": 280,
+  "areaSlug": "itaewon-hannam",
+  "name": "핌피",
+  "category": "스테이크",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "이태원 스테이크 맛집으로 자주 오르내리는 양식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 129
+ },
+ {
+  "id": 281,
+  "areaSlug": "itaewon-hannam",
+  "name": "더리얼치즈버거",
+  "category": "햄버거",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "미국식 치즈버거를 내는 이태원의 버거 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 130
+ },
+ {
+  "id": 282,
+  "areaSlug": "itaewon-hannam",
+  "name": "야상해",
+  "category": "딤섬",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "딤섬을 내는 이태원의 중식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 131
+ },
+ {
+  "id": 283,
+  "areaSlug": "itaewon-hannam",
+  "name": "피자브루클린 이태원점",
+  "category": "피자",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "푸짐한 피자로 알려진 이태원의 피자집입니다.",
+  "waitTip": "웨이팅이 있다는 후기가 많아 예약을 권하는 의견이 있습니다.",
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 132
+ },
+ {
+  "id": 284,
+  "areaSlug": "konkuk",
+  "name": "해란양꼬치 건대본점",
+  "category": "양꼬치",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "건대에서 단체 회식에 적합하다고 소개되는 양꼬치 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 131
+ },
+ {
+  "id": 285,
+  "areaSlug": "konkuk",
+  "name": "뽕잎사랑 건대스타시티점",
+  "category": "샤브샤브",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "1인 13,000원 샤브 코스로 소개되는 가성비 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 132
+ },
+ {
+  "id": 286,
+  "areaSlug": "konkuk",
+  "name": "용가회전훠궈 건대점",
+  "category": "훠궈",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "혼자서도 먹기 편한 회전 훠궈 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 133
+ },
+ {
+  "id": 287,
+  "areaSlug": "konkuk",
+  "name": "겐로쿠우동 건대직영점",
+  "category": "우동",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "건대 상권에서 알려진 우동 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 134
+ },
+ {
+  "id": 288,
+  "areaSlug": "konkuk",
+  "name": "카토카츠",
+  "category": "돈가스",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "건대 상권에서 상위권으로 언급되는 돈가스 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 135
+ },
+ {
+  "id": 289,
+  "areaSlug": "konkuk",
+  "name": "고베규카츠 건대점",
+  "category": "규카츠",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "바삭한 규카츠를 내는 건대의 일식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 136
+ },
+ {
+  "id": 290,
+  "areaSlug": "konkuk",
+  "name": "탄토탄토",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "건대 파스타 맛집 목록에서 자주 오르는 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 137
+ },
+ {
+  "id": 291,
+  "areaSlug": "konkuk",
+  "name": "드로잉레시피",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "건대 파스타 맛집 목록에서 자주 언급되는 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 138
+ },
+ {
+  "id": 292,
+  "areaSlug": "konkuk",
+  "name": "뉴웨이브서울 건대",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "들기름 대파 파스타 등을 내는 건대의 파스타집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 139
+ },
+ {
+  "id": 293,
+  "areaSlug": "konkuk",
+  "name": "깍뚝",
+  "category": "돼지구이",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "고기 두께 대비 가성비가 좋다고 소개되는 건대의 돼지고기구이집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 140
+ },
+ {
+  "id": 294,
+  "areaSlug": "konkuk",
+  "name": "왕소구이",
+  "category": "소고기구이",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "건대의 고기 요리 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 141
+ },
+ {
+  "id": 295,
+  "areaSlug": "konkuk",
+  "name": "콩불 건대점",
+  "category": "콩불",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "콩나물불고기를 내는 건대의 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 142
+ },
+ {
+  "id": 296,
+  "areaSlug": "euljiro",
+  "name": "청와옥 을지로3가직영점",
+  "category": "순대국",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "8가지 한약재로 끓인 순대국밥이 대표 메뉴인 을지로의 유명 순대국집입니다.",
+  "waitTip": "웨이팅이 긴 편이라 테이블링으로 미리 대기를 걸어두는 방법이 소개되어 있습니다. 주말 저녁에는 대기가 30팀 이상이었다는 후기가 있습니다.",
+  "reservationTip": "테이블링으로 원격 웨이팅이 가능하다는 소개가 있습니다.",
+  "address": "서울 중구 을지로3가",
+  "sortOrder": 141
+ },
+ {
+  "id": 297,
+  "areaSlug": "euljiro",
+  "name": "사랑방칼국수",
+  "category": "칼국수",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "1968년에 문을 연 것으로 알려진 을지로의 노포 칼국수집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 142
+ },
+ {
+  "id": 298,
+  "areaSlug": "euljiro",
+  "name": "을지 장만옥",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "중국 가정식 기반으로 표고 슈마이와 대파소스 닭튀김이 인기 메뉴입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 143
+ },
+ {
+  "id": 299,
+  "areaSlug": "euljiro",
+  "name": "우기식당 을지로점",
+  "category": "숙성회",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "숙성회 전문점으로 가을에는 전어가 추천 메뉴로 언급됩니다.",
+  "waitTip": "대기가 긴 편으로 알려져 있어 테이블링으로 미리 웨이팅을 걸어두고 다른 곳에서 먼저 식사하는 방법이 소개되어 있습니다.",
+  "reservationTip": "확인된 예약 수단은 테이블링 웨이팅입니다. 캐치테이블 예약 여부는 확인하지 못했습니다.",
+  "address": "서울 중구 충무로5길 18",
+  "sortOrder": 144
+ },
+ {
+  "id": 300,
+  "areaSlug": "euljiro",
+  "name": "을지갈매기",
+  "category": "갈매기살",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "충무로에 있는 고깃집으로 새우젓 소스가 특징이라는 소개가 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 145
+ },
+ {
+  "id": 301,
+  "areaSlug": "euljiro",
+  "name": "산청숯불가든 을지로",
+  "category": "돼지구이",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "소금구이를 내는 을지로의 숯불 고깃집으로 모임 식사에 알맞다는 평이 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 146
+ },
+ {
+  "id": 302,
+  "areaSlug": "euljiro",
+  "name": "토리노 라스베가스",
+  "category": "이자카야",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "야키토리 중심의 을지로3가 이자카야로 2차 자리로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 중구 을지로3가",
+  "sortOrder": 147
+ },
+ {
+  "id": 303,
+  "areaSlug": "euljiro",
+  "name": "스탬파",
+  "category": "피자",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "화덕피자를 내는 을지로3가의 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 중구 을지로3가",
+  "sortOrder": 148
+ },
+ {
+  "id": 304,
+  "areaSlug": "euljiro",
+  "name": "을지다락",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "을지로3가의 파스타 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 중구 을지로3가",
+  "sortOrder": 149
+ },
+ {
+  "id": 305,
+  "areaSlug": "euljiro",
+  "name": "이남장",
+  "category": "설렁탕",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "설렁탕으로 소개되는 을지로의 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 150
+ },
+ {
+  "id": 306,
+  "areaSlug": "euljiro",
+  "name": "남포면옥",
+  "category": "냉면",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "혼밥이나 든든한 한 끼로 소개되는 을지로의 냉면집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 151
+ },
+ {
+  "id": 307,
+  "areaSlug": "euljiro",
+  "name": "골수",
+  "category": "뼈구이",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "뼈구이와 수육전골을 내는 을지로3가의 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 중구 을지로3가",
+  "sortOrder": 152
+ },
+ {
+  "id": 308,
+  "areaSlug": "ikseon",
+  "name": "세컨디포레스트 익선점",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "익선동 한옥 골목의 파스타·양식 식당으로 소개되는 곳입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 종로구 돈화문로11다길 34",
+  "sortOrder": 151
+ },
+ {
+  "id": 309,
+  "areaSlug": "ikseon",
+  "name": "온천집",
+  "category": "샤브샤브",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "곰 모양 샤브샤브와 스테이크 덮밥 등을 내는 샤브샤브·스키야키 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 종로구 돈화문로11나길 31-8",
+  "sortOrder": 152
+ },
+ {
+  "id": 310,
+  "areaSlug": "ikseon",
+  "name": "아담집",
+  "category": "이자카야",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "모듬꼬치와 하이볼이 알려진 익선동 꼬치 이자카야입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 153
+ },
+ {
+  "id": 311,
+  "areaSlug": "ikseon",
+  "name": "돈부리파스타 익선점",
+  "category": "파스타",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "덮밥과 파스타를 함께 내는 곳으로, 가성비 좋은 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 종로구 수표로28길 33-10",
+  "sortOrder": 154
+ },
+ {
+  "id": 312,
+  "areaSlug": "ikseon",
+  "name": "서대포집",
+  "category": "삼겹살",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "익선동 한옥거리 일대의 삼겹살집으로 목록에 올라 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 155
+ },
+ {
+  "id": 313,
+  "areaSlug": "ikseon",
+  "name": "멍석집",
+  "category": "삼겹살",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "익선동 일대의 삼겹살집으로 소개되는 곳입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 156
+ },
+ {
+  "id": 314,
+  "areaSlug": "ikseon",
+  "name": "종삼육",
+  "category": "삼겹살",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "익선동 고깃집 목록에 오른 삼겹살집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 157
+ },
+ {
+  "id": 315,
+  "areaSlug": "ikseon",
+  "name": "형제불백",
+  "category": "불백",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "집밥 스타일의 불백을 내는 한식집으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 158
+ },
+ {
+  "id": 316,
+  "areaSlug": "ikseon",
+  "name": "송암온반",
+  "category": "온반",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "따뜻한 국물에 밥을 말아 내는 온반 전문 한식집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 159
+ },
+ {
+  "id": 317,
+  "areaSlug": "ikseon",
+  "name": "낙원장X하나마토",
+  "category": "이자카야",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "익선동 술집 목록 상위권에 오른 이자카야입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 160
+ },
+ {
+  "id": 318,
+  "areaSlug": "ikseon",
+  "name": "호호식당",
+  "category": "일식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "룸이 있는 익선동 식당으로, 룸은 이용 시간 제한이 있다고 알려져 있습니다.",
+  "waitTip": "익선동은 웨이팅이 많아 브레이크 타임 직후에 맞춰 갔다는 후기가 있습니다.",
+  "reservationTip": "네이버로 룸을 예약할 수 있고 이용 시간은 1시간이라는 소개가 있습니다.",
+  "address": null,
+  "sortOrder": 161
+ },
+ {
+  "id": 319,
+  "areaSlug": "mangwon",
+  "name": "초월양곱창",
+  "category": "곱창",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "망원시장 일대에서 알려진 양곱창 전문점으로, 모임에도 넓은 편이라고 소개됩니다.",
+  "waitTip": "저녁 시간대 웨이팅이 생긴다는 소개가 있습니다.",
+  "reservationTip": null,
+  "address": "서울 마포구 포은로 66 1층",
+  "sortOrder": 161
+ },
+ {
+  "id": 320,
+  "areaSlug": "mangwon",
+  "name": "희옥",
+  "category": "라멘",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "시오라멘과 츠케멘으로 알려진 라멘집입니다.",
+  "waitTip": "점심에도 웨이팅이 있다는 후기가 있고, 토요일은 점심만 영업한다고 알려져 있습니다.",
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 162
+ },
+ {
+  "id": 321,
+  "areaSlug": "mangwon",
+  "name": "청어람",
+  "category": "곱창전골",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "국물이 시원하고 양이 푸짐하다고 알려진 곱창전골집입니다.",
+  "waitTip": "평일 점심에는 대기가 적은 편이라는 소개가 있습니다.",
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 163
+ },
+ {
+  "id": 322,
+  "areaSlug": "mangwon",
+  "name": "레이 키친",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "망리단길에서 파스타로 언급되는 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 164
+ },
+ {
+  "id": 323,
+  "areaSlug": "mangwon",
+  "name": "페리도트",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "조용한 분위기에서 파스타를 즐기는 데이트 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 165
+ },
+ {
+  "id": 324,
+  "areaSlug": "mangwon",
+  "name": "유어다이닝",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "생면 파스타를 내는 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 166
+ },
+ {
+  "id": 325,
+  "areaSlug": "mangwon",
+  "name": "코랏",
+  "category": "태국음식",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "푸팟퐁커리와 쌀국수 세트가 강점이라고 소개되는 태국 음식점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 월드컵로19길 14 1층",
+  "sortOrder": 167
+ },
+ {
+  "id": 326,
+  "areaSlug": "mangwon",
+  "name": "망원양꼬치",
+  "category": "양꼬치",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "양꼬치와 꿔바로우를 내는 중식 꼬치집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 월드컵로13길 17",
+  "sortOrder": 168
+ },
+ {
+  "id": 327,
+  "areaSlug": "mangwon",
+  "name": "오하루수육국밥",
+  "category": "국밥",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "수육국밥정식과 순대국밥정식을 내는 망원시장 인근 국밥집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 월드컵로13길 13 1층",
+  "sortOrder": 169
+ },
+ {
+  "id": 328,
+  "areaSlug": "mangwon",
+  "name": "해물부자",
+  "category": "해물탕",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "신선한 재료로 끓인다고 소개되는 해물탕집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 월드컵로19길 34",
+  "sortOrder": 170
+ },
+ {
+  "id": 329,
+  "areaSlug": "mangwon",
+  "name": "친친국밥",
+  "category": "국밥",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "망원역에서 도보 약 8분 거리의 국밥집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 월드컵로25길 51 1층 101호",
+  "sortOrder": 171
+ },
+ {
+  "id": 330,
+  "areaSlug": "mangwon",
+  "name": "타코닷",
+  "category": "타코",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "망원시장 인근의 타코 가게입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 172
+ },
+ {
+  "id": 331,
+  "areaSlug": "songridan",
+  "name": "앨리나인",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "파스타와 와인을 내는 곳으로, 스테이크보다 파스타 평이 좋다는 후기가 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 백제고분로41길 27 2층",
+  "sortOrder": 171
+ },
+ {
+  "id": 332,
+  "areaSlug": "songridan",
+  "name": "나복집",
+  "category": "국밥",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "한우 국밥과 수육이 대표 메뉴입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 백제고분로42길 6-24 1층",
+  "sortOrder": 172
+ },
+ {
+  "id": 333,
+  "areaSlug": "songridan",
+  "name": "옥소반 송리단길점",
+  "category": "스키야키",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "스키야키와 볶음밥, 우동을 내는 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 백제고분로45길 32 1층 101호",
+  "sortOrder": 173
+ },
+ {
+  "id": 334,
+  "areaSlug": "songridan",
+  "name": "진지아",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "마라곱창전골과 마라샹궈가 시그니처인 중국 가정식 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 백제고분로41길 12-9",
+  "sortOrder": 174
+ },
+ {
+  "id": 335,
+  "areaSlug": "songridan",
+  "name": "금금 송리단길점",
+  "category": "퓨전한식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "보리된장 메뉴로 알려진 퓨전 한식집입니다.",
+  "waitTip": "캐치테이블로 줄서기가 가능하고, 이 동네에서 웨이팅이 긴 편이라는 후기가 있습니다.",
+  "reservationTip": "저녁에는 예약이 어렵다는 후기가 있습니다.",
+  "address": null,
+  "sortOrder": 175
+ },
+ {
+  "id": 336,
+  "areaSlug": "songridan",
+  "name": "쁘띠키친",
+  "category": "코스요리",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "송리단길의 코스요리 레스토랑으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 176
+ },
+ {
+  "id": 337,
+  "areaSlug": "songridan",
+  "name": "라코즈",
+  "category": "파스타",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "파스타와 대형 고기 요리를 내며 공간이 넓다고 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 177
+ },
+ {
+  "id": 338,
+  "areaSlug": "songridan",
+  "name": "팔각동",
+  "category": "이자카야",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "송리단길의 이자카야로 목록에 올라 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 178
+ },
+ {
+  "id": 339,
+  "areaSlug": "songridan",
+  "name": "동경산책 송리단길점",
+  "category": "일식",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "데이트용 일식당으로 분류되는 곳입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 179
+ },
+ {
+  "id": 340,
+  "areaSlug": "songridan",
+  "name": "무궁화정육식당",
+  "category": "한우구이",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "고기를 골라 구워 먹는 한우 정육식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 송파대로49길 59 1층",
+  "sortOrder": 180
+ },
+ {
+  "id": 341,
+  "areaSlug": "songridan",
+  "name": "카페 모타운",
+  "category": "샌드위치",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "샌드위치 전문점으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 백제고분로45길 34-6 1층 101호",
+  "sortOrder": 181
+ },
+ {
+  "id": 342,
+  "areaSlug": "seochon",
+  "name": "청하식당",
+  "category": "백반",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "제육볶음과 라면이 알려진 서촌의 가정식 백반집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 종로구 자하문로10길 25",
+  "sortOrder": 202
+ },
+ {
+  "id": 343,
+  "areaSlug": "seochon",
+  "name": "함박식당",
+  "category": "함박스테이크",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "하이라이스와 함박이 추천 메뉴로 소개되는 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 종로구 필운대로1길 6 1층",
+  "sortOrder": 203
+ },
+ {
+  "id": 344,
+  "areaSlug": "seochon",
+  "name": "참괜찮소 서촌",
+  "category": "곰탕",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "정육식당에서 운영하는 곰탕집으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 종로구 필운대로6길 8",
+  "sortOrder": 204
+ },
+ {
+  "id": 345,
+  "areaSlug": "seochon",
+  "name": "뼈탄집 서촌본점",
+  "category": "뼈구이",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "직화 뼈구이 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 종로구 자하문로1길 13",
+  "sortOrder": 205
+ },
+ {
+  "id": 346,
+  "areaSlug": "seochon",
+  "name": "서촌주막",
+  "category": "주점",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "막걸리 종류가 많은 서촌의 주점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 종로구 자하문로 55 2호, 3호",
+  "sortOrder": 206
+ },
+ {
+  "id": 347,
+  "areaSlug": "seochon",
+  "name": "라스위스 서촌",
+  "category": "스위스음식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "스위스 가정식을 내는 오래된 서촌 식당입니다.",
+  "waitTip": "주말 저녁에는 내부 테이블이 가득 찼다는 후기가 있습니다.",
+  "reservationTip": "주말 저녁은 예약 후 방문한 후기가 있어 예약이 사실상 필요해 보입니다.",
+  "address": null,
+  "sortOrder": 207
+ },
+ {
+  "id": 348,
+  "areaSlug": "seochon",
+  "name": "비스트로 친친",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "서촌의 이탈리안 레스토랑으로, 예약이 필요하다는 후기가 있습니다.",
+  "waitTip": null,
+  "reservationTip": "예약이 필요하다는 후기가 있습니다.",
+  "address": "서울 종로구 효자로13길 54 1층",
+  "sortOrder": 208
+ },
+ {
+  "id": 349,
+  "areaSlug": "seochon",
+  "name": "두오모",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "제철 채소로 만드는 이탈리아 가정식과 뇨끼, 파스타를 내는 곳으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 209
+ },
+ {
+  "id": 350,
+  "areaSlug": "seochon",
+  "name": "효자동초밥",
+  "category": "초밥",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "서촌 효자동의 초밥집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 210
+ },
+ {
+  "id": 351,
+  "areaSlug": "seochon",
+  "name": "명란식당",
+  "category": "일본가정식",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "서촌의 일본 가정식 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 211
+ },
+ {
+  "id": 352,
+  "areaSlug": "seochon",
+  "name": "국빈관",
+  "category": "한우구이",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "서촌의 한우 고깃집으로 목록에 올라 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 212
+ },
+ {
+  "id": 353,
+  "areaSlug": "namyangju",
+  "name": "약수촌",
+  "category": "오리구이",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "돌판 생오리구이와 볶음밥이 대표 메뉴로 소개되는 진접읍의 가족 외식 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 진접읍 금강로1521번길 70",
+  "sortOrder": 194
+ },
+ {
+  "id": 354,
+  "areaSlug": "namyangju",
+  "name": "광릉돌솥밥",
+  "category": "솥밥",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "셀프바 반찬과 돌솥밥으로 알려진 진접읍의 한식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 진접읍 금강로1845번길 1",
+  "sortOrder": 195
+ },
+ {
+  "id": 355,
+  "areaSlug": "namyangju",
+  "name": "티라토레",
+  "category": "베이커리카페",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "주차 공간이 넓은 대형 베이커리·다이닝 카페로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 진접읍 경복대로가마솥골길 85",
+  "sortOrder": 196
+ },
+ {
+  "id": 356,
+  "areaSlug": "namyangju",
+  "name": "안마을 돼지불백",
+  "category": "불백",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "돼지불백을 내는 진접읍의 백반집으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 진접읍 금강로 1001",
+  "sortOrder": 197
+ },
+ {
+  "id": 357,
+  "areaSlug": "namyangju",
+  "name": "콤비식당",
+  "category": "굴요리",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "통영산 굴을 한 상으로 내는 진접읍의 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 진접읍 금강로 1580",
+  "sortOrder": 198
+ },
+ {
+  "id": 358,
+  "areaSlug": "namyangju",
+  "name": "돈카츠야",
+  "category": "돈가스",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "진접오남 행정복지센터 맞은편에 있는 돈카츠 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 진접읍 금강로 1509-9",
+  "sortOrder": 199
+ },
+ {
+  "id": 359,
+  "areaSlug": "namyangju",
+  "name": "하오짜",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "진접읍 해밀예당 인근의 중식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 진접읍 해밀예당1로215번길 4 108호",
+  "sortOrder": 200
+ },
+ {
+  "id": 360,
+  "areaSlug": "namyangju",
+  "name": "풍미연",
+  "category": "설렁탕",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "설렁탕 등 국물 요리를 내는 별내동의 한식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 별내중앙로58번길 18-7",
+  "sortOrder": 201
+ },
+ {
+  "id": 361,
+  "areaSlug": "namyangju",
+  "name": "담터추어탕",
+  "category": "추어탕",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "추어탕을 내는 별내동의 보양식 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 불암로 25-1",
+  "sortOrder": 202
+ },
+ {
+  "id": 362,
+  "areaSlug": "namyangju",
+  "name": "두부마을",
+  "category": "두부요리",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "두부 요리를 내는 별내동의 한식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 송산로152번길 20",
+  "sortOrder": 203
+ },
+ {
+  "id": 363,
+  "areaSlug": "namyangju",
+  "name": "스파게티스토리 별내점",
+  "category": "파스타",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "별내역 인근에 있는 파스타 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 별내중앙로 26 112호",
+  "sortOrder": 204
+ },
+ {
+  "id": 364,
+  "areaSlug": "namyangju",
+  "name": "장어의 꿈",
+  "category": "장어",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "장어구이를 내는 별내동의 식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기도 남양주시 순화궁로 492-6",
+  "sortOrder": 205
+ },
+ {
+  "id": 365,
+  "areaSlug": "sinsa",
+  "name": "정돈 프리미엄 가로수길점",
+  "category": "돈가스",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "일식풍 돈카츠 전문점으로 안심카츠와 연어장덮밥이 언급됩니다.",
+  "waitTip": "저녁에는 세트나 스페셜 메뉴가 품절되기도 한다는 후기가 있습니다. 일찍 가시는 편이 좋습니다.",
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 1
+ },
+ {
+  "id": 366,
+  "areaSlug": "sinsa",
+  "name": "희래등",
+  "category": "중식",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "가로수길의 중식당으로 유니짜장면이 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 2
+ },
+ {
+  "id": 367,
+  "areaSlug": "sinsa",
+  "name": "타코앤칠리",
+  "category": "멕시칸",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "타코, 부리또와 함께 치미창가를 내는 멕시코 음식점입니다. 소주도 판매하며 영업시간은 11:30~22:00로 안내됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 3
+ },
+ {
+  "id": 368,
+  "areaSlug": "sinsa",
+  "name": "개미집",
+  "category": "한식주점",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "카페가 많은 가로수길에서 보기 드문 한식 전문 술집으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 4
+ },
+ {
+  "id": 369,
+  "areaSlug": "sinsa",
+  "name": "이자카야 우규 신사점",
+  "category": "이자카야",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "세로수길 일대의 이자카야로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 압구정로2길 46 1층 13호",
+  "sortOrder": 5
+ },
+ {
+  "id": 370,
+  "areaSlug": "sinsa",
+  "name": "브루클린더버거조인트 가로수길점",
+  "category": "햄버거",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "가로수길의 수제버거 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 도산대로15길 12 가로수빌딩 1층",
+  "sortOrder": 6
+ },
+ {
+  "id": 371,
+  "areaSlug": "sinsa",
+  "name": "하남돼지집 가로수길점",
+  "category": "삼겹살",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "가로수길에 있는 돼지고기 구이 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 강남대로152길 55 태영빌딩 1층",
+  "sortOrder": 7
+ },
+ {
+  "id": 372,
+  "areaSlug": "sinsa",
+  "name": "이자카야 공감 가로수길점",
+  "category": "이자카야",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "가로수길의 이자카야입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 강남대로154길 41",
+  "sortOrder": 8
+ },
+ {
+  "id": 373,
+  "areaSlug": "sinsa",
+  "name": "누데이크 가로수길",
+  "category": "베이커리카페",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "주먹밥 모양 페이스트리와 피그 케이크가 소개되는 가로수길의 디저트 가게입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 강남대로162길 41",
+  "sortOrder": 9
+ },
+ {
+  "id": 374,
+  "areaSlug": "sinsa",
+  "name": "메리고라운드 스테이크",
+  "category": "스테이크",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "스테이크 브런치, 스테이크 라이스, 함박스테이크 라이스를 내며 2008년 킹콩스테이크로 시작했다고 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 논현로175길 69 원영빌딩 1층",
+  "sortOrder": 10
+ },
+ {
+  "id": 375,
+  "areaSlug": "sinsa",
+  "name": "신사랑",
+  "category": "덮밥",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "덮밥과 고등어 요리로 소개되는 신사동의 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 11
+ },
+ {
+  "id": 376,
+  "areaSlug": "sinsa",
+  "name": "뉴만두집",
+  "category": "만두",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "신사동 압구정로변에 있는 만두 전문점으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 강남구 압구정로 338",
+  "sortOrder": 12
+ },
+ {
+  "id": 377,
+  "areaSlug": "jamsil",
+  "name": "촙촙 롯데월드몰점",
+  "category": "쌀국수",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "롯데월드몰 지하 1층 식당가의 베트남 음식점으로 쌀국수와 팟타이가 소개됩니다.",
+  "waitTip": "웨이팅이 많다는 후기가 있습니다. 영업시간은 매일 10:30~22:00로 안내됩니다.",
+  "reservationTip": null,
+  "address": "서울 송파구 올림픽로 300 롯데월드몰 지하 1층",
+  "sortOrder": 1
+ },
+ {
+  "id": 378,
+  "areaSlug": "jamsil",
+  "name": "하연옥 잠실점",
+  "category": "냉면",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "진주물냉면, 육전, 흑돼지 맑은 곰탕을 내는 석촌호수 인근 식당입니다.",
+  "waitTip": "점심시간에 웨이팅이 자주 생긴다는 소개가 있습니다. 주차장이 없어 석촌호수 공영주차장을 이용하라는 안내가 많습니다.",
+  "reservationTip": null,
+  "address": "서울 송파구 송파대로49길 61 1층",
+  "sortOrder": 2
+ },
+ {
+  "id": 379,
+  "areaSlug": "jamsil",
+  "name": "옥봉갈비 잠실새내본점",
+  "category": "갈비",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "숙성 생갈비로 알려진 잠실새내 시장 안의 고기집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 신천동",
+  "sortOrder": 3
+ },
+ {
+  "id": 380,
+  "areaSlug": "jamsil",
+  "name": "신선계 잠실새내본점",
+  "category": "닭요리",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "닭 특수부위 숯불구이로 알려진 잠실새내의 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 백제고분로9길 40 1층",
+  "sortOrder": 4
+ },
+ {
+  "id": 381,
+  "areaSlug": "jamsil",
+  "name": "도몽 잠실새내 본점",
+  "category": "삼겹살",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "숙성 삼겹·목살·항정·가브리살을 내는 잠실새내의 고기집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 신천동",
+  "sortOrder": 5
+ },
+ {
+  "id": 382,
+  "areaSlug": "jamsil",
+  "name": "남경막국수",
+  "category": "막국수",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "곤드레 막국수, 들깨 막국수, 물 막국수가 대표 메뉴로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 신천동",
+  "sortOrder": 6
+ },
+ {
+  "id": 383,
+  "areaSlug": "jamsil",
+  "name": "짬뽕지존 잠실새내점",
+  "category": "짬뽕",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "화~일 24시간 영업으로 안내되는 짬뽕 전문점으로 심야 식사에 적합합니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 올림픽로12길 14",
+  "sortOrder": 7
+ },
+ {
+  "id": 384,
+  "areaSlug": "jamsil",
+  "name": "효탄신참치 2호점",
+  "category": "참치",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "참치 코스 메뉴를 내는 잠실새내의 참치 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 신천동",
+  "sortOrder": 8
+ },
+ {
+  "id": 385,
+  "areaSlug": "jamsil",
+  "name": "큰손닭한마리",
+  "category": "닭요리",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "닭한마리에 칼국수와 볶음밥을 이어 먹는 식사로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 신천동",
+  "sortOrder": 9
+ },
+ {
+  "id": 386,
+  "areaSlug": "jamsil",
+  "name": "지미존스 잠실새내역점",
+  "category": "샌드위치",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "잠실새내역 앞의 샌드위치 가게로 테이크아웃에 적합하다고 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 올림픽로 114 서경빌딩 1층",
+  "sortOrder": 10
+ },
+ {
+  "id": 387,
+  "areaSlug": "jamsil",
+  "name": "세상의모든아침 롯데월드몰점",
+  "category": "브런치",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "롯데월드몰 6층의 브런치 식당입니다. 영업시간은 10:30~22:00로 안내됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 올림픽로 300 롯데월드몰 6층",
+  "sortOrder": 11
+ },
+ {
+  "id": 388,
+  "areaSlug": "jamsil",
+  "name": "크리스탈제이드 롯데 에비뉴엘 월드타워점",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "롯데 에비뉴엘 6층에 있는 중식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 올림픽로 300 롯데 에비뉴엘 6층",
+  "sortOrder": 12
+ },
+ {
+  "id": 389,
+  "areaSlug": "jamsil",
+  "name": "아그라 에비뉴엘 월드타워점",
+  "category": "인도음식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "롯데 에비뉴엘 6층에 있는 인도 음식점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 송파구 올림픽로 300 롯데 에비뉴엘 6층",
+  "sortOrder": 13
+ },
+ {
+  "id": 390,
+  "areaSlug": "hapjeong",
+  "name": "동두천 솥뚜껑 생삼겹살",
+  "category": "삼겹살",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "솥뚜껑에 구워 먹는 생삼겹살집으로, 고기를 한 판부터 주문할 수 있고 냉면도 함께 찾는 곳입니다.",
+  "waitTip": "저녁 시간대 웨이팅이 길다는 후기가 있습니다.",
+  "reservationTip": null,
+  "address": "서울 마포구 양화로6길 39",
+  "sortOrder": 1
+ },
+ {
+  "id": 391,
+  "areaSlug": "hapjeong",
+  "name": "슬로우야드 바베큐",
+  "category": "바비큐",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "참나무로 12시간 이상 훈연한 미국식 바비큐 플래터가 대표 메뉴로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 2
+ },
+ {
+  "id": 392,
+  "areaSlug": "hapjeong",
+  "name": "이리에라멘",
+  "category": "라멘",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "도미로 우린 국물의 시오라멘을 내는 합정 라멘집으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 성지1길 18",
+  "sortOrder": 3
+ },
+ {
+  "id": 393,
+  "areaSlug": "hapjeong",
+  "name": "스시 겐",
+  "category": "스시",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "지라시 스시와 오마카세로 알려진 합정의 일식집으로, 손님 접대용으로 찾는 후기가 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 양화로7길 6-12",
+  "sortOrder": 4
+ },
+ {
+  "id": 394,
+  "areaSlug": "hapjeong",
+  "name": "최강금돈까스",
+  "category": "돈가스",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "등심·안심·상등심 세 부위 돈가스를 내며 안심 돈가스가 인기 메뉴로 알려져 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 5
+ },
+ {
+  "id": 395,
+  "areaSlug": "hapjeong",
+  "name": "미미본관",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "호텔 출신 셰프가 운영하는 중식 포장마차 콘셉트의 가게로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 6
+ },
+ {
+  "id": 396,
+  "areaSlug": "hapjeong",
+  "name": "신야텐야",
+  "category": "텐동",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "합정역 근처의 텐동 전문점으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 7
+ },
+ {
+  "id": 397,
+  "areaSlug": "hapjeong",
+  "name": "어메이징 농카이",
+  "category": "태국음식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "똠얌꿍 등을 내는 합정의 태국 음식점으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 8
+ },
+ {
+  "id": 398,
+  "areaSlug": "hapjeong",
+  "name": "버튼업",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "파스타와 맥주를 함께 즐길 수 있는 곳으로 소개되며 블랙올리브파스타가 언급됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 마포구 토정로 53-9",
+  "sortOrder": 9
+ },
+ {
+  "id": 399,
+  "areaSlug": "hapjeong",
+  "name": "팔로피자",
+  "category": "피자",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "합정역 3번 출구 인근의 나폴리 스타일 피자집으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 10
+ },
+ {
+  "id": 400,
+  "areaSlug": "hapjeong",
+  "name": "도돌곱창전골",
+  "category": "곱창전골",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "곱창전골을 내는 합정의 식당으로, 전용 주차 공간이 없어 대중교통 이용이 권장됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 11
+ },
+ {
+  "id": 401,
+  "areaSlug": "hapjeong",
+  "name": "샤브인서울 합정점",
+  "category": "샤브샤브",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "1등급 흑돼지 목살 샤브정식을 내며 딜라이트스퀘어 지하 2층에 있습니다.",
+  "waitTip": null,
+  "reservationTip": "네이버 예약과 캐치테이블로 예약할 수 있다고 소개됩니다.",
+  "address": null,
+  "sortOrder": 12
+ },
+ {
+  "id": 402,
+  "areaSlug": "yeonhui",
+  "name": "목란",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "이연복 셰프가 운영하는 것으로 알려진 연희동 중식당입니다.",
+  "waitTip": "웨이팅보다 예약이 중요한 곳으로 소개됩니다.",
+  "reservationTip": "방문 한 달 전쯤부터 예약을 서둘러야 한다는 소개가 있습니다. 방문 전 예약 방법을 확인하세요.",
+  "address": null,
+  "sortOrder": 1
+ },
+ {
+  "id": 403,
+  "areaSlug": "yeonhui",
+  "name": "이화원",
+  "category": "중식",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "오향만두로 입소문 난 연희동 중식당으로, 주문 즉시 조리한다고 소개됩니다.",
+  "waitTip": "매장이 작고 포장 손님도 많은 편이라는 소개가 있습니다.",
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 2
+ },
+ {
+  "id": 404,
+  "areaSlug": "yeonhui",
+  "name": "연희미식",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "바지락볶음과 계란볶음밥이 인기 메뉴로 언급되는 가게입니다.",
+  "waitTip": "웨이팅이 긴 편이라는 후기가 있습니다.",
+  "reservationTip": null,
+  "address": "서울 서대문구 연희맛로 22",
+  "sortOrder": 3
+ },
+ {
+  "id": 405,
+  "areaSlug": "yeonhui",
+  "name": "시오",
+  "category": "덮밥",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "닭다리를 올린 덮밥 등을 내는 연희동 일식집으로 소개되며 크림치즈 고로케가 사이드로 언급됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 서대문구 연희로11가길 23",
+  "sortOrder": 4
+ },
+ {
+  "id": 406,
+  "areaSlug": "yeonhui",
+  "name": "크크레스토랑",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "오일 베이스 생고등어 파스타로 알려진 연희동 이탈리안 레스토랑입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 5
+ },
+ {
+  "id": 407,
+  "areaSlug": "yeonhui",
+  "name": "에노테카오토",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "생면 파스타로 알려진 이탈리안 가게로 아란치니와 가지구이 등이 메뉴에 있습니다.",
+  "waitTip": null,
+  "reservationTip": "예약 방법은 확인되지 않았습니다. 영업일과 브레이크타임은 출처마다 달라 방문 전 확인이 필요합니다.",
+  "address": "서울 서대문구 연희맛로 17-18 지하 1층",
+  "sortOrder": 6
+ },
+ {
+  "id": 408,
+  "areaSlug": "yeonhui",
+  "name": "센트그릴",
+  "category": "바비큐",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "2인용 포크 플래터 등 바비큐 플래터가 주력인 가게입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 서대문구 연희로 89-3 지하 1층",
+  "sortOrder": 7
+ },
+ {
+  "id": 409,
+  "areaSlug": "yeonhui",
+  "name": "이품",
+  "category": "중식",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "군만두와 삼선짬뽕, 탕수육 등이 언급되는 연희동 중국집입니다.",
+  "waitTip": null,
+  "reservationTip": "휴무일이 출처마다 달라 방문 전 전화 확인이 필요합니다.",
+  "address": "서울 서대문구 연희로11길 20",
+  "sortOrder": 8
+ },
+ {
+  "id": 410,
+  "areaSlug": "yeonhui",
+  "name": "진보",
+  "category": "중식",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "양장피와 짜장면이 대표 메뉴로 꼽히는 연희동 중식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 서대문구 연희동 189-10",
+  "sortOrder": 9
+ },
+ {
+  "id": 411,
+  "areaSlug": "yeonhui",
+  "name": "연희동칼국수 본점",
+  "category": "칼국수",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "사골 국물 베이스의 칼국수를 내는 가게로 소개됩니다.",
+  "waitTip": "주말에는 대기가 긴 편이라는 후기가 있습니다.",
+  "reservationTip": null,
+  "address": "서울 서대문구 연희맛로 37",
+  "sortOrder": 10
+ },
+ {
+  "id": 412,
+  "areaSlug": "yeonhui",
+  "name": "연희동 양꼬치",
+  "category": "양꼬치",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "양꼬치를 내는 연희동 가게로, 고기 맛을 칭찬하는 후기가 있습니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 서대문구 연희로 81-5",
+  "sortOrder": 11
+ },
+ {
+  "id": 413,
+  "areaSlug": "yongsan",
+  "name": "몽탄",
+  "category": "우대갈비",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "짚불로 구운 우대갈비와 양파김치볶음밥이 대표로 소개되며 직원이 구워 줍니다.",
+  "waitTip": "오픈 전부터 줄이 길어 현장 등록이 일찍 마감된다는 후기가 있습니다.",
+  "reservationTip": "웨이팅 시스템과 사전 예약이 있다고 소개됩니다. 방식은 방문 전 확인하세요.",
+  "address": "서울 용산구 백범로99길 50",
+  "sortOrder": 1
+ },
+ {
+  "id": 414,
+  "areaSlug": "yongsan",
+  "name": "파차마마",
+  "category": "페루음식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "용산 삼각지의 페루 음식점으로 알려져 있습니다.",
+  "waitTip": "웨이팅이 매우 길다는 후기가 있습니다.",
+  "reservationTip": null,
+  "address": "서울 용산구 한강대로62다길 9",
+  "sortOrder": 2
+ },
+ {
+  "id": 415,
+  "areaSlug": "yongsan",
+  "name": "버뮤다 삼각지",
+  "category": "폭립",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "양이 많은 폭립이 언급되는 곳으로, 공간 방음이 아쉽다는 후기도 있습니다.",
+  "waitTip": "웨이팅 없이 들어갔다는 후기가 있습니다.",
+  "reservationTip": null,
+  "address": "서울 용산구 한강대로52길 19",
+  "sortOrder": 3
+ },
+ {
+  "id": 416,
+  "areaSlug": "yongsan",
+  "name": "남도돼지촌",
+  "category": "삼겹살",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "직원이 고기를 구워 주며 2층 좌석이 많아 회식에 적합하다는 평이 있습니다.",
+  "waitTip": "평일 저녁 현장 캐치테이블로 28분 기다렸다는 후기가 있습니다.",
+  "reservationTip": "캐치테이블 대기 등록을 이용한다는 후기가 있습니다.",
+  "address": "서울 용산구 한강대로40가길 40",
+  "sortOrder": 4
+ },
+ {
+  "id": 417,
+  "areaSlug": "yongsan",
+  "name": "키보",
+  "category": "이자카야",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "서서 마시는 타치노미 콘셉트의 하이볼 술집으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 5
+ },
+ {
+  "id": 418,
+  "areaSlug": "yongsan",
+  "name": "먼치",
+  "category": "다이닝바",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "용리단길에서 구옥을 개조해 연 캐주얼 다이닝 바로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 6
+ },
+ {
+  "id": 419,
+  "areaSlug": "yongsan",
+  "name": "카키바움",
+  "category": "독일음식",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "독일식 홈메이드 디저트와 가정식을 내는 카페 겸 레스토랑입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 7
+ },
+ {
+  "id": 420,
+  "areaSlug": "yongsan",
+  "name": "평양집",
+  "category": "곱창",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "1973년부터 영업해 온 노포로 소 곱창과 양 등 특수 부위를 다룹니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 8
+ },
+ {
+  "id": 421,
+  "areaSlug": "yongsan",
+  "name": "풍성집",
+  "category": "차돌박이",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "두툼하게 썬 차돌박이 구이로 알려진 삼각지 노포입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 용산구 한강대로62길 38 1층",
+  "sortOrder": 9
+ },
+ {
+  "id": 422,
+  "areaSlug": "yongsan",
+  "name": "원대구탕",
+  "category": "대구탕",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "삼각지 대구탕 골목에서 알려진 대구탕집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 용산구 한강대로62가길 8 1층",
+  "sortOrder": 10
+ },
+ {
+  "id": 423,
+  "areaSlug": "yongsan",
+  "name": "꺼거",
+  "category": "홍콩식중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "효뜨·남박을 낸 셰프가 운영하는 홍콩식 중식당으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 11
+ },
+ {
+  "id": 424,
+  "areaSlug": "yongsan",
+  "name": "효뜨",
+  "category": "쌀국수",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "야외 테라스 브런치로도 알려진 베트남 음식점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 12
+ },
+ {
+  "id": 425,
+  "areaSlug": "yeonhui",
+  "name": "그로어스",
+  "category": "브런치",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "주택을 개조한 브런치 카페로 소개된 곳입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": null,
+  "sortOrder": 12
+ },
+ {
+  "id": 426,
+  "areaSlug": "mullae",
+  "name": "은진포차",
+  "category": "해산물",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "병어조림이 대표 메뉴로 알려진 문래동 해산물 포차입니다.",
+  "waitTip": "손님이 끊이지 않는 동네 터줏대감이라는 소개가 있습니다. 저녁에는 대기가 생길 수 있습니다.",
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 1
+ },
+ {
+  "id": 427,
+  "areaSlug": "mullae",
+  "name": "월화갈비 문래본점",
+  "category": "돼지갈비",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "돼지직화구이와 마늘양념갈비, 육회비빔쫄면 등을 내는 돼지갈비집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 2
+ },
+ {
+  "id": 428,
+  "areaSlug": "mullae",
+  "name": "몽밀",
+  "category": "덮밥",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "성게알 덮밥으로 알려진 곳으로 노출 콘크리트 인테리어가 특징입니다.",
+  "waitTip": "줄을 서서 먹는 곳으로 소개되며 브레이크타임이 있다고 알려져 있습니다.",
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 3
+ },
+ {
+  "id": 429,
+  "areaSlug": "mullae",
+  "name": "곱 문래본점",
+  "category": "곱창",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "문래 먹자골목에 있는 곱창 전문점입니다.",
+  "waitTip": "평일·주말 모두 웨이팅이 있는 편이라 오픈 시간에 맞춰 가라는 소개가 있습니다.",
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 4
+ },
+ {
+  "id": 430,
+  "areaSlug": "mullae",
+  "name": "오복순대국",
+  "category": "순대국",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "아바이순대국이 대표 메뉴인 순대국 전문점입니다.",
+  "waitTip": "점심시간에 줄이 이어진다는 소개가 있습니다.",
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 5
+ },
+ {
+  "id": 431,
+  "areaSlug": "mullae",
+  "name": "송죽장",
+  "category": "짬뽕",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "고추짬뽕과 짜장면으로 알려진 중식 노포입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 6
+ },
+ {
+  "id": 432,
+  "areaSlug": "mullae",
+  "name": "신룽푸마라탕 문래점",
+  "category": "마라탕",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "마라탕, 마라반, 마라샹궈와 꿔바로우를 파는 마라 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 7
+ },
+ {
+  "id": 433,
+  "areaSlug": "mullae",
+  "name": "영일분식",
+  "category": "칼국수",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "비빔칼국수로 알려진 문래동 분식집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 8
+ },
+ {
+  "id": 434,
+  "areaSlug": "mullae",
+  "name": "매일낙지",
+  "category": "낙지볶음",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "1979년 개업했다고 알려진 불낙지 단일 메뉴 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 9
+ },
+ {
+  "id": 435,
+  "areaSlug": "mullae",
+  "name": "통통",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "크리스피 탕수육 등 현대적인 중식을 내는 곳입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 10
+ },
+ {
+  "id": 436,
+  "areaSlug": "mullae",
+  "name": "골목오리집",
+  "category": "오리요리",
+  "situations": [
+   "팀 회식"
+  ],
+  "summary": "오리주물럭과 오리불고기를 내는 오리요리집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 11
+ },
+ {
+  "id": 437,
+  "areaSlug": "mullae",
+  "name": "양키스버거앤피자",
+  "category": "햄버거",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "수제 버거와 피자를 파는 문래동 버거집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 12
+ },
+ {
+  "id": 438,
+  "areaSlug": "mullae",
+  "name": "올드문래",
+  "category": "수제맥주",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "분위기가 좋다고 소개된 문래동 수제맥주집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 문래동",
+  "sortOrder": 13
+ },
+ {
+  "id": 439,
+  "areaSlug": "yeouido",
+  "name": "정인면옥 본점",
+  "category": "평양냉면",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "담백한 육수와 메밀면의 평양냉면으로 알려진 여의도 노포입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 여의도동",
+  "sortOrder": 1
+ },
+ {
+  "id": 440,
+  "areaSlug": "yeouido",
+  "name": "타마",
+  "category": "장어덮밥",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "민물장어를 직접 손질해 잔가시 없이 낸다는 장어덮밥 전문점입니다.",
+  "waitTip": "점심에 붐빌 수 있어 브레이크타임과 일요일 휴무를 확인하세요.",
+  "reservationTip": null,
+  "address": "서울 영등포구 여의도동",
+  "sortOrder": 2
+ },
+ {
+  "id": 441,
+  "areaSlug": "yeouido",
+  "name": "서궁",
+  "category": "중식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "오향장육과 소고기 군만두가 추천 메뉴로 소개되는 정통 중화요리집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 여의도동",
+  "sortOrder": 3
+ },
+ {
+  "id": 442,
+  "areaSlug": "yeouido",
+  "name": "오한수우육면가",
+  "category": "우육면",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "홍콩식 우육면을 내는 곳입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 여의도동",
+  "sortOrder": 4
+ },
+ {
+  "id": 443,
+  "areaSlug": "yeouido",
+  "name": "파낙스",
+  "category": "삼계탕",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "샛강역 근처에서 40년 가까이 삼계탕을 이어왔다고 알려진 곳입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 여의도동",
+  "sortOrder": 5
+ },
+ {
+  "id": 444,
+  "areaSlug": "yeouido",
+  "name": "상은북어국",
+  "category": "북엇국",
+  "situations": [
+   "혼밥"
+  ],
+  "summary": "개업 40년이 넘은 노포로 북엇국이 대표 메뉴로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 여의도동",
+  "sortOrder": 6
+ },
+ {
+  "id": 445,
+  "areaSlug": "yeouido",
+  "name": "미미옥 여의도점",
+  "category": "샤브샤브",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "1++ 한우 등심 샤브와 한우 육회를 내는 IFC몰 샤브샤브 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 국제금융로 10 IFC몰",
+  "sortOrder": 7
+ },
+ {
+  "id": 446,
+  "areaSlug": "yeouido",
+  "name": "점보씨푸드 IFC몰점",
+  "category": "칠리크랩",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "싱가포르식 칠리크랩 전문점으로 룸이 있어 모임에도 쓰입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 국제금융로 10 IFC몰",
+  "sortOrder": 8
+ },
+ {
+  "id": 447,
+  "areaSlug": "yeouido",
+  "name": "콘타이 IFC몰점",
+  "category": "태국음식",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "쏨땀, 그린커리, 푸팟퐁커리, 해물쌀국수 등을 파는 태국 음식점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 국제금융로 10 IFC몰",
+  "sortOrder": 9
+ },
+ {
+  "id": 448,
+  "areaSlug": "yeouido",
+  "name": "온더보더 여의도IFC점",
+  "category": "멕시칸",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "과카몰리와 치킨퀘사디아가 대표 메뉴로 꼽히는 멕시칸 캐주얼 다이닝입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 국제금융로 10 IFC몰",
+  "sortOrder": 10
+ },
+ {
+  "id": 449,
+  "areaSlug": "yeouido",
+  "name": "훠궈야 IFC몰점",
+  "category": "훠궈",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "점심 가성비로 소개되는 IFC몰 훠궈 전문점입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 국제금융로 10 IFC몰",
+  "sortOrder": 11
+ },
+ {
+  "id": 450,
+  "areaSlug": "yeouido",
+  "name": "온드린 더현대서울",
+  "category": "한정식",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "더현대 서울에 있는 한정식집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "서울 영등포구 여의대로 108 더현대 서울",
+  "sortOrder": 12
+ },
+ {
+  "id": 451,
+  "areaSlug": "haenggung",
+  "name": "운멜로랩",
+  "category": "양식",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "감성과 분위기로 입소문 난 레스토랑입니다.",
+  "waitTip": "라스트오더는 21:30으로 소개됩니다.",
+  "reservationTip": null,
+  "address": "경기 수원시 팔달구 행궁동",
+  "sortOrder": 1
+ },
+ {
+  "id": 452,
+  "areaSlug": "haenggung",
+  "name": "호미스",
+  "category": "양식",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "옥수수 트러플 뇨끼가 대표 메뉴로 소개되는 2층 레스토랑입니다.",
+  "waitTip": "매주 월요일 휴무로 소개됩니다.",
+  "reservationTip": null,
+  "address": "경기 수원시 팔달구 신풍로 52 2층",
+  "sortOrder": 2
+ },
+ {
+  "id": 453,
+  "areaSlug": "haenggung",
+  "name": "버거스테이지",
+  "category": "햄버거",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "한옥을 개조한 외관에 네온사인 내부가 특징인 수제버거집입니다.",
+  "waitTip": "화요일 정기휴무로 소개됩니다.",
+  "reservationTip": null,
+  "address": "경기 수원시 팔달구 행궁동",
+  "sortOrder": 3
+ },
+ {
+  "id": 454,
+  "areaSlug": "haenggung",
+  "name": "태리주택 행궁",
+  "category": "양식",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "유럽풍 분위기를 내세우는 양식 레스토랑입니다.",
+  "waitTip": null,
+  "reservationTip": "캐치테이블에서 예약 페이지가 확인됩니다.",
+  "address": "경기 수원시 팔달구 행궁동",
+  "sortOrder": 4
+ },
+ {
+  "id": 455,
+  "areaSlug": "haenggung",
+  "name": "존앤진피자펍",
+  "category": "피자",
+  "situations": [
+   "데이트",
+   "팀 회식"
+  ],
+  "summary": "구옥을 개조한 공간에서 뉴욕식 피자를 파는 피자펍입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 수원시 팔달구 정조로",
+  "sortOrder": 5
+ },
+ {
+  "id": 456,
+  "areaSlug": "haenggung",
+  "name": "노체부엌 행궁점",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "카펠리니 육회 파스타가 대표 메뉴로 꼽히는 저녁 데이트 식당입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 수원시 팔달구 화서문로45번길 21",
+  "sortOrder": 6
+ },
+ {
+  "id": 457,
+  "areaSlug": "haenggung",
+  "name": "로우파이브 행궁동",
+  "category": "양식",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "라자냐가 평이 좋은 양식집입니다.",
+  "waitTip": "웨이팅이 긴 편이라는 후기가 있습니다.",
+  "reservationTip": null,
+  "address": "경기 수원시 팔달구 행궁동",
+  "sortOrder": 7
+ },
+ {
+  "id": 458,
+  "areaSlug": "haenggung",
+  "name": "진미통닭 수원",
+  "category": "통닭",
+  "situations": [
+   "혼밥",
+   "팀 회식"
+  ],
+  "summary": "후라이드 통닭이 대표 메뉴인 행궁동 통닭집입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 수원시 팔달구 행궁동",
+  "sortOrder": 8
+ },
+ {
+  "id": 459,
+  "areaSlug": "haenggung",
+  "name": "테이스팅뮤지엄 행궁동",
+  "category": "파스타",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "한옥 실내와 마당에서 파스타와 홍게장리조또를 내는 곳입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 수원시 팔달구 행궁동",
+  "sortOrder": 9
+ },
+ {
+  "id": 460,
+  "areaSlug": "haenggung",
+  "name": "미가공 수원행궁동본점",
+  "category": "덮밥",
+  "situations": [
+   "데이트",
+   "혼밥"
+  ],
+  "summary": "전복볶음밥 등 점심 메뉴를 내는 곳입니다.",
+  "waitTip": null,
+  "reservationTip": null,
+  "address": "경기 수원시 팔달구 행궁동",
+  "sortOrder": 10
+ },
+ {
+  "id": 461,
+  "areaSlug": "haenggung",
+  "name": "더유로피언 행궁본점",
+  "category": "피자",
+  "situations": [
+   "데이트"
+  ],
+  "summary": "신라호텔 셰프 출신이 만드는 화덕피자가 특징으로 소개됩니다.",
+  "waitTip": null,
+  "reservationTip": "캐치테이블에서 예약 가능한 곳으로 알려져 있습니다.",
+  "address": "경기 수원시 팔달구 행궁동",
+  "sortOrder": 11
  }
 ]

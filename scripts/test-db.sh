@@ -25,4 +25,10 @@ PSQL="psql -h $DIR -p $PORT -U postgres -d postgres -q -v ON_ERROR_STOP=1"
 RUN "$PSQL -f $ROOT/supabase/tests/stub.sql"
 RUN "$PSQL -f $ROOT/supabase/migrations/20261020000000_init.sql"
 RUN "$PSQL -f $ROOT/supabase/seed.sql"
+# 이미 시드를 올린 DB에 다시 실행해도 안전해야 한다(가게 수가 늘지 않고 오류도 없다)
+BEFORE=$($PSQL -t -A -c "select count(*) from public.places")
+RUN "$PSQL -f $ROOT/supabase/seed.sql"
+AFTER=$($PSQL -t -A -c "select count(*) from public.places")
+[ "$BEFORE" = "$AFTER" ] || { echo "시드를 두 번 실행하자 가게 수가 달라졌습니다: $BEFORE -> $AFTER"; exit 1; }
+echo "시드 재실행 확인: 가게 $AFTER곳, 동네 $($PSQL -t -A -c 'select count(*) from public.areas')개"
 RUN "$PSQL -f $ROOT/supabase/tests/rls.sql"
