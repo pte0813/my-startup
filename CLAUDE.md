@@ -49,6 +49,10 @@ outputs/                 프로토타입·산출물
 - 신뢰 장치는 모든 화면에서 지킨다: 후기 없으면 "검증 전", 90일 초과 시 "검증 N일 전", 협찬 후기는 반드시 표기.
 - 외부 서비스(리뷰·사진)의 내용을 가져와 저장하지 않는다. 링크로만 연결한다. 사진은 직접 올린 것만 쓴다.
 
+## PWA
+- `apps/web/public/sw.js`는 `/offline`과 정적 파일(`/_next/static/`, `/icons/`)만 캐시한다. HTML·개인 데이터는 캐시하지 않는다. 캐시 구조를 바꾸면 `VERSION`을 올린다.
+- 아이콘은 `node scripts/build-icons.mjs`로 마스코트에서 다시 만든다.
+
 ## 알려진 제약
 - 이 실행 환경에서는 Supabase·Vercel 접속이 막혀 있다. 쓰기 기능(로그인, 후기·가게·사진·찜)은 가짜 Supabase(`scripts/mock-supabase.mjs`)로 앱 코드와 API의 맞물림을, 로컬 Postgres(`scripts/test-db.sh`)로 접근 규칙을 시험했다. **실제 Supabase 와의 연결은 아직 시험하지 못했다.** 접속이 열리면 가장 먼저 로그인 메일, 후기 저장, 사진 업로드를 실제로 확인한다.
 - 로그인 상태·권한은 서버에서 `getSession()`(인증 서버 확인)으로만 믿는다. 이 함수와 서버 액션은 요청 시점 데이터라 화면에서는 `<Suspense>` 안에서 부르고 앞에 `await connection()`을 둔다.

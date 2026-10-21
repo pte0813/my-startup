@@ -128,6 +128,21 @@ await step("로그인 링크 콜백은 잘못된 코드를 안전하게 처리�
   assert.match(res.headers()["location"], /\/login\?error=link$/);
 });
 
+await step("PWA: 매니페스트·아이콘·서비스 워커·오프라인 화면", async () => {
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const manifest = await (await page.request.get(`${BASE}/manifest.webmanifest`)).json();
+  assert.equal(manifest.display, "standalone");
+  for (const icon of manifest.icons) assert.equal((await page.request.get(BASE + icon.src)).status(), 200, icon.src);
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await page.reload({ waitUntil: "networkidle" });
+  assert.equal(await page.evaluate(() => !!navigator.serviceWorker.controller), true);
+  await page.context().setOffline(true);
+  await page.goto(`${BASE}/list`).catch(() => {});
+  await page.getByRole("heading", { name: /인터넷에 연결되어 있지 않아요/ }).waitFor();
+  await page.context().setOffline(false);
+  problems.splice(0, problems.length, ...problems.filter((m) => !m.includes("ERR_INTERNET_DISCONNECTED"))); // 일부러 끊은 연결의 오류는 제외
+});
+
 await browser.close();
 console.log("4xx/5xx 응답:", failed);
 assert.deepEqual(problems, [], `브라우저 오류: ${problems.join(" | ")}`);
