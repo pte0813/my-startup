@@ -185,6 +185,75 @@
     if (msg) { msg.hidden = false; setTimeout(() => { msg.hidden = true; }, 2000); }
   }
 
+  /* ---- 재만남: 지난 여행에서 다시 만나고 싶은 사람 고르기 (서로 골랐을 때만 성사) ---- */
+  const reState = {}; // 여행 id → { status, data, suggest: { [applicationId]: {status, data} } }
+  async function reCall(payload) {
+    const { data } = await authClient.auth.getSession();
+    const token = data && data.session && data.session.access_token;
+    if (!token) return { status: 401, body: null };
+    try {
+      const res = await fetch('/api/reunion', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ ...payload, lang: currentLang }) });
+      let body = null;
+      try { body = await res.json(); } catch (e) { /* 서버 함수가 없는 환경 */ }
+      return { status: res.status, body };
+    } catch (e) { return { status: 0, body: null }; }
+  }
+  function reHtml(id) {
+    const st = reState[id];
+    if (!st || st.open === false) return '';
+    if (st.status === 'loading') return `<p class="note">${esc(T('re_loading'))}</p>`;
+    if (st.status === 'off') return `<p class="note">${esc(T('re_off'))}</p>`;
+    if (st.status === 'error') return `<p class="note">${esc(T('re_err'))}</p>`;
+    const d = st.data;
+    const intro = `<p class="note">${esc(T('re_desc', { n: d.max_picks }))}</p>`;
+    if (!d.candidates.length) return intro + `<p class="note">${esc(T('re_empty'))}</p>`;
+    const rows = d.candidates.map((c) => {
+      const sg = (st.suggest || {})[c.application_id];
+      let extra = '';
+      if (c.matched) {
+        extra = `<span class="pill">${esc(T('re_matched'))}</span><button class="btn ghost small" type="button" data-re-suggest="${esc(id)}" data-app="${esc(c.application_id)}">${esc(T('re_suggest'))}</button>`;
+        if (sg && sg.status === 'loading') extra += `<p class="note">${esc(T('re_suggest_loading'))}</p>`;
+        else if (sg && sg.status === 'done') {
+          const trips = sg.data.trips || [];
+          extra += trips.length
+            ? `<p class="re-sug">${esc(sg.data.text || '')}</p><ul class="re-trips">${trips.map((x) => `<li>${esc(x.title)}${x.location ? ` · ${esc(x.location)}` : ''}</li>`).join('')}</ul><a class="btn small" href="trips.html#trip-open">${esc(T('re_suggest_go'))}</a>`
+            : `<p class="note">${esc(T('re_suggest_none'))}</p>`;
+        } else if (sg) extra += `<p class="note">${esc(T('re_err'))}</p>`;
+      }
+      return `<li class="re-row${c.matched ? ' matched' : ''}"><div class="re-main"><strong>${esc(c.name)}</strong><button class="btn small${c.picked ? '' : ' ghost'}" type="button" data-re-toggle="${esc(id)}" data-app="${esc(c.application_id)}" data-picked="${c.picked ? 1 : 0}" aria-pressed="${c.picked}">${esc(T(c.picked ? 're_picked' : 're_pick'))}</button></div>${extra ? `<div class="re-extra">${extra}</div>` : ''}</li>`;
+    }).join('');
+    return intro + `<ul class="re-list">${rows}</ul>`;
+  }
+  function reBlock(id) {
+    return `<button class="btn ghost re-btn" type="button" data-re="${esc(id)}">${esc(T('re_btn'))}</button><div class="ai-panel" data-re-panel="${esc(id)}" aria-live="polite">${reHtml(id)}</div>`;
+  }
+  function paintRe(id) { const el = document.querySelector(`[data-re-panel="${id}"]`); if (el) el.innerHTML = reHtml(id); }
+  function reApply(id, r) {
+    if (r.status === 200 && r.body && r.body.candidates) reState[id] = { ...(reState[id] || {}), status: 'done', data: r.body };
+    else if (r.status === 409 && r.body && r.body.error === 'too_many_picks') { const m = $('#trip-msg'); setMsg(m, null); if (m) { m.textContent = T('re_limit', { n: r.body.max }); m.className = 'fmsg err'; } }
+    else if (r.status === 503 || r.status === 405 || (r.status === 404 && !r.body)) reState[id] = { status: 'off' };
+    else reState[id] = { ...(reState[id] || {}), status: reState[id] && reState[id].data ? 'done' : 'error' };
+    paintRe(id);
+  }
+  async function loadRe(id, btn) {
+    const open = reState[id] && reState[id].open;
+    if (open) { reState[id].open = false; const el = document.querySelector(`[data-re-panel="${id}"]`); if (el) el.innerHTML = ''; return; }
+    reState[id] = { status: 'loading', open: true }; paintRe(id); btn.disabled = true;
+    const r = await reCall({ action: 'list', trip_id: id });
+    reState[id].open = true; reApply(id, r); btn.disabled = false;
+  }
+  async function toggleRe(id, appId, picked, btn) {
+    btn.disabled = true;
+    const r = await reCall({ action: picked ? 'unpick' : 'pick', trip_id: id, application_id: appId });
+    reApply(id, r);
+  }
+  async function suggestRe(id, appId, btn) {
+    const st = reState[id]; st.suggest = st.suggest || {}; st.suggest[appId] = { status: 'loading' }; paintRe(id);
+    const r = await reCall({ action: 'suggest', trip_id: id, application_id: appId });
+    st.suggest[appId] = r.status === 200 && r.body ? { status: 'done', data: r.body } : { status: 'error' };
+    paintRe(id);
+  }
+
   function tripCard(t) {
     const n = tripState.counts[t.id] || 0;
     const mine = tripState.mine[t.id];
@@ -212,6 +281,7 @@
         ${btn}
         ${t.status === 'open' && authUser && !(t.capacity && n >= t.capacity) ? aiBlock(t.id) : ''}
         ${t.status === 'open' && authUser && mine && mine !== 'cancelled' ? iceBlock(t.id) : ''}
+        ${t.status === 'past' && authUser && mine && mine !== 'cancelled' ? reBlock(t.id) : ''}
       </div></article>`;
   }
 
@@ -266,6 +336,12 @@
       if (ab) loadAiMatch(ab.dataset.ai, ab);
       const ib = e.target.closest('[data-ice]');
       if (ib) loadIce(ib.dataset.ice, ib);
+      const rb = e.target.closest('[data-re]');
+      if (rb) loadRe(rb.dataset.re, rb);
+      const rt = e.target.closest('[data-re-toggle]');
+      if (rt) toggleRe(rt.dataset.reToggle, rt.dataset.app, rt.dataset.picked === '1', rt);
+      const rs = e.target.closest('[data-re-suggest]');
+      if (rs) suggestRe(rs.dataset.reSuggest, rs.dataset.app, rs);
       const cb = e.target.closest('[data-ice-copy]');
       if (cb) copyIce(cb.dataset.iceCopy);
     });
@@ -278,6 +354,125 @@
   /* ---------------- 후기 ---------------- */
   const rv = { list: [], mine: [], trips: [], loaded: false, failed: false };
 
+  /* ---- 후기 카드: AI가 다듬은 문구 + 사진으로 인스타 공유용 이미지(피드 4:5 · 스토리 9:16)를 브라우저에서 그린다 ---- */
+  const rcState = {}; // 후기 id → { status, data }
+  const CARD_SIZES = { feed: [1080, 1350, 700], story: [1080, 1920, 1150] }; // [가로, 세로, 사진 높이]
+  const NAVY = '#1F3A5F', CORAL = '#FF6B5B', CREAM = '#FFF1D6';
+  function rcLoadImage(src, cors) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      if (cors) img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+  }
+  function rcWrap(ctx, text, maxW, maxLines) {
+    const lines = [];
+    let line = '';
+    const push = (l) => { lines.push(l); line = ''; };
+    for (const word of String(text || '').split(/(\s+)/)) {
+      if (!word) continue;
+      const tryLine = line + word;
+      if (ctx.measureText(tryLine.trim()).width <= maxW) { line = tryLine; continue; }
+      if (line.trim()) push(line.trim());
+      line = '';
+      for (const ch of word.trim() === '' ? '' : word) {
+        if (ctx.measureText((line + ch).trim()).width > maxW && line) push(line.trim());
+        line += ch;
+      }
+    }
+    if (line.trim()) lines.push(line.trim());
+    if (lines.length > maxLines) { lines.length = maxLines; lines[maxLines - 1] = lines[maxLines - 1].replace(/.{0,1}$/, '…'); }
+    return lines;
+  }
+  function rcRoundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  function rcDraw(canvas, kind, d, photo, art) {
+    const [W, H, PH] = CARD_SIZES[kind];
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = CREAM; ctx.fillRect(0, 0, W, H);
+    // 사진(또는 일러스트): 가로를 꽉 채우고 위아래를 잘라 맞춘다
+    const img = photo || art;
+    if (img) {
+      const s = Math.max(W / img.width, PH / img.height), w = img.width * s, h = img.height * s;
+      ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, PH); ctx.clip(); ctx.drawImage(img, (W - w) / 2, (PH - h) / 2, w, h); ctx.restore();
+    }
+    // 위쪽 브랜드 표시
+    ctx.fillStyle = '#fff'; rcRoundRect(ctx, 50, 50, 270, 84, 42); ctx.fill();
+    ctx.fillStyle = NAVY; ctx.beginPath(); ctx.arc(100, 92, 20, 0, 7); ctx.fill();
+    ctx.fillStyle = CORAL; ctx.beginPath(); ctx.arc(128, 92, 20, 0, 7); ctx.fill();
+    ctx.fillStyle = NAVY; ctx.font = '40px Jua, sans-serif'; ctx.textBaseline = 'middle'; ctx.fillText('함께닿', 170, 94);
+    // 아래 흰 카드
+    const y0 = PH - 70, cardH = H - 50 - y0;
+    ctx.fillStyle = '#fff'; rcRoundRect(ctx, 50, y0, W - 100, cardH, 56); ctx.fill();
+    const x = 100, maxW = W - 200;
+    let y = y0 + 80;
+    ctx.textBaseline = 'alphabetic';
+    if (d.trip_title) { ctx.fillStyle = 'rgba(31,58,95,.7)'; ctx.font = '500 34px "Noto Sans KR", sans-serif'; ctx.fillText(rcWrap(ctx, d.trip_title, maxW, 1)[0] || '', x, y); y += 70; }
+    ctx.fillStyle = CORAL; ctx.font = '56px Jua, sans-serif';
+    const r = Math.max(0, Math.min(5, Number(d.rating) || 0));
+    ctx.fillText('★'.repeat(r) + '☆'.repeat(5 - r), x, y); y += 40 + 52;
+    ctx.fillStyle = NAVY; ctx.font = '72px Jua, sans-serif';
+    for (const l of rcWrap(ctx, d.headline, maxW, 2)) { ctx.fillText(l, x, y); y += 84; }
+    y += 6; ctx.fillStyle = 'rgba(31,58,95,.85)'; ctx.font = '700 50px Gaegu, "Noto Sans KR", sans-serif';
+    for (const l of rcWrap(ctx, d.caption, maxW, kind === 'story' ? 5 : 3)) { ctx.fillText(l, x, y); y += 64; }
+    const tags = (d.hashtags || []).map((h) => '#' + h).join('  ');
+    ctx.fillStyle = CORAL; ctx.font = '40px Jua, sans-serif';
+    ctx.fillText(rcWrap(ctx, tags, maxW, 1)[0] || '', x, H - 50 - 56);
+  }
+  async function rcPaint(id) {
+    const st = rcState[id];
+    const box = document.querySelector(`[data-rc-panel="${id}"]`);
+    if (!box) return;
+    if (!st) { box.innerHTML = ''; return; }
+    if (st.status === 'loading') { box.innerHTML = `<p class="note">${esc(T('rc_loading'))}</p>`; return; }
+    if (st.status === 'off') { box.innerHTML = `<p class="note">${esc(T('ai_unavailable'))}</p>`; return; }
+    if (st.status === 'error') { box.innerHTML = `<p class="note">${esc(T('rc_err'))}</p>`; return; }
+    const d = st.data;
+    const note = d.ai ? '' : `<p class="note">${esc(d.limited ? T('rc_limit') : T('rc_basic'))}</p>`;
+    box.innerHTML = `${note}<div class="rc-cards">${['feed', 'story'].map((k) => `<figure><canvas data-rc-canvas="${k}" role="img" aria-label="${esc(d.headline)}"></canvas><figcaption>${esc(T('rc_' + k))}</figcaption><button class="btn small" type="button" data-rc-dl="${esc(id)}" data-kind="${k}">${esc(T('rc_download'))}</button></figure>`).join('')}</div><p class="note">${esc(T('rc_share_tip'))}</p>`;
+    try { await Promise.all(['72px Jua', '700 50px Gaegu', '500 34px "Noto Sans KR"'].map((f) => document.fonts.load(f, '함께닿'))); } catch (e) { /* 글꼴을 못 불러와도 기본 글꼴로 그린다 */ }
+    const review = rv.mine.find((x) => x.id === id) || {};
+    const photoUrl = (review.photo_urls || []).find((u) => safeUrl(u) && u.startsWith(APP_CONFIG.url));
+    const photo = photoUrl ? await rcLoadImage(photoUrl, true) : null;
+    const trip = rv.trips.find((x) => x.id === review.trip_id) || {};
+    const art = await rcLoadImage(`art/cover-${coverKind({ id: review.trip_id, title: trip.title, location: trip.location })}.svg`, false);
+    if (rcState[id] !== st) return; // 그리는 동안 상태가 바뀌었으면 중단
+    box.querySelectorAll('canvas').forEach((c) => rcDraw(c, c.dataset.rcCanvas, d, photo, art));
+  }
+  async function makeCard(id, btn) {
+    rcState[id] = { status: 'loading' }; rcPaint(id); btn.disabled = true;
+    try {
+      const { data } = await authClient.auth.getSession();
+      const token = data && data.session && data.session.access_token;
+      if (!token) { rcState[id] = { status: 'error' }; return; }
+      const res = await fetch('/api/ai-review-card', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ review_id: id, lang: currentLang }) });
+      let body = null;
+      try { body = await res.json(); } catch (e) { /* 서버 함수가 없는 환경 */ }
+      if (res.status === 503 || res.status === 405 || (res.status === 404 && !body)) rcState[id] = { status: 'off' };
+      else if (!res.ok || !body || !body.headline) rcState[id] = { status: 'error' };
+      else rcState[id] = { status: 'done', data: body };
+    } catch (e) {
+      rcState[id] = { status: 'off' };
+    } finally {
+      btn.disabled = false; rcPaint(id);
+    }
+  }
+  function downloadCard(id, kind) {
+    const c = document.querySelector(`[data-rc-panel="${id}"] canvas[data-rc-canvas="${kind}"]`);
+    if (!c) return;
+    c.toBlob((blob) => {
+      if (!blob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = `hamkkedat-review-${kind}.png`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }, 'image/png');
+  }
+
   function reviewCard(r, mine) {
     const photos = (r.photo_urls || []).filter((u) => safeUrl(u) && u.startsWith(APP_CONFIG.url))
       .map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="" loading="lazy"></a>`).join('');
@@ -287,7 +482,8 @@
       ${tripTitle ? `<p class="trip-meta">${esc(tripTitle)}</p>` : ''}
       <p class="review-body">${esc(r.body)}</p>
       ${photos ? `<div class="review-photos">${photos}</div>` : ''}
-      <time datetime="${esc(r.created_at)}">${esc(fmtDate(r.created_at))}</time></article>`;
+      <time datetime="${esc(r.created_at)}">${esc(fmtDate(r.created_at))}</time>
+      ${mine ? `<button class="btn ghost small rc-btn" type="button" data-rc="${esc(r.id)}">${esc(T('rc_btn'))}</button><div class="rc-panel" data-rc-panel="${esc(r.id)}" aria-live="polite"></div>` : ''}</article>`;
   }
 
   function renderReviews() {
@@ -303,13 +499,14 @@
     const sel = $('#rv-trip'), keep = sel.value;
     sel.innerHTML = `<option value="">${esc(T('rv_trip_none'))}</option>` + rv.trips.map((t) => `<option value="${esc(t.id)}">${esc(t.title)}</option>`).join('');
     sel.value = keep;
+    Object.keys(rcState).forEach(rcPaint);
   }
 
   async function loadReviews() {
     try {
       const [a, tr_] = await Promise.all([
         authClient.from('reviews').select('*').eq('approved', true).order('created_at', { ascending: false }).limit(30),
-        authClient.from('trips').select('id,title')
+        authClient.from('trips').select('id,title,location')
       ]);
       if (a.error) throw a.error;
       rv.list = a.data || []; rv.trips = tr_.data || [];
@@ -355,6 +552,12 @@
   function initReviews() {
     if (!$('#review-list')) return;
     $('#rv-form').addEventListener('submit', submitReview);
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-rc]');
+      if (b) makeCard(b.dataset.rc, b);
+      const dl = e.target.closest('[data-rc-dl]');
+      if (dl) downloadCard(dl.dataset.rcDl, dl.dataset.kind);
+    });
     $('#review-list').innerHTML = `<p class="note">${esc(T('loading'))}</p>`;
     if (!authClient) { rv.loaded = true; rv.failed = true; renderReviews(); return; }
     loadReviews();

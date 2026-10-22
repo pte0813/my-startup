@@ -30,3 +30,17 @@ create table if not exists public.ai_icebreakers (
 );
 alter table public.ai_icebreakers enable row level security;
 revoke all on public.ai_icebreakers from anon, authenticated;
+
+-- 3단계 재만남: 지난 여행 참가자끼리 "다시 만나고 싶은 사람" 선택 (서버 함수 /api/reunion만 읽고 쓴다)
+create table if not exists public.reunion_picks (
+  id         uuid primary key default gen_random_uuid(),
+  trip_id    uuid not null references public.trips (id) on delete cascade,
+  from_user  uuid not null references auth.users (id) on delete cascade,
+  to_user    uuid not null references auth.users (id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique (trip_id, from_user, to_user),
+  check (from_user <> to_user)
+);
+create index if not exists reunion_picks_to on public.reunion_picks (trip_id, to_user);
+alter table public.reunion_picks enable row level security;
+revoke all on public.reunion_picks from anon, authenticated;
