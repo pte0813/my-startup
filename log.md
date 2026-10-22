@@ -11,3 +11,4 @@
 | 2026-10-22 | 사전신청 랜딩페이지(문제→해결→혜택→신청) 제작, 중복 이메일 차단·동의 문구 포함 | outputs/landing/index.html·build.py 작성, signups.sql에 중복 방지 추가 (Supabase 실연결은 샌드박스 제한으로 미확인) |
 | 2026-10-22 | 랜딩페이지 Vercel 배포 | hamkkedat-landing 프로젝트로 배포(production), 헤더 로고를 인라인으로 변경, 공개 접근 최종 확인은 미완료 |
 | 2026-10-22 | 신청 시 Resend 확인 메일 발송(테스트 발신 주소, 테스트는 내 메일) | outputs/landing/api/signup.js·dev.js 작성, 페이지는 /api/signup 호출로 변경, 모의 테스트 통과·테스트 메일 1통 발송, Vercel 환경변수 설정 후 재배포 필요 |
+| 2026-10-22 | 회사 홈페이지 outputs/homepage 제작(소개·서비스·팀·FAQ·문의, 메뉴, 사전신청 버튼), 팀·FAQ·문의는 공백 | 메뉴·모바일 햄버거·버튼 링크(hamkkedat-landing.vercel.app) 구현, 소개·서비스는 idea-brief 내용, 배포는 미진행 |
