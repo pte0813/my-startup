@@ -21,3 +21,4 @@
 | 2026-10-22 | 홈페이지 2단계: 여행 목록·신청, 문의(+접수 메일), 상품 제안, 후기(승인 후 공개·사진), 내 신청 내역 | Supabase에 trips·trip_applications·inquiries·suggestions·reviews 표와 사진 저장소 적용(outputs/homepage-schema.sql), 권한 시험·화면 시험 통과, 정원 초과 DB 차단은 선택 SQL로 남김, 참고 링크(하나투어)는 접속 불가로 미확인, 배포는 미진행 |
 | 2026-10-22 | 홈페이지 3단계: 나이스페이먼츠 결제 기능(테스트 키 없이 기능만) | payments 표 적용, 서버 함수 3개(pay-prepare·pay-return·_lib)와 결제창 연동 pay.js 작성, 나이스 공식 매뉴얼 기준(서버 승인·서명 검증·망취소), 가짜 서버로 시험 통과, 실제 결제는 테스트 키·service_role 키 필요 |
 | 2026-10-22 | 홈페이지 Vercel 배포 | https://hamkkedat-homepage.vercel.app 배포 완료(READY, 정적 파일·서버 함수 3개 확인). 단, 공유 이미지(og-image.png)는 올리는 중 깨져 원본과 다름 → 대시보드/CLI/Git 연동으로 재업로드 필요. 환경변수(service_role·나이스·Resend 키)는 직접 등록 필요 |
+| 2026-10-22 | 홈페이지 UI/UX 개선 1단계: 페이지별 공유 이미지 | 페이지마다 다른 공유 이미지 5종(og-image·trips·reviews·community·contact, 브랜드 색·글꼴) 생성(og.py), build.py가 페이지별로 연결, 배포는 미진행(이미지 업로드 필요) |

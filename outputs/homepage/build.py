@@ -64,6 +64,7 @@ for page, group in PAGES.items():
         .replace("{{DESC}}", ko[f"d_{page}"])
         .replace("{{PAGE}}", page)
         .replace("{{URL}}", SITE_URL + ("/" if page == "index" else f"/{page}.html"))
+        .replace("{{OG}}", "og-image.png" if page == "index" else f"og-{page}.png")
         .replace("{{SITE_URL}}", SITE_URL)
     )
     (out / f"{page}.html").write_text(html, encoding="utf-8")
