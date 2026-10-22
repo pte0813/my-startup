@@ -3,9 +3,23 @@
   "name_en": "Hamkkedat",
   "slogan": "혼자 떠나도, 마음은 닿는다",
   "colors": {
-    "primary": { "name": "닿는 코랄", "hex": "#FF6B5B" },
-    "secondary": { "name": "깊은 바다 남색", "hex": "#1F3A5F" },
-    "accent": { "name": "햇살 크림", "hex": "#FFF1D6" }
+    "primary": {
+      "name": "닿는 코랄",
+      "hex": "#FF6B5B"
+    },
+    "secondary": {
+      "name": "깊은 바다 남색",
+      "hex": "#1F3A5F"
+    },
+    "accent": {
+      "name": "햇살 크림",
+      "hex": "#FFF1D6"
+    }
   },
-  "logo": "brand/logo.svg"
+  "logo": "brand/logo.svg",
+  "fonts": {
+    "name": "Jua",
+    "slogan": "Gaegu Bold",
+    "source": "Google Fonts (SIL OFL)"
+  }
 }
