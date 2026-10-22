@@ -220,17 +220,6 @@
     </form>
   </dialog>
 
-  <dialog id="account-dialog" aria-labelledby="acct-title">
-    <div class="dlg-head"><h2 id="acct-title" data-i18n="auth_account">내 정보</h2><button class="x" type="button" data-close data-i18n-attr="aria-label:auth_close" aria-label="닫기">×</button></div>
-    <form id="acct-form" novalidate>
-      <label><span data-i18n="auth_email">이메일</span><input type="email" id="acct-email" readonly></label>
-      <label><span data-i18n="auth_name">이름</span><input type="text" id="acct-name" autocomplete="name" maxlength="100"></label>
-      <button class="btn block" type="submit" data-i18n="auth_save">저장</button>
-      <button class="btn block ghost" type="button" id="logout" data-i18n="auth_logout">로그아웃</button>
-      <p class="dmsg" id="acct-msg" role="status" aria-live="polite"></p>
-    </form>
-  </dialog>
-
   <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script>
@@ -285,10 +274,8 @@
     } catch (e) { authClient = null; }
 
     const authDlg = document.getElementById('auth-dialog');
-    const acctDlg = document.getElementById('account-dialog');
     const authForm = document.getElementById('auth-form');
     const authMsg = document.getElementById('auth-msg');
-    const acctMsg = document.getElementById('acct-msg');
     function tr(key) { return (I18N[currentLang] || I18N.ko)[key]; }
     const say = (el, key, kind) => { el.textContent = key ? tr(key) : ''; el.className = 'dmsg ' + (kind || ''); };
 
@@ -321,19 +308,9 @@
       if (err && (err.status === 429 || code.includes('rate_limit'))) return 'err_rate';
       return 'err_generic';
     }
-    async function openAccount() {
-      say(acctMsg, '');
-      document.getElementById('acct-email').value = authUser.email || '';
-      const nameEl = document.getElementById('acct-name');
-      nameEl.value = (authUser.user_metadata && authUser.user_metadata.name) || '';
-      acctDlg.showModal();
-      const { data } = await authClient.from('profiles').select('name').eq('id', authUser.id).maybeSingle();
-      if (data) nameEl.value = data.name;
-    }
-
     document.getElementById('auth-nav').addEventListener('click', () => {
       if (!authClient) { authDlg.showModal(); say(authMsg, 'err_unavailable', 'err'); return; }
-      if (authUser) return openAccount();
+      if (authUser) { location.href = 'account.html'; return; }
       setAuthMode('login'); authForm.reset(); authDlg.showModal();
     });
     document.getElementById('tab-login').addEventListener('click', () => setAuthMode('login'));
@@ -365,18 +342,6 @@
       } finally {
         submit.disabled = false;
       }
-    });
-
-    document.getElementById('acct-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = document.getElementById('acct-name').value.trim();
-      if (!name) return say(acctMsg, 'err_name', 'err');
-      const { error } = await authClient.from('profiles').upsert({ id: authUser.id, name, updated_at: new Date().toISOString() });
-      say(acctMsg, error ? 'err_generic' : 'msg_saved', error ? 'err' : 'ok');
-    });
-    document.getElementById('logout').addEventListener('click', async () => {
-      await authClient.auth.signOut();
-      acctDlg.close();
     });
 
     if (authClient) {

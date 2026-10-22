@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>내 정보 수정 | 함께닿</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Jua&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="brand.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: var(--accent); color: var(--secondary); font-family: "Noto Sans KR", system-ui, sans-serif; line-height: 1.7; overflow-x: hidden; }
+    h1, h2 { font-family: "Jua", "Noto Sans KR", sans-serif; font-weight: 400; line-height: 1.3; margin: 0; }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 0 16px; }
+    header { border-bottom: 1px solid rgba(31,58,95,.12); }
+    .bar { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 8px; }
+    .logo { flex-shrink: 0; display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--secondary); }
+    .logo-name { white-space: nowrap; font-family: "Jua", sans-serif; font-size: 1.5rem; line-height: 1; }
+    .dots-mini { display: flex; }
+    .dots-mini i { width: 22px; height: 22px; border-radius: 50%; display: block; }
+    .dots-mini i:first-child { background: var(--secondary); }
+    .dots-mini i:last-child { background: var(--primary); margin-left: -6px; }
+    .actions { display: flex; align-items: center; gap: 8px; }
+    .lang select, .home { font: 500 .9rem "Noto Sans KR", system-ui, sans-serif; color: var(--secondary); background: #fff; border: 1px solid rgba(31,58,95,.25); border-radius: 999px; height: 38px; padding: 0 10px; max-width: 110px; }
+    .home { display: inline-flex; align-items: center; text-decoration: none; }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    main { padding: 32px 0 64px; }
+    h1 { font-size: 1.9rem; margin-bottom: 20px; }
+    .card { background: #fff; border-radius: 20px; padding: 22px; margin-bottom: 16px; }
+    .card h2 { font-size: 1.3rem; margin-bottom: 14px; }
+    form { display: grid; gap: 12px; margin: 0; }
+    label { display: grid; gap: 4px; font-weight: 500; font-size: .95rem; }
+    input { width: 100%; font: inherit; font-size: 1rem; padding: 12px 14px; border-radius: 14px; border: 2px solid rgba(31,58,95,.15); background: #fff; color: var(--secondary); }
+    input[readonly] { background: rgba(31,58,95,.06); }
+    input:focus-visible, select:focus-visible, .btn:focus-visible, .home:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+    .meta { margin: 0 0 4px; font-size: .9rem; opacity: .8; }
+    .btn { display: inline-block; text-align: center; border: 0; cursor: pointer; text-decoration: none; background: var(--primary); color: #fff; font: 400 1.05rem "Jua", sans-serif; padding: 12px 20px; border-radius: 999px; }
+    .btn:disabled { opacity: .6; cursor: default; }
+    .btn.ghost { background: transparent; color: var(--secondary); border: 1px solid var(--secondary); }
+    .msg { min-height: 1.5em; margin: 0; font-weight: 500; font-size: .95rem; }
+    .msg.ok { color: #1f7a45; } .msg.err { color: #c4382a; }
+    #need { display: none; text-align: center; }
+    #need p { margin: 0 0 14px; font-size: 1.1rem; }
+    @media (max-width: 420px) { .logo-name { font-size: 1.3rem; } .lang select, .home { font-size: .8rem; padding: 0 8px; max-width: 88px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap bar">
+      <a class="logo" href="index.html" aria-label="함께닿"><span class="dots-mini" aria-hidden="true"><i></i><i></i></span><span class="logo-name">함께닿</span></a>
+      <div class="actions">
+        <label class="lang"><span class="sr" data-i18n="lang_label">언어</span>
+          <select id="lang"><option value="ko">한국어</option><option value="en">English</option><option value="zh">中文</option><option value="ja">日本語</option><option value="es">Español</option></select>
+        </label>
+        <a class="home" href="index.html" data-i18n="acct_home">홈으로</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <h1 data-i18n="acct_page_title">내 정보 수정</h1>
+
+      <div class="card" id="need">
+        <p data-i18n="acct_need_login">로그인이 필요해요.</p>
+        <a class="btn" href="index.html" data-i18n="acct_go_home">홈으로 가서 로그인하기</a>
+      </div>
+
+      <div id="content" hidden>
+        <section class="card">
+          <h2 data-i18n="acct_profile">프로필</h2>
+          <p class="meta"><span data-i18n="acct_joined">가입일</span>: <span id="joined"></span></p>
+          <form id="profile-form" novalidate>
+            <label><span data-i18n="auth_email">이메일</span><input type="email" id="email" readonly></label>
+            <label><span data-i18n="auth_name">이름</span><input type="text" id="name" autocomplete="name" maxlength="100"></label>
+            <button class="btn" type="submit" data-i18n="auth_save">저장</button>
+            <p class="msg" id="profile-msg" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2 data-i18n="acct_pw_section">비밀번호 변경</h2>
+          <form id="pw-form" novalidate>
+            <label><span data-i18n="acct_pw_current">현재 비밀번호</span><input type="password" name="current" autocomplete="current-password" maxlength="72"></label>
+            <label><span data-i18n="acct_pw_new">새 비밀번호</span><input type="password" name="next" autocomplete="new-password" maxlength="72"></label>
+            <label><span data-i18n="acct_pw_confirm">새 비밀번호 확인</span><input type="password" name="confirm" autocomplete="new-password" maxlength="72"></label>
+            <button class="btn" type="submit" data-i18n="acct_pw_change">비밀번호 변경하기</button>
+            <p class="msg" id="pw-msg" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <button class="btn ghost" type="button" id="logout" data-i18n="auth_logout">로그아웃</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script>
+    const I18N = {"ko": {"acct_page_title": "내 정보 수정", "acct_home": "홈으로", "acct_profile": "프로필", "acct_joined": "가입일", "acct_pw_section": "비밀번호 변경", "acct_pw_current": "현재 비밀번호", "acct_pw_new": "새 비밀번호", "acct_pw_confirm": "새 비밀번호 확인", "acct_pw_change": "비밀번호 변경하기", "acct_pw_saved": "비밀번호를 바꿨어요.", "err_pw_mismatch": "새 비밀번호가 서로 달라요.", "err_pw_current": "현재 비밀번호가 맞지 않아요.", "err_pw_same": "새 비밀번호가 현재 비밀번호와 같아요.", "acct_need_login": "로그인이 필요해요.", "acct_go_home": "홈으로 가서 로그인하기", "auth_email": "이메일", "auth_name": "이름", "auth_save": "저장", "auth_logout": "로그아웃", "auth_wait": "잠시만요…", "msg_saved": "저장했어요.", "err_name": "이름을 입력해 주세요.", "err_pw": "비밀번호는 8자 이상이어야 해요.", "err_generic": "문제가 생겼어요. 잠시 후 다시 시도해 주세요.", "err_rate": "요청이 너무 많아요. 잠시 후 다시 시도해 주세요.", "err_unavailable": "로그인 기능을 불러오지 못했어요.", "lang_label": "언어", "menu_title": "내 정보"}, "en": {"acct_page_title": "Edit my account", "acct_home": "Home", "acct_profile": "Profile", "acct_joined": "Joined", "acct_pw_section": "Change password", "acct_pw_current": "Current password", "acct_pw_new": "New password", "acct_pw_confirm": "Confirm new password", "acct_pw_change": "Change password", "acct_pw_saved": "Your password has been changed.", "err_pw_mismatch": "The new passwords do not match.", "err_pw_current": "The current password is incorrect.", "err_pw_same": "The new password is the same as the current one.", "acct_need_login": "Please log in first.", "acct_go_home": "Go to home and log in", "auth_email": "Email", "auth_name": "Name", "auth_save": "Save", "auth_logout": "Log out", "auth_wait": "One moment…", "msg_saved": "Saved.", "err_name": "Please enter your name.", "err_pw": "Password must be at least 8 characters.", "err_generic": "Something went wrong. Please try again.", "err_rate": "Too many requests. Please try again later.", "err_unavailable": "Could not load the sign-in feature.", "lang_label": "Language", "menu_title": "My account"}, "zh": {"acct_page_title": "修改我的信息", "acct_home": "返回首页", "acct_profile": "个人资料", "acct_joined": "注册日期", "acct_pw_section": "修改密码", "acct_pw_current": "当前密码", "acct_pw_new": "新密码", "acct_pw_confirm": "确认新密码", "acct_pw_change": "修改密码", "acct_pw_saved": "密码已修改。", "err_pw_mismatch": "两次输入的新密码不一致。", "err_pw_current": "当前密码不正确。", "err_pw_same": "新密码与当前密码相同。", "acct_need_login": "请先登录。", "acct_go_home": "返回首页登录", "auth_email": "邮箱", "auth_name": "姓名", "auth_save": "保存", "auth_logout": "退出登录", "auth_wait": "请稍候…", "msg_saved": "已保存。", "err_name": "请输入姓名。", "err_pw": "密码至少需要8个字符。", "err_generic": "出了点问题,请稍后重试。", "err_rate": "请求过于频繁,请稍后再试。", "err_unavailable": "无法加载登录功能。", "lang_label": "语言", "menu_title": "我的信息"}, "ja": {"acct_page_title": "マイページ編集", "acct_home": "ホームへ", "acct_profile": "プロフィール", "acct_joined": "登録日", "acct_pw_section": "パスワード変更", "acct_pw_current": "現在のパスワード", "acct_pw_new": "新しいパスワード", "acct_pw_confirm": "新しいパスワード(確認)", "acct_pw_change": "パスワードを変更する", "acct_pw_saved": "パスワードを変更しました。", "err_pw_mismatch": "新しいパスワードが一致しません。", "err_pw_current": "現在のパスワードが違います。", "err_pw_same": "新しいパスワードが現在のものと同じです。", "acct_need_login": "ログインが必要です。", "acct_go_home": "ホームへ戻ってログイン", "auth_email": "メールアドレス", "auth_name": "お名前", "auth_save": "保存", "auth_logout": "ログアウト", "auth_wait": "少々お待ちください…", "msg_saved": "保存しました。", "err_name": "お名前を入力してください。", "err_pw": "パスワードは8文字以上にしてください。", "err_generic": "問題が発生しました。もう一度お試しください。", "err_rate": "リクエストが多すぎます。しばらくしてからお試しください。", "err_unavailable": "ログイン機能を読み込めませんでした。", "lang_label": "言語", "menu_title": "マイページ"}, "es": {"acct_page_title": "Editar mi cuenta", "acct_home": "Inicio", "acct_profile": "Perfil", "acct_joined": "Registro", "acct_pw_section": "Cambiar contraseña", "acct_pw_current": "Contraseña actual", "acct_pw_new": "Nueva contraseña", "acct_pw_confirm": "Confirmar nueva contraseña", "acct_pw_change": "Cambiar contraseña", "acct_pw_saved": "Contraseña cambiada.", "err_pw_mismatch": "Las nuevas contraseñas no coinciden.", "err_pw_current": "La contraseña actual es incorrecta.", "err_pw_same": "La nueva contraseña es igual a la actual.", "acct_need_login": "Inicia sesión primero.", "acct_go_home": "Ir al inicio e iniciar sesión", "auth_email": "Correo electrónico", "auth_name": "Nombre", "auth_save": "Guardar", "auth_logout": "Cerrar sesión", "auth_wait": "Un momento…", "msg_saved": "Guardado.", "err_name": "Introduce tu nombre.", "err_pw": "La contraseña debe tener al menos 8 caracteres.", "err_generic": "Algo salió mal. Inténtalo de nuevo.", "err_rate": "Demasiadas solicitudes. Inténtalo más tarde.", "err_unavailable": "No se pudo cargar el inicio de sesión.", "lang_label": "Idioma", "menu_title": "Mi cuenta"}};
+    let lang = 'ko', user = null;
+    const tr = (k) => (I18N[lang] || I18N.ko)[k];
+    const client = (window.supabase && window.APP_CONFIG) ? window.supabase.createClient(APP_CONFIG.url, APP_CONFIG.anonKey) : null;
+    const $ = (id) => document.getElementById(id);
+    const say = (el, key, kind) => { el.textContent = key ? tr(key) : ''; el.className = 'msg ' + (kind || ''); };
+
+    function renderJoined() {
+      if (!user || !user.created_at) return;
+      $('joined').textContent = new Date(user.created_at).toLocaleDateString(lang === 'zh' ? 'zh-CN' : lang);
+    }
+    function applyLang(code) {
+      lang = I18N[code] ? code : 'ko';
+      document.documentElement.lang = lang;
+      document.title = tr('acct_page_title') + ' | 함께닿';
+      document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = tr(el.dataset.i18n); });
+      $('lang').value = lang;
+      renderJoined();
+    }
+    function initialLang() {
+      try { const s = localStorage.getItem('lang'); if (I18N[s]) return s; } catch (e) {}
+      const n = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+      return I18N[n] ? n : 'ko';
+    }
+    $('lang').addEventListener('change', () => { applyLang($('lang').value); try { localStorage.setItem('lang', lang); } catch (e) {} });
+    applyLang(initialLang());
+
+    function errKey(err) {
+      const msg = (err && err.message || '').toLowerCase(), code = (err && err.code) || '';
+      if (code === 'same_password' || msg.includes('different from the old')) return 'err_pw_same';
+      if (code === 'weak_password' || msg.includes('password should')) return 'err_pw';
+      if ((err && err.status === 429) || code.includes('rate_limit')) return 'err_rate';
+      return 'err_generic';
+    }
+    function showNeedLogin() { $('need').style.display = 'block'; $('content').hidden = true; }
+
+    async function show(session) {
+      user = session ? session.user : null;
+      if (!user) return showNeedLogin();
+      $('need').style.display = 'none'; $('content').hidden = false;
+      $('email').value = user.email || '';
+      $('name').value = (user.user_metadata && user.user_metadata.name) || '';
+      renderJoined();
+      const { data } = await client.from('profiles').select('name').eq('id', user.id).maybeSingle();
+      if (data) $('name').value = data.name;
+    }
+
+    $('profile-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = $('name').value.trim();
+      if (!name) return say($('profile-msg'), 'err_name', 'err');
+      const { error } = await client.from('profiles').upsert({ id: user.id, name, updated_at: new Date().toISOString() });
+      say($('profile-msg'), error ? 'err_generic' : 'msg_saved', error ? 'err' : 'ok');
+    });
+
+    $('pw-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target, msg = $('pw-msg'), btn = f.querySelector('button');
+      const current = f.current.value, next = f.next.value, confirm = f.confirm.value;
+      if (!current) return say(msg, 'err_pw_current', 'err');
+      if (next.length < 8) return say(msg, 'err_pw', 'err');
+      if (next !== confirm) return say(msg, 'err_pw_mismatch', 'err');
+      if (next === current) return say(msg, 'err_pw_same', 'err');
+      btn.disabled = true; say(msg, 'auth_wait');
+      try {
+        const check = await client.auth.signInWithPassword({ email: user.email, password: current });
+        if (check.error) return say(msg, 'err_pw_current', 'err');
+        const { error } = await client.auth.updateUser({ password: next });
+        if (error) return say(msg, errKey(error), 'err');
+        f.reset(); say(msg, 'acct_pw_saved', 'ok');
+      } catch (err) {
+        say(msg, 'err_generic', 'err');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    $('logout').addEventListener('click', async () => { await client.auth.signOut(); location.href = 'index.html'; });
+
+    if (!client) { showNeedLogin(); }
+    else {
+      client.auth.getSession().then(({ data }) => show(data.session));
+      client.auth.onAuthStateChange((event) => { if (event === 'SIGNED_OUT') showNeedLogin(); });
+    }
+  </script>
+</body>
+</html>
