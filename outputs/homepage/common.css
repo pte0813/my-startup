@@ -234,3 +234,23 @@ footer { padding: 24px 0; text-align: center; font-size: .85rem; opacity: .8; }
   .card.has-icon { grid-template-columns: 1fr; row-gap: 4px; text-align: left; }
   .card.has-icon .card-icon { grid-row: auto; width: 80px; height: 80px; margin-bottom: 8px; }
 }
+
+/* 팀 소개 · 빈 상태 · FAQ */
+.team-grid { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
+.member { background: #fff; border-radius: 20px; padding: 18px 8px; display: grid; justify-items: center; gap: 4px; text-align: center; }
+.member img { width: 76px; height: 76px; margin-bottom: 8px; }
+.member strong { font-family: "Jua", sans-serif; font-weight: 400; font-size: 1.15rem; color: var(--secondary); }
+.member span { font-size: .9rem; opacity: .75; }
+.empty { background: #fff; border-radius: 24px; padding: 28px 20px 32px; margin-top: 20px; display: grid; justify-items: center; gap: 6px; text-align: center; }
+.empty img { width: 200px; max-width: 70%; height: auto; }
+.empty h3 { font-size: 1.25rem; }
+.empty p { margin: 0 0 10px; max-width: 34em; }
+.faq { display: grid; gap: 10px; margin-top: 20px; }
+.faq details { background: #fff; border-radius: 18px; padding: 0 20px; }
+.faq summary { cursor: pointer; list-style: none; padding: 16px 28px 16px 0; font-weight: 500; position: relative; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; position: absolute; right: 0; top: 50%; transform: translateY(-50%); font: 400 1.5rem "Jua", sans-serif; color: var(--primary); }
+.faq details[open] summary::after { content: "–"; }
+.faq summary:focus-visible { outline: 3px solid var(--secondary); outline-offset: 2px; border-radius: 8px; }
+.faq details p { margin: 0 0 16px; }
+@media (min-width: 720px) { .member { padding: 22px 16px; } .member img { width: 96px; height: 96px; } .team-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); } }
