@@ -46,6 +46,28 @@
       padding: 8px 10px; height: 38px; cursor: pointer; max-width: 104px;
     }
     .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    nav .navbtn { display: block; width: 100%; text-align: left; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--secondary); background: transparent; color: var(--secondary); font: 500 1rem "Noto Sans KR", system-ui, sans-serif; cursor: pointer; }
+    nav .navbtn:hover { background: rgba(31,58,95,.08); }
+    @media (max-width: 720px) { nav .navbtn { padding: 14px 12px; font-size: 1.05rem; border: 0; border-top: 1px solid rgba(31,58,95,.12); border-radius: 0; margin-top: 6px; } }
+    dialog { border: 0; border-radius: 24px; padding: 24px; width: min(420px, calc(100vw - 32px)); background: var(--accent); color: var(--secondary); box-shadow: 0 20px 60px rgba(31,58,95,.35); }
+    dialog::backdrop { background: rgba(31,58,95,.5); }
+    .dlg-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .dlg-head h2 { font-size: 1.5rem; margin: 0; }
+    .x { border: 0; background: transparent; width: 40px; height: 40px; border-radius: 12px; font-size: 1.5rem; line-height: 1; cursor: pointer; color: var(--secondary); }
+    .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: rgba(31,58,95,.08); padding: 4px; border-radius: 999px; margin-bottom: 16px; }
+    .tabs button { border: 0; border-radius: 999px; padding: 10px; font: 400 1rem "Jua", sans-serif; background: transparent; color: var(--secondary); cursor: pointer; }
+    .tabs button[aria-selected="true"] { background: var(--secondary); color: #fff; }
+    dialog form { display: grid; gap: 12px; margin: 0; }
+    dialog label { display: grid; gap: 4px; font-weight: 500; font-size: .95rem; }
+    dialog input { width: 100%; font: inherit; font-size: 1rem; padding: 12px 14px; border-radius: 14px; border: 2px solid transparent; background: #fff; color: var(--secondary); }
+    dialog input[readonly] { background: rgba(255,255,255,.6); }
+    dialog input:focus-visible, .x:focus-visible, .tabs button:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+    dialog small { opacity: .75; font-weight: 400; }
+    .dmsg { min-height: 1.5em; margin: 0; font-weight: 500; font-size: .95rem; }
+    .dmsg.ok { color: #1f7a45; } .dmsg.err { color: #c4382a; }
+    .btn.block { width: 100%; padding: 12px; font-size: 1.1rem; }
+    .btn.ghost { background: transparent; color: var(--secondary); border: 1px solid var(--secondary); }
+    .btn:disabled { opacity: .6; cursor: default; }
     .lang { position: relative; }
     .lang-ico { display: none; }
     @media (max-width: 420px) {
@@ -113,6 +135,7 @@
           <li><a href="#team" data-i18n="nav_team">팀</a></li>
           <li><a href="#faq" data-i18n="nav_faq">FAQ</a></li>
           <li><a href="#contact" data-i18n="nav_contact">문의</a></li>
+          <li><button type="button" class="navbtn" id="auth-nav" data-i18n="auth_login">로그인</button></li>
         </ul>
       </nav>
       <div class="actions">
@@ -182,6 +205,34 @@
 
   <footer><div class="wrap" data-i18n="footer">© 함께닿 · 혼자 떠나도, 마음은 닿는다</div></footer>
 
+  <dialog id="auth-dialog" aria-labelledby="auth-title">
+    <div class="dlg-head"><h2 id="auth-title" data-i18n="auth_login">로그인</h2><button class="x" type="button" data-close data-i18n-attr="aria-label:auth_close" aria-label="닫기">×</button></div>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" id="tab-login" aria-selected="true" data-i18n="auth_login">로그인</button>
+      <button type="button" role="tab" id="tab-signup" aria-selected="false" data-i18n="auth_signup">회원가입</button>
+    </div>
+    <form id="auth-form" novalidate>
+      <label id="name-row" hidden><span data-i18n="auth_name">이름</span><input type="text" name="name" autocomplete="name" maxlength="100"></label>
+      <label><span data-i18n="auth_email">이메일</span><input type="email" name="email" autocomplete="email" maxlength="254"></label>
+      <label><span data-i18n="auth_password">비밀번호</span><input type="password" name="password" autocomplete="current-password" maxlength="72"><small id="pw-hint" data-i18n="auth_pw_hint" hidden>8자 이상</small></label>
+      <button class="btn block" id="auth-submit" type="submit" data-i18n="auth_login">로그인</button>
+      <p class="dmsg" id="auth-msg" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <dialog id="account-dialog" aria-labelledby="acct-title">
+    <div class="dlg-head"><h2 id="acct-title" data-i18n="auth_account">내 정보</h2><button class="x" type="button" data-close data-i18n-attr="aria-label:auth_close" aria-label="닫기">×</button></div>
+    <form id="acct-form" novalidate>
+      <label><span data-i18n="auth_email">이메일</span><input type="email" id="acct-email" readonly></label>
+      <label><span data-i18n="auth_name">이름</span><input type="text" id="acct-name" autocomplete="name" maxlength="100"></label>
+      <button class="btn block" type="submit" data-i18n="auth_save">저장</button>
+      <button class="btn block ghost" type="button" id="logout" data-i18n="auth_logout">로그아웃</button>
+      <p class="dmsg" id="acct-msg" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script>
     const burger = document.getElementById('burger');
     const menu = document.getElementById('menu');
@@ -191,14 +242,16 @@
       burger.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
     };
     burger.addEventListener('click', () => setOpen(!menu.classList.contains('open')));
-    menu.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); });
+    menu.addEventListener('click', (e) => { if (e.target.closest('a, .navbtn')) setOpen(false); });
 
-    const I18N = {"ko": {"title": "함께닿 | 혼자 떠나도, 마음은 닿는다", "desc": "성향이 맞는 사람들과 안심하고 떠나는 2030 소셜링 투어, 함께닿.", "menu_label": "주 메뉴", "lang_label": "언어", "nav_intro": "소개", "nav_service": "서비스", "nav_team": "팀", "nav_faq": "FAQ", "nav_contact": "문의", "apply": "사전 신청", "h1": "<span>혼자 떠나도,</span><br><em>마음은 닿는다</em>", "lead": "함께닿은 혼자 여행 가고 싶지만 막상 혼자는 어색하고 외로운 20대 중후반을, 성향이 맞는 사람들과 안심하고 어울리게 해 주는 2030 소셜링 투어 서비스예요.", "cta": "출시 소식 먼저 받기", "service_title": "성향 매칭 + 자유 동행 투어", "service_desc": "여행 스타일과 성향으로 팩을 짜 드리고, 일정은 느슨하게 둬요.", "c1_t": "신원·후기 인증", "c1_d": "본인 인증과 여행 후기로 믿을 수 있는 사람들만 함께해요.", "c2_t": "안심 귀가 체크", "c2_d": "하루 일정이 끝나면 모두 무사히 돌아왔는지 확인해 드려요.", "c3_t": "재만남 매칭", "c3_d": "여행이 끝나도 서로 원하면 다시 만날 수 있도록 이어 드려요.", "faq_title": "자주 묻는 질문", "footer": "© 함께닿 · 혼자 떠나도, 마음은 닿는다"}, "en": {"title": "Hamkkedat (함께닿) | Travel solo, still connect", "desc": "Hamkkedat is a social touring service for people in their 20s and 30s: travel with like-minded people, safely.", "menu_label": "Main menu", "lang_label": "Language", "nav_intro": "About", "nav_service": "Service", "nav_team": "Team", "nav_faq": "FAQ", "nav_contact": "Contact", "apply": "Pre-register", "h1": "<span>Travel solo,</span><br><em>still connect</em>", "lead": "Hamkkedat (함께닿) is a social touring service for people in their 20s and 30s. It is for those in their mid-to-late 20s who want to travel solo but find it awkward and lonely on their own, helping them meet like-minded people and connect safely.", "cta": "Get launch news first", "service_title": "Personality matching + free-form group tours", "service_desc": "We form small groups based on travel style and personality, and keep the itinerary relaxed.", "c1_t": "Identity & review verification", "c1_d": "Only trustworthy people join, thanks to ID verification and trip reviews.", "c2_t": "Safe-return check", "c2_d": "When the day ends, we check that everyone has made it back safely.", "c3_t": "Reunion matching", "c3_d": "If you both want to, we connect you again after the trip.", "faq_title": "Frequently asked questions", "footer": "© Hamkkedat (함께닿) · Travel solo, still connect"}, "zh": {"title": "함께닿(Hamkkedat)| 独自出发,心也相连", "desc": "함께닿是面向20至30多岁人群的社交旅行服务,与性格相投的伙伴安心同行。", "menu_label": "主菜单", "lang_label": "语言", "nav_intro": "简介", "nav_service": "服务", "nav_team": "团队", "nav_faq": "常见问题", "nav_contact": "联系我们", "apply": "预先报名", "h1": "<span>独自出发,</span><br><em>心也相连</em>", "lead": "함께닿(Hamkkedat)是面向20至30多岁人群的社交旅行服务。我们帮助想独自旅行、却又觉得一个人尴尬孤单的20多岁中后期的年轻人,与性格相投的伙伴安心相聚。", "cta": "第一时间获取上线消息", "service_title": "性格匹配 + 自由同行之旅", "service_desc": "根据旅行风格和性格组成小队,行程安排轻松自由。", "c1_t": "身份与评价认证", "c1_d": "通过实名认证和旅行评价,只有值得信赖的人同行。", "c2_t": "平安返程确认", "c2_d": "一天的行程结束后,我们会确认大家是否都平安回到住处。", "c3_t": "再次相遇匹配", "c3_d": "旅行结束后,如果彼此愿意,我们会帮你们再次联系。", "faq_title": "常见问题", "footer": "© 함께닿(Hamkkedat)· 独自出发,心也相连"}, "ja": {"title": "함께닿(ハムケダッ)| ひとりで旅立っても、心はつながる", "desc": "함께닿は、価値観の合う仲間と安心して旅する20〜30代向けのソーシャルツアーです。", "menu_label": "メインメニュー", "lang_label": "言語", "nav_intro": "紹介", "nav_service": "サービス", "nav_team": "チーム", "nav_faq": "FAQ", "nav_contact": "お問い合わせ", "apply": "事前申込", "h1": "<span>ひとりで旅立っても、</span><br><em>心はつながる</em>", "lead": "함께닿(ハムケダッ)は、ひとり旅に出たいけれど、いざひとりだと気まずくて寂しい20代中後半の方が、価値観の合う仲間と安心して交流できるようにする、20〜30代向けのソーシャルツアーサービスです。", "cta": "リリース情報を先に受け取る", "service_title": "性格マッチング + 自由同行ツアー", "service_desc": "旅のスタイルと性格でチームを組み、日程はゆるやかに。", "c1_t": "本人確認・レビュー認証", "c1_d": "本人確認と旅のレビューで、信頼できる人だけが参加します。", "c2_t": "安心帰宅チェック", "c2_d": "一日の予定が終わったら、全員が無事に宿へ戻ったか確認します。", "c3_t": "再会マッチング", "c3_d": "旅のあとも、お互いに望めばまた会えるようにつなぎます。", "faq_title": "よくある質問", "footer": "© 함께닿(ハムケダッ)· ひとりで旅立っても、心はつながる"}, "es": {"title": "Hamkkedat (함께닿) | Viaja por tu cuenta y conecta", "desc": "Hamkkedat es un servicio de tours sociales para personas de 20 a 30 años: viaja con gente afín y con total seguridad.", "menu_label": "Menú principal", "lang_label": "Idioma", "nav_intro": "Nosotros", "nav_service": "Servicio", "nav_team": "Equipo", "nav_faq": "FAQ", "nav_contact": "Contacto", "apply": "Regístrate", "h1": "<span>Viaja por tu cuenta,</span><br><em>y aun así conecta</em>", "lead": "Hamkkedat (함께닿) es un servicio de tours sociales para personas de 20 a 30 años. Está pensado para quienes, a mediados o finales de sus veinte, quieren viajar por su cuenta pero se sienten incómodos y solos, y los ayuda a conectar con seguridad con gente afín.", "cta": "Recibe primero las novedades", "service_title": "Afinidad de personalidad + tour de acompañamiento libre", "service_desc": "Formamos grupos según el estilo de viaje y la personalidad, con un itinerario flexible.", "c1_t": "Verificación de identidad y reseñas", "c1_d": "Solo participan personas de confianza, gracias a la verificación de identidad y las reseñas de viajes.", "c2_t": "Control de regreso seguro", "c2_d": "Al terminar el día, comprobamos que todos hayan vuelto sanos y salvos al alojamiento.", "c3_t": "Reencuentro", "c3_d": "Si ambos lo desean, los volvemos a conectar después del viaje.", "faq_title": "Preguntas frecuentes", "footer": "© Hamkkedat (함께닿) · Viaja por tu cuenta y conecta"}};
+    const I18N = {"ko": {"title": "함께닿 | 혼자 떠나도, 마음은 닿는다", "desc": "성향이 맞는 사람들과 안심하고 떠나는 2030 소셜링 투어, 함께닿.", "menu_label": "주 메뉴", "lang_label": "언어", "nav_intro": "소개", "nav_service": "서비스", "nav_team": "팀", "nav_faq": "FAQ", "nav_contact": "문의", "apply": "사전 신청", "h1": "<span>혼자 떠나도,</span><br><em>마음은 닿는다</em>", "lead": "함께닿은 혼자 여행 가고 싶지만 막상 혼자는 어색하고 외로운 20대 중후반을, 성향이 맞는 사람들과 안심하고 어울리게 해 주는 2030 소셜링 투어 서비스예요.", "cta": "출시 소식 먼저 받기", "service_title": "성향 매칭 + 자유 동행 투어", "service_desc": "여행 스타일과 성향으로 팩을 짜 드리고, 일정은 느슨하게 둬요.", "c1_t": "신원·후기 인증", "c1_d": "본인 인증과 여행 후기로 믿을 수 있는 사람들만 함께해요.", "c2_t": "안심 귀가 체크", "c2_d": "하루 일정이 끝나면 모두 무사히 돌아왔는지 확인해 드려요.", "c3_t": "재만남 매칭", "c3_d": "여행이 끝나도 서로 원하면 다시 만날 수 있도록 이어 드려요.", "faq_title": "자주 묻는 질문", "footer": "© 함께닿 · 혼자 떠나도, 마음은 닿는다", "auth_login": "로그인", "auth_signup": "회원가입", "auth_logout": "로그아웃", "auth_account": "내 정보", "auth_name": "이름", "auth_email": "이메일", "auth_password": "비밀번호", "auth_pw_hint": "8자 이상", "auth_close": "닫기", "auth_save": "저장", "auth_wait": "잠시만요…", "msg_signup_ok": "가입이 완료됐어요!", "msg_signup_confirm": "가입 확인 메일을 보냈어요. 메일의 링크를 눌러 주세요.", "msg_saved": "저장했어요.", "err_name": "이름을 입력해 주세요.", "err_email": "이메일 주소를 다시 확인해 주세요.", "err_pw": "비밀번호는 8자 이상이어야 해요.", "err_credentials": "이메일 또는 비밀번호가 맞지 않아요.", "err_exists": "이미 가입된 이메일이에요. 로그인해 주세요.", "err_unconfirmed": "이메일 확인이 아직 안 됐어요. 메일의 링크를 눌러 주세요.", "err_rate": "요청이 너무 많아요. 잠시 후 다시 시도해 주세요.", "err_generic": "문제가 생겼어요. 잠시 후 다시 시도해 주세요.", "err_unavailable": "로그인 기능을 불러오지 못했어요."}, "en": {"title": "Hamkkedat (함께닿) | Travel solo, still connect", "desc": "Hamkkedat is a social touring service for people in their 20s and 30s: travel with like-minded people, safely.", "menu_label": "Main menu", "lang_label": "Language", "nav_intro": "About", "nav_service": "Service", "nav_team": "Team", "nav_faq": "FAQ", "nav_contact": "Contact", "apply": "Pre-register", "h1": "<span>Travel solo,</span><br><em>still connect</em>", "lead": "Hamkkedat (함께닿) is a social touring service for people in their 20s and 30s. It is for those in their mid-to-late 20s who want to travel solo but find it awkward and lonely on their own, helping them meet like-minded people and connect safely.", "cta": "Get launch news first", "service_title": "Personality matching + free-form group tours", "service_desc": "We form small groups based on travel style and personality, and keep the itinerary relaxed.", "c1_t": "Identity & review verification", "c1_d": "Only trustworthy people join, thanks to ID verification and trip reviews.", "c2_t": "Safe-return check", "c2_d": "When the day ends, we check that everyone has made it back safely.", "c3_t": "Reunion matching", "c3_d": "If you both want to, we connect you again after the trip.", "faq_title": "Frequently asked questions", "footer": "© Hamkkedat (함께닿) · Travel solo, still connect", "auth_login": "Log in", "auth_signup": "Sign up", "auth_logout": "Log out", "auth_account": "My account", "auth_name": "Name", "auth_email": "Email", "auth_password": "Password", "auth_pw_hint": "At least 8 characters", "auth_close": "Close", "auth_save": "Save", "auth_wait": "One moment…", "msg_signup_ok": "Your account is ready!", "msg_signup_confirm": "We sent a confirmation email. Please click the link in it.", "msg_saved": "Saved.", "err_name": "Please enter your name.", "err_email": "Please check your email address.", "err_pw": "Password must be at least 8 characters.", "err_credentials": "Incorrect email or password.", "err_exists": "This email is already registered. Please log in.", "err_unconfirmed": "Please confirm your email first by clicking the link we sent.", "err_rate": "Too many requests. Please try again later.", "err_generic": "Something went wrong. Please try again.", "err_unavailable": "Could not load the sign-in feature."}, "zh": {"title": "함께닿(Hamkkedat)| 独自出发,心也相连", "desc": "함께닿是面向20至30多岁人群的社交旅行服务,与性格相投的伙伴安心同行。", "menu_label": "主菜单", "lang_label": "语言", "nav_intro": "简介", "nav_service": "服务", "nav_team": "团队", "nav_faq": "常见问题", "nav_contact": "联系我们", "apply": "预先报名", "h1": "<span>独自出发,</span><br><em>心也相连</em>", "lead": "함께닿(Hamkkedat)是面向20至30多岁人群的社交旅行服务。我们帮助想独自旅行、却又觉得一个人尴尬孤单的20多岁中后期的年轻人,与性格相投的伙伴安心相聚。", "cta": "第一时间获取上线消息", "service_title": "性格匹配 + 自由同行之旅", "service_desc": "根据旅行风格和性格组成小队,行程安排轻松自由。", "c1_t": "身份与评价认证", "c1_d": "通过实名认证和旅行评价,只有值得信赖的人同行。", "c2_t": "平安返程确认", "c2_d": "一天的行程结束后,我们会确认大家是否都平安回到住处。", "c3_t": "再次相遇匹配", "c3_d": "旅行结束后,如果彼此愿意,我们会帮你们再次联系。", "faq_title": "常见问题", "footer": "© 함께닿(Hamkkedat)· 独自出发,心也相连", "auth_login": "登录", "auth_signup": "注册", "auth_logout": "退出登录", "auth_account": "我的信息", "auth_name": "姓名", "auth_email": "邮箱", "auth_password": "密码", "auth_pw_hint": "至少8个字符", "auth_close": "关闭", "auth_save": "保存", "auth_wait": "请稍候…", "msg_signup_ok": "注册成功!", "msg_signup_confirm": "我们已发送确认邮件,请点击邮件中的链接。", "msg_saved": "已保存。", "err_name": "请输入姓名。", "err_email": "请检查邮箱地址。", "err_pw": "密码至少需要8个字符。", "err_credentials": "邮箱或密码不正确。", "err_exists": "该邮箱已注册,请直接登录。", "err_unconfirmed": "请先点击邮件中的链接确认邮箱。", "err_rate": "请求过于频繁,请稍后再试。", "err_generic": "出了点问题,请稍后重试。", "err_unavailable": "无法加载登录功能。"}, "ja": {"title": "함께닿(ハムケダッ)| ひとりで旅立っても、心はつながる", "desc": "함께닿は、価値観の合う仲間と安心して旅する20〜30代向けのソーシャルツアーです。", "menu_label": "メインメニュー", "lang_label": "言語", "nav_intro": "紹介", "nav_service": "サービス", "nav_team": "チーム", "nav_faq": "FAQ", "nav_contact": "お問い合わせ", "apply": "事前申込", "h1": "<span>ひとりで旅立っても、</span><br><em>心はつながる</em>", "lead": "함께닿(ハムケダッ)は、ひとり旅に出たいけれど、いざひとりだと気まずくて寂しい20代中後半の方が、価値観の合う仲間と安心して交流できるようにする、20〜30代向けのソーシャルツアーサービスです。", "cta": "リリース情報を先に受け取る", "service_title": "性格マッチング + 自由同行ツアー", "service_desc": "旅のスタイルと性格でチームを組み、日程はゆるやかに。", "c1_t": "本人確認・レビュー認証", "c1_d": "本人確認と旅のレビューで、信頼できる人だけが参加します。", "c2_t": "安心帰宅チェック", "c2_d": "一日の予定が終わったら、全員が無事に宿へ戻ったか確認します。", "c3_t": "再会マッチング", "c3_d": "旅のあとも、お互いに望めばまた会えるようにつなぎます。", "faq_title": "よくある質問", "footer": "© 함께닿(ハムケダッ)· ひとりで旅立っても、心はつながる", "auth_login": "ログイン", "auth_signup": "新規登録", "auth_logout": "ログアウト", "auth_account": "マイページ", "auth_name": "お名前", "auth_email": "メールアドレス", "auth_password": "パスワード", "auth_pw_hint": "8文字以上", "auth_close": "閉じる", "auth_save": "保存", "auth_wait": "少々お待ちください…", "msg_signup_ok": "登録が完了しました!", "msg_signup_confirm": "確認メールを送信しました。メール内のリンクを押してください。", "msg_saved": "保存しました。", "err_name": "お名前を入力してください。", "err_email": "メールアドレスをご確認ください。", "err_pw": "パスワードは8文字以上にしてください。", "err_credentials": "メールアドレスまたはパスワードが違います。", "err_exists": "このメールアドレスは登録済みです。ログインしてください。", "err_unconfirmed": "メールの確認がまだです。届いたリンクを押してください。", "err_rate": "リクエストが多すぎます。しばらくしてからお試しください。", "err_generic": "問題が発生しました。もう一度お試しください。", "err_unavailable": "ログイン機能を読み込めませんでした。"}, "es": {"title": "Hamkkedat (함께닿) | Viaja por tu cuenta y conecta", "desc": "Hamkkedat es un servicio de tours sociales para personas de 20 a 30 años: viaja con gente afín y con total seguridad.", "menu_label": "Menú principal", "lang_label": "Idioma", "nav_intro": "Nosotros", "nav_service": "Servicio", "nav_team": "Equipo", "nav_faq": "FAQ", "nav_contact": "Contacto", "apply": "Regístrate", "h1": "<span>Viaja por tu cuenta,</span><br><em>y aun así conecta</em>", "lead": "Hamkkedat (함께닿) es un servicio de tours sociales para personas de 20 a 30 años. Está pensado para quienes, a mediados o finales de sus veinte, quieren viajar por su cuenta pero se sienten incómodos y solos, y los ayuda a conectar con seguridad con gente afín.", "cta": "Recibe primero las novedades", "service_title": "Afinidad de personalidad + tour de acompañamiento libre", "service_desc": "Formamos grupos según el estilo de viaje y la personalidad, con un itinerario flexible.", "c1_t": "Verificación de identidad y reseñas", "c1_d": "Solo participan personas de confianza, gracias a la verificación de identidad y las reseñas de viajes.", "c2_t": "Control de regreso seguro", "c2_d": "Al terminar el día, comprobamos que todos hayan vuelto sanos y salvos al alojamiento.", "c3_t": "Reencuentro", "c3_d": "Si ambos lo desean, los volvemos a conectar después del viaje.", "faq_title": "Preguntas frecuentes", "footer": "© Hamkkedat (함께닿) · Viaja por tu cuenta y conecta", "auth_login": "Iniciar sesión", "auth_signup": "Registrarse", "auth_logout": "Cerrar sesión", "auth_account": "Mi cuenta", "auth_name": "Nombre", "auth_email": "Correo electrónico", "auth_password": "Contraseña", "auth_pw_hint": "Mínimo 8 caracteres", "auth_close": "Cerrar", "auth_save": "Guardar", "auth_wait": "Un momento…", "msg_signup_ok": "¡Cuenta creada!", "msg_signup_confirm": "Te enviamos un correo de confirmación. Haz clic en el enlace.", "msg_saved": "Guardado.", "err_name": "Introduce tu nombre.", "err_email": "Revisa tu correo electrónico.", "err_pw": "La contraseña debe tener al menos 8 caracteres.", "err_credentials": "Correo o contraseña incorrectos.", "err_exists": "Este correo ya está registrado. Inicia sesión.", "err_unconfirmed": "Confirma primero tu correo con el enlace que te enviamos.", "err_rate": "Demasiadas solicitudes. Inténtalo más tarde.", "err_generic": "Algo salió mal. Inténtalo de nuevo.", "err_unavailable": "No se pudo cargar el inicio de sesión."}};
     const SHORT = { ko: 'KO', en: 'EN', zh: '中', ja: '日', es: 'ES' };
     const langSel = document.getElementById('lang');
     const metaDesc = document.querySelector('meta[name="description"]');
+    var currentLang = 'ko';
     function applyLang(code) {
       const t = I18N[code] || I18N.ko;
+      currentLang = code;
       document.documentElement.lang = code;
       document.title = t.title;
       metaDesc.setAttribute('content', t.desc);
@@ -210,6 +263,7 @@
       langSel.value = code;
       document.getElementById('lang-ico').textContent = SHORT[code];
       setOpen(false);
+      if (window.renderAuthNav) renderAuthNav();
     }
     function initialLang() {
       try { const saved = localStorage.getItem('lang'); if (I18N[saved]) return saved; } catch (e) {}
@@ -221,6 +275,114 @@
       try { localStorage.setItem('lang', langSel.value); } catch (e) {}
     });
     applyLang(initialLang());
+
+    /* ---- 로그인 / 회원가입 / 내 정보 (Supabase 인증) ---- */
+    var authUser = null;
+    var authMode = 'login';
+    var authClient = null;
+    try {
+      if (window.supabase && window.APP_CONFIG) authClient = window.supabase.createClient(APP_CONFIG.url, APP_CONFIG.anonKey);
+    } catch (e) { authClient = null; }
+
+    const authDlg = document.getElementById('auth-dialog');
+    const acctDlg = document.getElementById('account-dialog');
+    const authForm = document.getElementById('auth-form');
+    const authMsg = document.getElementById('auth-msg');
+    const acctMsg = document.getElementById('acct-msg');
+    function tr(key) { return (I18N[currentLang] || I18N.ko)[key]; }
+    const say = (el, key, kind) => { el.textContent = key ? tr(key) : ''; el.className = 'dmsg ' + (kind || ''); };
+
+    function renderAuthNav() {
+      const btn = document.getElementById('auth-nav');
+      btn.dataset.i18n = authUser ? 'auth_account' : 'auth_login';
+      btn.textContent = tr(btn.dataset.i18n);
+    }
+    function setAuthMode(mode) {
+      authMode = mode;
+      const signup = mode === 'signup';
+      document.getElementById('tab-login').setAttribute('aria-selected', String(!signup));
+      document.getElementById('tab-signup').setAttribute('aria-selected', String(signup));
+      document.getElementById('name-row').hidden = !signup;
+      document.getElementById('pw-hint').hidden = !signup;
+      authForm.password.autocomplete = signup ? 'new-password' : 'current-password';
+      const submit = document.getElementById('auth-submit');
+      submit.dataset.i18n = signup ? 'auth_signup' : 'auth_login';
+      submit.textContent = tr(submit.dataset.i18n);
+      document.getElementById('auth-title').dataset.i18n = signup ? 'auth_signup' : 'auth_login';
+      document.getElementById('auth-title').textContent = tr(signup ? 'auth_signup' : 'auth_login');
+      say(authMsg, '');
+    }
+    function errKey(err) {
+      const msg = (err && err.message || '').toLowerCase(), code = err && err.code || '';
+      if (code === 'invalid_credentials' || msg.includes('invalid login')) return 'err_credentials';
+      if (code === 'user_already_exists' || msg.includes('already registered')) return 'err_exists';
+      if (code === 'email_not_confirmed' || msg.includes('not confirmed')) return 'err_unconfirmed';
+      if (code === 'weak_password' || msg.includes('password should')) return 'err_pw';
+      if (err && (err.status === 429 || code.includes('rate_limit'))) return 'err_rate';
+      return 'err_generic';
+    }
+    async function openAccount() {
+      say(acctMsg, '');
+      document.getElementById('acct-email').value = authUser.email || '';
+      const nameEl = document.getElementById('acct-name');
+      nameEl.value = (authUser.user_metadata && authUser.user_metadata.name) || '';
+      acctDlg.showModal();
+      const { data } = await authClient.from('profiles').select('name').eq('id', authUser.id).maybeSingle();
+      if (data) nameEl.value = data.name;
+    }
+
+    document.getElementById('auth-nav').addEventListener('click', () => {
+      if (!authClient) { authDlg.showModal(); say(authMsg, 'err_unavailable', 'err'); return; }
+      if (authUser) return openAccount();
+      setAuthMode('login'); authForm.reset(); authDlg.showModal();
+    });
+    document.getElementById('tab-login').addEventListener('click', () => setAuthMode('login'));
+    document.getElementById('tab-signup').addEventListener('click', () => setAuthMode('signup'));
+    document.querySelectorAll('dialog [data-close]').forEach((b) => b.addEventListener('click', () => b.closest('dialog').close()));
+    document.querySelectorAll('dialog').forEach((d) => d.addEventListener('click', (e) => { if (e.target === d) d.close(); }));
+
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!authClient) return say(authMsg, 'err_unavailable', 'err');
+      const name = authForm.name.value.trim(), email = authForm.email.value.trim(), password = authForm.password.value;
+      if (authMode === 'signup' && !name) return say(authMsg, 'err_name', 'err');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return say(authMsg, 'err_email', 'err');
+      if (password.length < 8) return say(authMsg, 'err_pw', 'err');
+      const submit = document.getElementById('auth-submit');
+      submit.disabled = true; say(authMsg, 'auth_wait');
+      try {
+        if (authMode === 'signup') {
+          const { data, error } = await authClient.auth.signUp({ email, password, options: { data: { name } } });
+          if (error) return say(authMsg, errKey(error), 'err');
+          if (data.session) { authForm.reset(); authDlg.close(); } else { say(authMsg, 'msg_signup_confirm', 'ok'); }
+        } else {
+          const { error } = await authClient.auth.signInWithPassword({ email, password });
+          if (error) return say(authMsg, errKey(error), 'err');
+          authForm.reset(); authDlg.close();
+        }
+      } catch (err) {
+        say(authMsg, 'err_generic', 'err');
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    document.getElementById('acct-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('acct-name').value.trim();
+      if (!name) return say(acctMsg, 'err_name', 'err');
+      const { error } = await authClient.from('profiles').upsert({ id: authUser.id, name, updated_at: new Date().toISOString() });
+      say(acctMsg, error ? 'err_generic' : 'msg_saved', error ? 'err' : 'ok');
+    });
+    document.getElementById('logout').addEventListener('click', async () => {
+      await authClient.auth.signOut();
+      acctDlg.close();
+    });
+
+    if (authClient) {
+      authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); });
+      authClient.auth.onAuthStateChange((_event, session) => { authUser = session ? session.user : null; renderAuthNav(); });
+    }
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
   </script>
 </body>
