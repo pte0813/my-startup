@@ -113,3 +113,26 @@ create policy "후기 사진은 본인 폴더에만 업로드" on storage.object
 --         and (t.capacity is null or coalesce((select c.n from public.trip_counts c where c.trip_id = t.id), 0) < t.capacity)
 --     )
 --   );
+
+-- 7) 결제(나이스페이먼츠): 결제 기록은 서버(service_role 키)만 만들고 바꾼다. 회원은 본인 결제만 조회 가능
+create table public.payments (
+  id             uuid primary key default gen_random_uuid(),
+  order_id       text not null unique,
+  user_id        uuid not null references auth.users (id) on delete cascade,
+  application_id uuid not null references public.trip_applications (id) on delete cascade,
+  trip_id        uuid not null references public.trips (id),
+  amount         integer not null check (amount > 0),
+  status         text not null default 'ready' check (status in ('ready', 'paid', 'failed', 'cancelled')),
+  tid            text,
+  pay_method     text,
+  receipt_url    text,
+  fail_reason    text,
+  created_at     timestamptz not null default now(),
+  paid_at        timestamptz
+);
+create index payments_user_idx on public.payments (user_id);
+create index payments_application_idx on public.payments (application_id);
+alter table public.payments enable row level security;
+revoke all on public.payments from anon, authenticated;
+grant select on public.payments to authenticated;
+create policy "본인 결제만 조회" on public.payments for select to authenticated using (user_id = auth.uid());

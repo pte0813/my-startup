@@ -121,7 +121,14 @@
   "ct_consent": "개인정보 수집·이용에 동의합니다. (필수)",
   "ct_consent_d": "수집 항목: 이름, 이메일, 문의 내용 · 이용 목적: 문의 답변 · 보유 기간: 문의 처리가 끝날 때까지",
   "err_consent": "개인정보 수집·이용에 동의해 주세요.",
-  "loading": "불러오는 중…"
+  "loading": "불러오는 중…",
+  "trip_pay": "결제하기",
+  "trip_paid": "결제 완료",
+  "pay_ok": "결제가 완료됐어요! 내 신청 내역에서 확인할 수 있어요.",
+  "pay_fail": "결제에 실패했어요. 다시 시도해 주세요.",
+  "pay_unavailable": "결제 기능을 준비 중이에요. 잠시 후 다시 이용해 주세요.",
+  "pay_opening": "결제창을 여는 중…",
+  "app_pending": "결제 대기"
  },
  "en": {
   "menu_label": "Main menu",
@@ -245,7 +252,14 @@
   "ct_consent": "I agree to the collection and use of my personal information. (required)",
   "ct_consent_d": "Collected: name, email, message · Purpose: replying to your inquiry · Retention: until your inquiry is resolved",
   "err_consent": "Please agree to the privacy notice.",
-  "loading": "Loading…"
+  "loading": "Loading…",
+  "trip_pay": "Pay now",
+  "trip_paid": "Paid",
+  "pay_ok": "Payment complete! You can see it in My applications.",
+  "pay_fail": "Payment failed. Please try again.",
+  "pay_unavailable": "Payments are not available yet. Please try again later.",
+  "pay_opening": "Opening payment window…",
+  "app_pending": "Awaiting payment"
  },
  "zh": {
   "menu_label": "主菜单",
@@ -369,7 +383,14 @@
   "ct_consent": "我同意收集和使用个人信息。(必填)",
   "ct_consent_d": "收集项目:姓名、邮箱、咨询内容 · 目的:答复咨询 · 保存期限:至咨询处理完毕",
   "err_consent": "请同意个人信息收集和使用。",
-  "loading": "加载中…"
+  "loading": "加载中…",
+  "trip_pay": "去支付",
+  "trip_paid": "已付款",
+  "pay_ok": "支付成功!可在“我的报名”中查看。",
+  "pay_fail": "支付失败,请重试。",
+  "pay_unavailable": "支付功能准备中,请稍后再试。",
+  "pay_opening": "正在打开支付窗口…",
+  "app_pending": "待支付"
  },
  "ja": {
   "menu_label": "メインメニュー",
@@ -493,7 +514,14 @@
   "ct_consent": "個人情報の収集・利用に同意します。(必須)",
   "ct_consent_d": "収集項目:お名前、メール、内容 · 目的:お問い合わせへの回答 · 保有期間:対応が完了するまで",
   "err_consent": "個人情報の収集・利用に同意してください。",
-  "loading": "読み込み中…"
+  "loading": "読み込み中…",
+  "trip_pay": "支払う",
+  "trip_paid": "支払い済み",
+  "pay_ok": "お支払いが完了しました!申込履歴で確認できます。",
+  "pay_fail": "お支払いに失敗しました。もう一度お試しください。",
+  "pay_unavailable": "お支払い機能は準備中です。しばらくしてからお試しください。",
+  "pay_opening": "決済ウィンドウを開いています…",
+  "app_pending": "支払い待ち"
  },
  "es": {
   "menu_label": "Menú principal",
@@ -617,6 +645,13 @@
   "ct_consent": "Acepto la recopilación y el uso de mis datos personales. (obligatorio)",
   "ct_consent_d": "Datos: nombre, correo, mensaje · Finalidad: responder tu consulta · Conservación: hasta resolver la consulta",
   "err_consent": "Acepta el aviso de privacidad.",
-  "loading": "Cargando…"
+  "loading": "Cargando…",
+  "trip_pay": "Pagar",
+  "trip_paid": "Pagado",
+  "pay_ok": "¡Pago completado! Puedes verlo en Mis inscripciones.",
+  "pay_fail": "El pago ha fallado. Inténtalo de nuevo.",
+  "pay_unavailable": "Los pagos aún no están disponibles. Inténtalo más tarde.",
+  "pay_opening": "Abriendo la ventana de pago…",
+  "app_pending": "Pendiente de pago"
  }
 }

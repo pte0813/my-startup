@@ -65,7 +65,9 @@
     const seats = t.capacity ? T('trip_seats', { n, cap: t.capacity }) : (n ? T('trip_count', { n }) : '');
     let btn = '';
     if (t.status === 'open') {
-      if (mine && mine !== 'cancelled') btn = `<button class="btn ghost" type="button" disabled>${esc(T('trip_applied'))}</button>`;
+      if (mine === 'paid') btn = `<button class="btn ghost" type="button" disabled>${esc(T('trip_paid'))}</button>`;
+      else if (mine === 'applied' && t.price > 0) btn = `<button class="btn" type="button" data-pay="${esc(t.id)}">${esc(T('trip_pay'))}</button>`;
+      else if (mine && mine !== 'cancelled') btn = `<button class="btn ghost" type="button" disabled>${esc(T('trip_applied'))}</button>`;
       else if (t.capacity && n >= t.capacity) btn = `<button class="btn ghost" type="button" disabled>${esc(T('trip_full'))}</button>`;
       else btn = `<button class="btn" type="button" data-apply="${esc(t.id)}">${esc(T(authUser ? 'trip_apply' : 'trip_apply_login'))}</button>`;
     } else if (t.status === 'upcoming') {
@@ -111,13 +113,26 @@
     await loadTrips();
   }
 
+  async function payTrip(id, btn) {
+    const msg = $('#trip-msg');
+    btn.disabled = true; setMsg(msg, 'pay_opening');
+    const key = await startPayment(authClient, id);
+    if (key === 'need_login') { setMsg(msg, ''); openLogin(); }
+    else if (key === 'ok') setMsg(msg, '');
+    else setMsg(msg, key, 'err');
+    btn.disabled = false;
+  }
+
   function initTrips() {
     const wrap = $('#trip-open');
     if (!wrap) return;
     document.addEventListener('click', (e) => {
       const b = e.target.closest('[data-apply]');
       if (b) applyTrip(b.dataset.apply, b);
+      const pb = e.target.closest('[data-pay]');
+      if (pb) payTrip(pb.dataset.pay, pb);
     });
+    window.addEventListener('pay-error', () => setMsg($('#trip-msg'), 'pay_fail', 'err'));
     ['open', 'upcoming', 'past'].forEach((s) => { const g = $('#' + GRIDS[s]); if (g) g.innerHTML = `<p class="note">${esc(T('loading'))}</p>`; });
     if (!authClient) { tripState.loaded = true; tripState.failed = true; renderTrips(); return; }
     loadTrips();
