@@ -225,3 +225,12 @@ footer { padding: 24px 0; text-align: center; font-size: .85rem; opacity: .8; }
 .trip-cover img.art { object-fit: cover; }
 .trip-card:has(.st-past) .trip-cover img { filter: grayscale(.85) opacity(.85); }
 .trip-card:has(.st-upcoming) .trip-cover img { filter: saturate(.8); }
+
+/* 서비스 카드 아이콘 */
+.card.has-icon { display: grid; align-content: start; grid-template-columns: 64px 1fr; column-gap: 16px; align-items: start; }
+.card.has-icon h3::before { display: none; }
+.card.has-icon .card-icon { grid-row: 1 / span 2; width: 64px; height: 64px; }
+@media (min-width: 720px) {
+  .card.has-icon { grid-template-columns: 1fr; row-gap: 4px; text-align: left; }
+  .card.has-icon .card-icon { grid-row: auto; width: 80px; height: 80px; margin-bottom: 8px; }
+}
