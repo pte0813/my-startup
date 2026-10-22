@@ -8,6 +8,29 @@
     <section id="reviews-list">
       <div class="wrap">
         <h2 data-i18n="s_reviews">여행 후기 모음</h2>
-        <div class="blank"></div>
+        <div class="review-list" id="review-list" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="review-write">
+      <div class="wrap">
+        <h2 data-i18n="rv_write">후기 쓰기</h2>
+        <div class="form-card" id="rv-need" hidden>
+          <p data-i18n="rv_login">로그인하면 이용할 수 있어요.</p>
+          <button class="btn" type="button" data-open-login data-i18n="auth_login">로그인</button>
+        </div>
+        <form class="form-card" id="rv-form" hidden novalidate>
+          <label><span data-i18n="rv_trip">다녀온 여행 (선택)</span><select name="trip" id="rv-trip"></select></label>
+          <label><span data-i18n="rv_rating">별점</span>
+            <select name="rating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></label>
+          <label><span data-i18n="rv_body">후기 내용</span><textarea name="body" rows="5" maxlength="3000"></textarea></label>
+          <label><span data-i18n="rv_photos">사진 (최대 3장, 장당 5MB)</span><input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple></label>
+          <button class="btn" id="rv-submit" type="submit" data-i18n="rv_submit">후기 등록</button>
+          <p class="fmsg" id="rv-msg" role="status" aria-live="polite"></p>
+        </form>
+        <div id="rv-mine-wrap" hidden>
+          <h3 data-i18n="rv_my">내 후기</h3>
+          <div class="review-list" id="rv-mine"></div>
+        </div>
       </div>
     </section>

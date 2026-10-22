@@ -11,7 +11,7 @@ shutil.rmtree(dist, ignore_errors=True)
 dist.mkdir()
 files = [
     "index.html", "trips.html", "reviews.html", "community.html", "contact.html", "account.html",
-    "brand.css", "common.css", "common.js", "i18n.js", "config.js",
+    "brand.css", "common.css", "common.js", "app.js", "i18n.js", "config.js",
     "favicon.svg", "og-image.png", "robots.txt", "sitemap.xml",
 ]
 for f in files:

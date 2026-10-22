@@ -89,7 +89,15 @@
     <section id="contact-form">
       <div class="wrap">
         <h2 data-i18n="s_contact">문의하기</h2>
-        <div class="blank"></div>
+        <form class="form-card" id="ct-form" novalidate>
+          <label><span data-i18n="auth_name">이름</span><input type="text" name="name" autocomplete="name" maxlength="100"></label>
+          <label><span data-i18n="auth_email">이메일</span><input type="email" name="email" autocomplete="email" maxlength="254"></label>
+          <label><span data-i18n="ct_msg">문의 내용</span><textarea name="message" rows="5" maxlength="4000"></textarea></label>
+          <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="consent"><input type="checkbox" name="consent"><span><span data-i18n="ct_consent">개인정보 수집·이용에 동의합니다. (필수)</span><small data-i18n="ct_consent_d">수집 항목: 이름, 이메일, 문의 내용 · 이용 목적: 문의 답변 · 보유 기간: 문의 처리가 끝날 때까지</small></span></label>
+          <button class="btn" id="ct-submit" type="submit" data-i18n="ct_submit">문의 보내기</button>
+          <p class="fmsg" id="ct-msg" role="status" aria-live="polite"></p>
+        </form>
       </div>
     </section>
 
@@ -122,5 +130,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="i18n.js"></script>
   <script src="common.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -78,6 +78,7 @@ function renderAuthNav() {
   const btn = document.getElementById('auth-nav');
   btn.dataset.i18n = authUser ? 'auth_account' : 'auth_login';
   btn.textContent = tr(btn.dataset.i18n);
+  (window.pageHooks || []).forEach((f) => f());
 }
 function setAuthMode(mode) {
   authMode = mode;

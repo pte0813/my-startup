@@ -89,23 +89,25 @@
     <section id="trip-open">
       <div class="wrap">
         <h2 data-i18n="s_open">진행 중인 여행</h2>
-        <div class="blank"></div>
+        <div class="trip-grid" id="grid-open" aria-live="polite"></div>
       </div>
     </section>
 
     <section id="trip-soon">
       <div class="wrap">
         <h2 data-i18n="s_soon">오픈 예정 여행</h2>
-        <div class="blank"></div>
+        <div class="trip-grid" id="grid-upcoming" aria-live="polite"></div>
       </div>
     </section>
 
     <section id="trip-past">
       <div class="wrap">
         <h2 data-i18n="s_past">진행했던 여행</h2>
-        <div class="blank"></div>
+        <div class="trip-grid" id="grid-past" aria-live="polite"></div>
       </div>
     </section>
+
+    <div class="wrap"><p class="fmsg" id="trip-msg" role="status" aria-live="polite"></p></div>
   </main>
   <footer><div class="wrap" data-i18n="footer">© 함께닿 · 혼자 떠나도, 마음은 닿는다</div></footer>
 
@@ -129,5 +131,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="i18n.js"></script>
   <script src="common.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

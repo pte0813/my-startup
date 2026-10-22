@@ -41,6 +41,11 @@
     .btn.ghost { background: transparent; color: var(--secondary); border: 1px solid var(--secondary); }
     .msg { min-height: 1.5em; margin: 0; font-weight: 500; font-size: .95rem; }
     .msg.ok { color: #1f7a45; } .msg.err { color: #c4382a; }
+    .apps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    .apps li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 14px; border-radius: 14px; background: rgba(31,58,95,.05); }
+    .apps small { display: block; opacity: .7; }
+    .apps .pill { font: 400 .85rem "Jua", sans-serif; background: var(--primary); color: #fff; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+    [hidden] { display: none !important; }
     #need { display: none; text-align: center; }
     #need p { margin: 0 0 14px; font-size: 1.1rem; }
     @media (max-width: 420px) { .logo-name { font-size: 1.3rem; } .lang select, .home { font-size: .8rem; padding: 0 8px; max-width: 88px; } }
@@ -81,6 +86,11 @@
         </section>
 
         <section class="card">
+          <h2 data-i18n="acct_apps">내 신청 내역</h2>
+          <ul class="apps" id="apps"></ul>
+        </section>
+
+        <section class="card">
           <h2 data-i18n="acct_pw_section">비밀번호 변경</h2>
           <form id="pw-form" novalidate>
             <label><span data-i18n="acct_pw_current">현재 비밀번호</span><input type="password" name="current" autocomplete="current-password" maxlength="72"></label>
@@ -99,13 +109,32 @@
   <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script>
-    const I18N = {"ko": {"acct_page_title": "내 정보 수정", "acct_home": "홈으로", "acct_profile": "프로필", "acct_joined": "가입일", "acct_pw_section": "비밀번호 변경", "acct_pw_current": "현재 비밀번호", "acct_pw_new": "새 비밀번호", "acct_pw_confirm": "새 비밀번호 확인", "acct_pw_change": "비밀번호 변경하기", "acct_pw_saved": "비밀번호를 바꿨어요.", "err_pw_mismatch": "새 비밀번호가 서로 달라요.", "err_pw_current": "현재 비밀번호가 맞지 않아요.", "err_pw_same": "새 비밀번호가 현재 비밀번호와 같아요.", "acct_need_login": "로그인이 필요해요.", "acct_go_home": "홈으로 가서 로그인하기", "auth_email": "이메일", "auth_name": "이름", "auth_save": "저장", "auth_logout": "로그아웃", "auth_wait": "잠시만요…", "msg_saved": "저장했어요.", "err_name": "이름을 입력해 주세요.", "err_pw": "비밀번호는 8자 이상이어야 해요.", "err_generic": "문제가 생겼어요. 잠시 후 다시 시도해 주세요.", "err_rate": "요청이 너무 많아요. 잠시 후 다시 시도해 주세요.", "err_unavailable": "로그인 기능을 불러오지 못했어요.", "lang_label": "언어", "menu_title": "내 정보"}, "en": {"acct_page_title": "Edit my account", "acct_home": "Home", "acct_profile": "Profile", "acct_joined": "Joined", "acct_pw_section": "Change password", "acct_pw_current": "Current password", "acct_pw_new": "New password", "acct_pw_confirm": "Confirm new password", "acct_pw_change": "Change password", "acct_pw_saved": "Your password has been changed.", "err_pw_mismatch": "The new passwords do not match.", "err_pw_current": "The current password is incorrect.", "err_pw_same": "The new password is the same as the current one.", "acct_need_login": "Please log in first.", "acct_go_home": "Go to home and log in", "auth_email": "Email", "auth_name": "Name", "auth_save": "Save", "auth_logout": "Log out", "auth_wait": "One moment…", "msg_saved": "Saved.", "err_name": "Please enter your name.", "err_pw": "Password must be at least 8 characters.", "err_generic": "Something went wrong. Please try again.", "err_rate": "Too many requests. Please try again later.", "err_unavailable": "Could not load the sign-in feature.", "lang_label": "Language", "menu_title": "My account"}, "zh": {"acct_page_title": "修改我的信息", "acct_home": "返回首页", "acct_profile": "个人资料", "acct_joined": "注册日期", "acct_pw_section": "修改密码", "acct_pw_current": "当前密码", "acct_pw_new": "新密码", "acct_pw_confirm": "确认新密码", "acct_pw_change": "修改密码", "acct_pw_saved": "密码已修改。", "err_pw_mismatch": "两次输入的新密码不一致。", "err_pw_current": "当前密码不正确。", "err_pw_same": "新密码与当前密码相同。", "acct_need_login": "请先登录。", "acct_go_home": "返回首页登录", "auth_email": "邮箱", "auth_name": "姓名", "auth_save": "保存", "auth_logout": "退出登录", "auth_wait": "请稍候…", "msg_saved": "已保存。", "err_name": "请输入姓名。", "err_pw": "密码至少需要8个字符。", "err_generic": "出了点问题,请稍后重试。", "err_rate": "请求过于频繁,请稍后再试。", "err_unavailable": "无法加载登录功能。", "lang_label": "语言", "menu_title": "我的信息"}, "ja": {"acct_page_title": "マイページ編集", "acct_home": "ホームへ", "acct_profile": "プロフィール", "acct_joined": "登録日", "acct_pw_section": "パスワード変更", "acct_pw_current": "現在のパスワード", "acct_pw_new": "新しいパスワード", "acct_pw_confirm": "新しいパスワード(確認)", "acct_pw_change": "パスワードを変更する", "acct_pw_saved": "パスワードを変更しました。", "err_pw_mismatch": "新しいパスワードが一致しません。", "err_pw_current": "現在のパスワードが違います。", "err_pw_same": "新しいパスワードが現在のものと同じです。", "acct_need_login": "ログインが必要です。", "acct_go_home": "ホームへ戻ってログイン", "auth_email": "メールアドレス", "auth_name": "お名前", "auth_save": "保存", "auth_logout": "ログアウト", "auth_wait": "少々お待ちください…", "msg_saved": "保存しました。", "err_name": "お名前を入力してください。", "err_pw": "パスワードは8文字以上にしてください。", "err_generic": "問題が発生しました。もう一度お試しください。", "err_rate": "リクエストが多すぎます。しばらくしてからお試しください。", "err_unavailable": "ログイン機能を読み込めませんでした。", "lang_label": "言語", "menu_title": "マイページ"}, "es": {"acct_page_title": "Editar mi cuenta", "acct_home": "Inicio", "acct_profile": "Perfil", "acct_joined": "Registro", "acct_pw_section": "Cambiar contraseña", "acct_pw_current": "Contraseña actual", "acct_pw_new": "Nueva contraseña", "acct_pw_confirm": "Confirmar nueva contraseña", "acct_pw_change": "Cambiar contraseña", "acct_pw_saved": "Contraseña cambiada.", "err_pw_mismatch": "Las nuevas contraseñas no coinciden.", "err_pw_current": "La contraseña actual es incorrecta.", "err_pw_same": "La nueva contraseña es igual a la actual.", "acct_need_login": "Inicia sesión primero.", "acct_go_home": "Ir al inicio e iniciar sesión", "auth_email": "Correo electrónico", "auth_name": "Nombre", "auth_save": "Guardar", "auth_logout": "Cerrar sesión", "auth_wait": "Un momento…", "msg_saved": "Guardado.", "err_name": "Introduce tu nombre.", "err_pw": "La contraseña debe tener al menos 8 caracteres.", "err_generic": "Algo salió mal. Inténtalo de nuevo.", "err_rate": "Demasiadas solicitudes. Inténtalo más tarde.", "err_unavailable": "No se pudo cargar el inicio de sesión.", "lang_label": "Idioma", "menu_title": "Mi cuenta"}};
+    const I18N = {"ko": {"acct_page_title": "내 정보 수정", "acct_home": "홈으로", "acct_profile": "프로필", "acct_joined": "가입일", "acct_pw_section": "비밀번호 변경", "acct_pw_current": "현재 비밀번호", "acct_pw_new": "새 비밀번호", "acct_pw_confirm": "새 비밀번호 확인", "acct_pw_change": "비밀번호 변경하기", "acct_pw_saved": "비밀번호를 바꿨어요.", "err_pw_mismatch": "새 비밀번호가 서로 달라요.", "err_pw_current": "현재 비밀번호가 맞지 않아요.", "err_pw_same": "새 비밀번호가 현재 비밀번호와 같아요.", "acct_need_login": "로그인이 필요해요.", "acct_go_home": "홈으로 가서 로그인하기", "auth_email": "이메일", "auth_name": "이름", "auth_save": "저장", "auth_logout": "로그아웃", "auth_wait": "잠시만요…", "msg_saved": "저장했어요.", "err_name": "이름을 입력해 주세요.", "err_pw": "비밀번호는 8자 이상이어야 해요.", "err_generic": "문제가 생겼어요. 잠시 후 다시 시도해 주세요.", "err_rate": "요청이 너무 많아요. 잠시 후 다시 시도해 주세요.", "err_unavailable": "로그인 기능을 불러오지 못했어요.", "lang_label": "언어", "menu_title": "내 정보", "acct_apps": "내 신청 내역", "acct_apps_empty": "신청한 여행이 없어요.", "app_applied": "신청 완료", "app_paid": "결제 완료", "app_cancelled": "취소됨", "trip_applied": "신청 완료"}, "en": {"acct_page_title": "Edit my account", "acct_home": "Home", "acct_profile": "Profile", "acct_joined": "Joined", "acct_pw_section": "Change password", "acct_pw_current": "Current password", "acct_pw_new": "New password", "acct_pw_confirm": "Confirm new password", "acct_pw_change": "Change password", "acct_pw_saved": "Your password has been changed.", "err_pw_mismatch": "The new passwords do not match.", "err_pw_current": "The current password is incorrect.", "err_pw_same": "The new password is the same as the current one.", "acct_need_login": "Please log in first.", "acct_go_home": "Go to home and log in", "auth_email": "Email", "auth_name": "Name", "auth_save": "Save", "auth_logout": "Log out", "auth_wait": "One moment…", "msg_saved": "Saved.", "err_name": "Please enter your name.", "err_pw": "Password must be at least 8 characters.", "err_generic": "Something went wrong. Please try again.", "err_rate": "Too many requests. Please try again later.", "err_unavailable": "Could not load the sign-in feature.", "lang_label": "Language", "menu_title": "My account", "acct_apps": "My applications", "acct_apps_empty": "No applications yet.", "app_applied": "Applied", "app_paid": "Paid", "app_cancelled": "Cancelled", "trip_applied": "Applied"}, "zh": {"acct_page_title": "修改我的信息", "acct_home": "返回首页", "acct_profile": "个人资料", "acct_joined": "注册日期", "acct_pw_section": "修改密码", "acct_pw_current": "当前密码", "acct_pw_new": "新密码", "acct_pw_confirm": "确认新密码", "acct_pw_change": "修改密码", "acct_pw_saved": "密码已修改。", "err_pw_mismatch": "两次输入的新密码不一致。", "err_pw_current": "当前密码不正确。", "err_pw_same": "新密码与当前密码相同。", "acct_need_login": "请先登录。", "acct_go_home": "返回首页登录", "auth_email": "邮箱", "auth_name": "姓名", "auth_save": "保存", "auth_logout": "退出登录", "auth_wait": "请稍候…", "msg_saved": "已保存。", "err_name": "请输入姓名。", "err_pw": "密码至少需要8个字符。", "err_generic": "出了点问题,请稍后重试。", "err_rate": "请求过于频繁,请稍后再试。", "err_unavailable": "无法加载登录功能。", "lang_label": "语言", "menu_title": "我的信息", "acct_apps": "我的报名", "acct_apps_empty": "暂无报名。", "app_applied": "已报名", "app_paid": "已付款", "app_cancelled": "已取消", "trip_applied": "已报名"}, "ja": {"acct_page_title": "マイページ編集", "acct_home": "ホームへ", "acct_profile": "プロフィール", "acct_joined": "登録日", "acct_pw_section": "パスワード変更", "acct_pw_current": "現在のパスワード", "acct_pw_new": "新しいパスワード", "acct_pw_confirm": "新しいパスワード(確認)", "acct_pw_change": "パスワードを変更する", "acct_pw_saved": "パスワードを変更しました。", "err_pw_mismatch": "新しいパスワードが一致しません。", "err_pw_current": "現在のパスワードが違います。", "err_pw_same": "新しいパスワードが現在のものと同じです。", "acct_need_login": "ログインが必要です。", "acct_go_home": "ホームへ戻ってログイン", "auth_email": "メールアドレス", "auth_name": "お名前", "auth_save": "保存", "auth_logout": "ログアウト", "auth_wait": "少々お待ちください…", "msg_saved": "保存しました。", "err_name": "お名前を入力してください。", "err_pw": "パスワードは8文字以上にしてください。", "err_generic": "問題が発生しました。もう一度お試しください。", "err_rate": "リクエストが多すぎます。しばらくしてからお試しください。", "err_unavailable": "ログイン機能を読み込めませんでした。", "lang_label": "言語", "menu_title": "マイページ", "acct_apps": "申込履歴", "acct_apps_empty": "申込はまだありません。", "app_applied": "申込済み", "app_paid": "支払い済み", "app_cancelled": "キャンセル", "trip_applied": "申込済み"}, "es": {"acct_page_title": "Editar mi cuenta", "acct_home": "Inicio", "acct_profile": "Perfil", "acct_joined": "Registro", "acct_pw_section": "Cambiar contraseña", "acct_pw_current": "Contraseña actual", "acct_pw_new": "Nueva contraseña", "acct_pw_confirm": "Confirmar nueva contraseña", "acct_pw_change": "Cambiar contraseña", "acct_pw_saved": "Contraseña cambiada.", "err_pw_mismatch": "Las nuevas contraseñas no coinciden.", "err_pw_current": "La contraseña actual es incorrecta.", "err_pw_same": "La nueva contraseña es igual a la actual.", "acct_need_login": "Inicia sesión primero.", "acct_go_home": "Ir al inicio e iniciar sesión", "auth_email": "Correo electrónico", "auth_name": "Nombre", "auth_save": "Guardar", "auth_logout": "Cerrar sesión", "auth_wait": "Un momento…", "msg_saved": "Guardado.", "err_name": "Introduce tu nombre.", "err_pw": "La contraseña debe tener al menos 8 caracteres.", "err_generic": "Algo salió mal. Inténtalo de nuevo.", "err_rate": "Demasiadas solicitudes. Inténtalo más tarde.", "err_unavailable": "No se pudo cargar el inicio de sesión.", "lang_label": "Idioma", "menu_title": "Mi cuenta", "acct_apps": "Mis inscripciones", "acct_apps_empty": "Aún no tienes inscripciones.", "app_applied": "Inscrito", "app_paid": "Pagado", "app_cancelled": "Cancelado", "trip_applied": "Inscrito"}};
     let lang = 'ko', user = null;
     const tr = (k) => (I18N[lang] || I18N.ko)[k];
     const client = (window.supabase && window.APP_CONFIG) ? window.supabase.createClient(APP_CONFIG.url, APP_CONFIG.anonKey) : null;
     const $ = (id) => document.getElementById(id);
     const say = (el, key, kind) => { el.textContent = key ? tr(key) : ''; el.className = 'msg ' + (kind || ''); };
 
+    const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    let appsData = null;
+    function renderApps() {
+      const list = $('apps');
+      if (!appsData) return;
+      if (!appsData.length) { list.innerHTML = '<li>' + esc(tr('acct_apps_empty')) + '</li>'; return; }
+      const day = (d) => (d ? new Date(d + 'T00:00:00').toLocaleDateString(lang === 'zh' ? 'zh-CN' : lang, { month: 'short', day: 'numeric' }) : '');
+      list.innerHTML = appsData.map((a) => {
+        const t = a.trips || {};
+        const when = t.start_date ? (t.end_date && t.end_date !== t.start_date ? day(t.start_date) + ' – ' + day(t.end_date) : day(t.start_date)) : '';
+        const label = { applied: 'trip_applied', paid: 'app_paid', cancelled: 'app_cancelled' }[a.status] || 'trip_applied';
+        return '<li><span>' + esc(t.title || '') + (when ? '<small>' + esc(when) + '</small>' : '') + '</span><span class="pill">' + esc(tr(label)) + '</span></li>';
+      }).join('');
+    }
+    async function loadApps() {
+      const { data, error } = await client.from('trip_applications').select('status,created_at,trips(title,start_date,end_date)').order('created_at', { ascending: false });
+      appsData = error ? [] : (data || []);
+      renderApps();
+    }
     function renderJoined() {
       if (!user || !user.created_at) return;
       $('joined').textContent = new Date(user.created_at).toLocaleDateString(lang === 'zh' ? 'zh-CN' : lang);
@@ -117,6 +146,7 @@
       document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = tr(el.dataset.i18n); });
       $('lang').value = lang;
       renderJoined();
+      renderApps();
     }
     function initialLang() {
       try { const s = localStorage.getItem('lang'); if (I18N[s]) return s; } catch (e) {}
@@ -144,6 +174,7 @@
       renderJoined();
       const { data } = await client.from('profiles').select('name').eq('id', user.id).maybeSingle();
       if (data) $('name').value = data.name;
+      loadApps();
     }
 
     $('profile-form').addEventListener('submit', async (e) => {

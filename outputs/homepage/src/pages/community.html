@@ -22,6 +22,15 @@
     <section id="suggest">
       <div class="wrap">
         <h2 data-i18n="s_suggest">상품 제안하기</h2>
-        <div class="blank"></div>
+        <div class="form-card" id="sg-need" hidden>
+          <p data-i18n="need_login">로그인하면 이용할 수 있어요.</p>
+          <button class="btn" type="button" data-open-login data-i18n="auth_login">로그인</button>
+        </div>
+        <form class="form-card" id="sg-form" hidden novalidate>
+          <label><span data-i18n="sg_subject">제안 제목</span><input type="text" name="title" maxlength="100"></label>
+          <label><span data-i18n="sg_body">제안 내용</span><textarea name="body" rows="5" maxlength="4000"></textarea></label>
+          <button class="btn" id="sg-submit" type="submit" data-i18n="sg_submit">제안 보내기</button>
+          <p class="fmsg" id="sg-msg" role="status" aria-live="polite"></p>
+        </form>
       </div>
     </section>
