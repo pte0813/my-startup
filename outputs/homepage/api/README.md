@@ -34,3 +34,8 @@
 - 동의(`profiles.ai_consent`)한 회원의 선택지 값(MBTI·관심사·여행 스타일·활동 시간대)만 사용한다. 선택지는 `ai-options.json` 하나로 관리한다.
 - 환경변수: `ANTHROPIC_API_KEY`(필수), `AI_MODEL`(기본 `claude-haiku-5-5`), `AI_DAILY_LIMIT`(회원당 하루 호출 수, 기본 10). `SUPABASE_*`는 결제와 같은 값을 쓴다.
 - DB 변경은 `outputs/homepage-schema-ai.sql`.
+
+### api/ai-icebreaker.js (2단계)
+- `POST /api/ai-icebreaker { trip_id, lang }` — 신청자만 사용. 같은 여행 신청자 중 동의한 회원의 **공통 관심사 인원 수 통계**(2명 이상 겹치는 항목만)로 대화 주제 4개·밸런스 게임 3개·자기소개 템플릿·단톡방 첫인사를 만든다.
+- 여행·언어별로 결과를 `ai_icebreakers`에 저장해 모두가 같은 내용을 본다(참가자 구성이 바뀌면 다시 만들고, 하루 사용 한도는 매칭과 같은 `AI_DAILY_LIMIT`).
+- AI를 쓸 수 없으면(키 없음·한도·오류) 통계와 기본 자기소개 템플릿만 보여 준다.

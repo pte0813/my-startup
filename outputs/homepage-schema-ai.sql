@@ -18,3 +18,15 @@ create table if not exists public.ai_usage (
 create index if not exists ai_usage_user_day on public.ai_usage (user_id, created_at desc);
 alter table public.ai_usage enable row level security;
 revoke all on public.ai_usage from anon, authenticated;
+
+-- 2단계 아이스브레이킹: 여행·언어별로 한 번 만든 결과를 저장해 모두가 같은 내용을 보게 한다 (서버만 읽고 쓴다)
+create table if not exists public.ai_icebreakers (
+  trip_id    uuid not null references public.trips (id) on delete cascade,
+  lang       text not null check (lang in ('ko','en','zh','ja','es')),
+  stats_hash text not null,
+  content    jsonb not null,
+  created_at timestamptz not null default now(),
+  primary key (trip_id, lang)
+);
+alter table public.ai_icebreakers enable row level security;
+revoke all on public.ai_icebreakers from anon, authenticated;

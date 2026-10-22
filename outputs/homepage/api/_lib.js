@@ -46,7 +46,8 @@ const db = (e) => {
   return {
     select: (path) => call('GET', path),
     insert: (table, row) => call('POST', table, row, { Prefer: 'return=representation' }),
-    update: (path, row) => call('PATCH', path, row, { Prefer: 'return=representation' })
+    update: (path, row) => call('PATCH', path, row, { Prefer: 'return=representation' }),
+    upsert: (table, row, conflict) => call('POST', `${table}?on_conflict=${conflict}`, row, { Prefer: 'resolution=merge-duplicates,return=minimal' })
   };
 };
 

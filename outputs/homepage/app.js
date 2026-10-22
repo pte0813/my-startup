@@ -117,6 +117,74 @@
     }
   }
 
+  /* ---- AI 아이스브레이킹: 신청한 여행의 대화 주제·밸런스 게임·자기소개 템플릿 ---- */
+  const iceState = {};
+  function iceText(st) {
+    const c = st.data && st.data.content;
+    const topics = c ? c.topics.map((x) => '• ' + x).join('\n') : '';
+    const games = c ? c.balance_games.map((g) => g.a + ' ' + T('ice_vs') + ' ' + g.b).join('\n') : '';
+    return [c && c.opener, topics && T('ice_topics') + '\n' + topics, games && T('ice_games') + '\n' + games, T('ice_intro') + '\n' + (c ? c.intro_template : T('ice_generic_intro'))].filter(Boolean).join('\n\n');
+  }
+  function icePanelHtml(id) {
+    const st = iceState[id];
+    if (!st) return '';
+    if (st.status === 'loading') return `<p class="note">${esc(T('ice_loading'))}</p>`;
+    if (st.status === 'off') return `<p class="note">${esc(T('ai_unavailable'))}</p>`;
+    if (st.status === 'error') return `<p class="note">${esc(T('ice_err'))}</p>`;
+    const d = st.data, c = d.content;
+    const tags = [].concat(d.stats.interests.map((x) => [aiName('interests', x.k), x.n]), d.stats.travel_styles.map((x) => [aiName('travel_styles', x.k), x.n]), d.stats.active_times.map((x) => [aiName('active_times', x.k), x.n]));
+    const common = tags.length ? `<div class="ai-tags">${tags.map(([n, c2]) => `<span>${esc(n)} · ${esc(T('ice_people', { n: c2 }))}</span>`).join('')}</div>` : `<p class="note">${esc(T('ice_no_common'))}</p>`;
+    const sec = (title, inner) => `<div class="ice-sec"><h4>${esc(title)}</h4>${inner}</div>`;
+    let html = sec(T('ice_common'), common);
+    if (c) {
+      html += sec(T('ice_opener'), `<p class="ice-pre">${esc(c.opener)}</p>`);
+      html += sec(T('ice_topics'), `<ul class="ice-list">${c.topics.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`);
+      html += sec(T('ice_games'), `<ul class="ice-games">${c.balance_games.map((g) => `<li><span>${esc(g.a)}</span><b>${esc(T('ice_vs'))}</b><span>${esc(g.b)}</span></li>`).join('')}</ul>`);
+      html += sec(T('ice_intro'), `<p class="ice-pre">${esc(c.intro_template)}</p>`);
+    } else {
+      html += sec(T('ice_intro'), `<p class="ice-pre">${esc(T('ice_generic_intro'))}</p>`);
+      html += `<p class="note">${esc(d.limited ? T('ice_limit') : T('ice_generic_note'))}</p>`;
+    }
+    return html + `<button class="btn ghost small" type="button" data-ice-copy="${esc(id)}">${esc(T('ice_copy'))}</button><p class="note ice-copied" data-ice-copied="${esc(id)}" hidden>${esc(T('ice_copied'))}</p>`;
+  }
+  function iceBlock(id) {
+    return `<button class="btn ghost ice-btn" type="button" data-ice="${esc(id)}">${esc(T('ice_btn'))}</button><div class="ai-panel" data-ice-panel="${esc(id)}" aria-live="polite">${icePanelHtml(id)}</div>`;
+  }
+  function paintIce(id) {
+    const el = document.querySelector(`[data-ice-panel="${id}"]`);
+    if (el) el.innerHTML = icePanelHtml(id);
+  }
+  async function loadIce(id, btn) {
+    iceState[id] = { status: 'loading' }; paintIce(id); btn.disabled = true;
+    try {
+      const { data } = await authClient.auth.getSession();
+      const token = data && data.session && data.session.access_token;
+      if (!token) { iceState[id] = { status: 'error' }; return; }
+      const res = await fetch('/api/ai-icebreaker', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ trip_id: id, lang: currentLang }) });
+      let body = null;
+      try { body = await res.json(); } catch (e) { /* 서버 함수가 없는 환경 */ }
+      if (res.status === 503 || res.status === 405 || (res.status === 404 && !body)) iceState[id] = { status: 'off' };
+      else if (!res.ok || !body) iceState[id] = { status: 'error' };
+      else iceState[id] = { status: 'done', data: body, lang: currentLang };
+    } catch (e) {
+      iceState[id] = { status: 'off' };
+    } finally {
+      btn.disabled = false; paintIce(id);
+    }
+  }
+  async function copyIce(id) {
+    const st = iceState[id];
+    if (!st || st.status !== 'done') return;
+    const text = iceText(st);
+    try { await navigator.clipboard.writeText(text); } catch (e) {
+      const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e2) { /* 복사 불가 환경 */ }
+      ta.remove();
+    }
+    const msg = document.querySelector(`[data-ice-copied="${id}"]`);
+    if (msg) { msg.hidden = false; setTimeout(() => { msg.hidden = true; }, 2000); }
+  }
+
   function tripCard(t) {
     const n = tripState.counts[t.id] || 0;
     const mine = tripState.mine[t.id];
@@ -143,6 +211,7 @@
         <p class="trip-foot"><strong>${t.price > 0 ? esc(money(t.price)) : ''}</strong><span>${esc(seats)}</span></p>
         ${btn}
         ${t.status === 'open' && authUser && !(t.capacity && n >= t.capacity) ? aiBlock(t.id) : ''}
+        ${t.status === 'open' && authUser && mine && mine !== 'cancelled' ? iceBlock(t.id) : ''}
       </div></article>`;
   }
 
@@ -195,6 +264,10 @@
       if (pb) payTrip(pb.dataset.pay, pb);
       const ab = e.target.closest('[data-ai]');
       if (ab) loadAiMatch(ab.dataset.ai, ab);
+      const ib = e.target.closest('[data-ice]');
+      if (ib) loadIce(ib.dataset.ice, ib);
+      const cb = e.target.closest('[data-ice-copy]');
+      if (cb) copyIce(cb.dataset.iceCopy);
     });
     window.addEventListener('pay-error', () => setMsg($('#trip-msg'), 'pay_fail', 'err'));
     ['open', 'upcoming', 'past'].forEach((s) => { const g = $('#' + GRIDS[s]); if (g) g.innerHTML = `<p class="note">${esc(T('loading'))}</p>`; });
