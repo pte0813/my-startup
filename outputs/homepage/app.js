@@ -220,7 +220,7 @@
             : `<p class="note">${esc(T('re_suggest_none'))}</p>`;
         } else if (sg) extra += `<p class="note">${esc(T('re_err'))}</p>`;
       }
-      return `<li class="re-row${c.matched ? ' matched' : ''}"><div class="re-main"><strong>${esc(c.name)}</strong><button class="btn small${c.picked ? '' : ' ghost'}" type="button" data-re-toggle="${esc(id)}" data-app="${esc(c.application_id)}" data-picked="${c.picked ? 1 : 0}" aria-pressed="${c.picked}">${esc(T(c.picked ? 're_picked' : 're_pick'))}</button></div>${extra ? `<div class="re-extra">${extra}</div>` : ''}</li>`;
+      return `<li class="re-row${c.matched ? ' matched' : ''}"><div class="re-main"><strong>${esc(c.name)}</strong><button class="link-btn" type="button" data-report="user" data-trip="${esc(id)}" data-app="${esc(c.application_id)}" data-label="${esc(c.name)}">${esc(T('report_btn'))}</button><button class="btn small${c.picked ? '' : ' ghost'}" type="button" data-re-toggle="${esc(id)}" data-app="${esc(c.application_id)}" data-picked="${c.picked ? 1 : 0}" aria-pressed="${c.picked}">${esc(T(c.picked ? 're_picked' : 're_pick'))}</button></div>${extra ? `<div class="re-extra">${extra}</div>` : ''}</li>`;
     }).join('');
     return intro + `<ul class="re-list">${rows}</ul>`;
   }
@@ -282,6 +282,7 @@
         ${t.status === 'open' && authUser && !(t.capacity && n >= t.capacity) ? aiBlock(t.id) : ''}
         ${t.status === 'open' && authUser && mine && mine !== 'cancelled' ? iceBlock(t.id) : ''}
         ${t.status === 'past' && authUser && mine && mine !== 'cancelled' ? reBlock(t.id) : ''}
+        <button class="link-btn" type="button" data-report="trip" data-id="${esc(t.id)}" data-label="${esc(t.title)}">${esc(T('report_btn'))}</button>
       </div></article>`;
   }
 
@@ -483,6 +484,7 @@
       <p class="review-body">${esc(r.body)}</p>
       ${photos ? `<div class="review-photos">${photos}</div>` : ''}
       <time datetime="${esc(r.created_at)}">${esc(fmtDate(r.created_at))}</time>
+      ${mine ? '' : `<button class="link-btn" type="button" data-report="review" data-id="${esc(r.id)}" data-label="${esc(r.author_name)}">${esc(T('report_btn'))}</button>`}
       ${mine ? `<button class="btn ghost small rc-btn" type="button" data-rc="${esc(r.id)}">${esc(T('rc_btn'))}</button><p class="rc-notice">${esc(T('rc_notice'))}</p><div class="rc-panel" data-rc-panel="${esc(r.id)}" aria-live="polite"></div>` : ''}</article>`;
   }
 
@@ -630,6 +632,42 @@
     });
   }
 
+  /* ---------------- 신고 ---------------- */
+  let reportTarget = null;
+  function openReport(el) {
+    if (!authUser) { setMsg($('#trip-msg'), 'report_login', 'err'); return openLogin(); }
+    reportTarget = { type: el.dataset.report, id: el.dataset.id, trip: el.dataset.trip, app: el.dataset.app };
+    const f = $('#report-form'); f.reset();
+    $('#report-target').textContent = T('report_target', { name: el.dataset.label || '' });
+    setReportMsg('');
+    $('#report-dialog').showModal();
+  }
+  function setReportMsg(key, kind) { const m = $('#report-msg'); m.textContent = key ? T(key) : ''; m.className = 'dmsg ' + (kind || ''); }
+  function initReports() {
+    const form = $('#report-form');
+    if (!form) return;
+    document.addEventListener('click', (e) => { const b = e.target.closest('[data-report]'); if (b) openReport(b); });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!reportTarget || !authUser) return;
+      const btn = $('#report-submit'); btn.disabled = true; setReportMsg('auth_wait');
+      const reason = form.reason.value, detail = form.detail.value.trim().slice(0, 1000);
+      let key = 'report_fail';
+      try {
+        if (reportTarget.type === 'user') {
+          const r = await reCall({ action: 'report', trip_id: reportTarget.trip, application_id: reportTarget.app, reason, detail });
+          key = r.status === 200 ? 'report_ok' : r.status === 409 ? 'report_dup' : 'report_fail';
+        } else {
+          const { error } = await authClient.from('reports').insert({ target_type: reportTarget.type, target_id: reportTarget.id, reason, detail });
+          key = !error ? 'report_ok' : (error.code === '23505' ? 'report_dup' : 'report_fail');
+        }
+      } catch (err) { key = 'report_fail'; }
+      setReportMsg(key, key === 'report_ok' ? 'ok' : 'err');
+      btn.disabled = false;
+      if (key === 'report_ok') setTimeout(() => { const d = $('#report-dialog'); if (d.open) d.close(); }, 1200);
+    });
+  }
+
   /* ---------------- 개인정보 처리방침: 한국어가 정본, 그 외 언어는 영어 참고 번역 + 안내 ---------------- */
   function renderPrivacy() {
     const ko = document.querySelector('[data-policy="ko"]'), en = document.querySelector('[data-policy="en"]');
@@ -650,5 +688,5 @@
     if (changed) { if (tripState.loaded) loadTrips(); if (rv.loaded) loadReviews(); }
     renderTrips(); renderReviews(); renderSuggest(); renderPrivacy();
   });
-  initTrips(); initReviews(); initSuggest(); initContact();
+  initTrips(); initReviews(); initSuggest(); initContact(); initReports();
 })();

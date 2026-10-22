@@ -315,3 +315,11 @@ dialog .consent small { display: block; opacity: .75; margin-top: 2px; }
 .policy-table th, .policy-table td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid rgba(31,58,95,.1); }
 .policy-table th { background: rgba(31,58,95,.06); font-weight: 500; white-space: nowrap; }
 .rc-notice { font-size: .82rem; opacity: .75; margin: 6px 0 0; }
+
+/* 신고 버튼 */
+.link-btn { border: 0; background: none; padding: 2px 0; font: inherit; font-size: .8rem; color: var(--secondary); opacity: .6; text-decoration: underline; cursor: pointer; justify-self: start; }
+.link-btn:hover, .link-btn:focus-visible { opacity: 1; }
+.re-main .link-btn { margin-left: auto; margin-right: 8px; }
+#report-form { display: grid; gap: 12px; }
+#report-form label { display: grid; gap: 4px; font-weight: 500; font-size: .95rem; }
+#report-form select, #report-form textarea { font: inherit; padding: 10px 12px; border-radius: 12px; border: 2px solid rgba(31,58,95,.15); background: #fff; color: var(--secondary); }

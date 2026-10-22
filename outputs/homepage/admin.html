@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>관리자 | 함께닿</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="brand.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: var(--accent); color: var(--secondary); font-family: "Noto Sans KR", system-ui, sans-serif; line-height: 1.6; }
+    h1, h2, h3 { font-family: "Jua", "Noto Sans KR", sans-serif; font-weight: 400; margin: 0; }
+    a { color: inherit; }
+    [hidden] { display: none !important; }
+    .top { background: #fff; border-bottom: 1px solid rgba(31,58,95,.1); position: sticky; top: 0; z-index: 5; }
+    .top .in { max-width: 1100px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .brand { font-family: "Jua", sans-serif; font-size: 1.3rem; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .dots { display: inline-flex; } .dots i { width: 16px; height: 16px; border-radius: 50%; background: var(--secondary); } .dots i + i { background: var(--primary); margin-left: -5px; }
+    .badge-admin { font: 400 .8rem "Jua", sans-serif; padding: 2px 10px; border-radius: 999px; background: var(--secondary); color: #fff; }
+    .who { margin-left: auto; font-size: .9rem; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    nav.tabs { max-width: 1100px; margin: 0 auto; padding: 0 16px; display: flex; gap: 4px; overflow-x: auto; }
+    nav.tabs button { border: 0; background: transparent; padding: 10px 14px; font: 500 .95rem "Noto Sans KR", sans-serif; color: var(--secondary); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+    nav.tabs button[aria-selected="true"] { border-bottom-color: var(--primary); color: var(--primary); }
+    main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+    .card { background: #fff; border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+    .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+    .stat { background: #fff; border-radius: 16px; padding: 14px 16px; }
+    .stat b { display: block; font: 400 1.9rem "Jua", sans-serif; }
+    .stat span { font-size: .85rem; opacity: .75; }
+    .charts { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 12px; }
+    .chart h3 { font-size: 1.05rem; margin-bottom: 6px; }
+    .chart svg { width: 100%; height: auto; display: block; }
+    .btn { font: 500 .92rem "Noto Sans KR", sans-serif; padding: 8px 14px; border-radius: 999px; border: 2px solid var(--primary); background: var(--primary); color: #fff; cursor: pointer; }
+    .btn.ghost { background: #fff; color: var(--primary); }
+    .btn.danger { background: #B3261E; border-color: #B3261E; }
+    .btn.small { padding: 4px 10px; font-size: .82rem; }
+    .btn:disabled { opacity: .5; cursor: default; }
+    input, select, textarea { font: inherit; font-size: .95rem; padding: 8px 12px; border-radius: 10px; border: 2px solid rgba(31,58,95,.15); background: #fff; color: var(--secondary); max-width: 100%; }
+    input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+    .bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+    .tw { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; background: #fff; border-radius: 12px; overflow: hidden; }
+    th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid rgba(31,58,95,.08); vertical-align: top; }
+    th { background: rgba(31,58,95,.06); font-weight: 500; white-space: nowrap; }
+    tr.click { cursor: pointer; } tr.click:hover { background: rgba(255,107,91,.06); }
+    .pill { display: inline-block; padding: 1px 10px; border-radius: 999px; font-size: .78rem; background: rgba(31,58,95,.1); }
+    .pill.warn { background: #FFE9B8; } .pill.bad { background: #FFD6D2; color: #8a1c14; } .pill.ok { background: #D5EFD9; } .pill.info { background: #D5E8F7; }
+    .muted { opacity: .7; font-size: .85rem; }
+    .msg { min-height: 1.4em; font-size: .9rem; } .msg.err { color: #B3261E; } .msg.ok { color: #1E7B3A; }
+    .panel { display: grid; gap: 14px; }
+    .report { border-left: 4px solid var(--primary); }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    dialog { border: 0; border-radius: 16px; padding: 20px; width: min(440px, calc(100% - 32px)); color: var(--secondary); }
+    dialog::backdrop { background: rgba(31,58,95,.45); }
+    dialog form { display: grid; gap: 10px; }
+    dialog textarea { width: 100%; min-height: 90px; }
+    .login { max-width: 360px; margin: 60px auto; }
+    .login form { display: grid; gap: 10px; }
+    @media (max-width: 600px) { .who { margin-left: 0; } }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="in">
+      <a class="brand" href="index.html"><span class="dots" aria-hidden="true"><i></i><i></i></span>함께닿 <span class="badge-admin">관리자</span></a>
+      <div class="who" id="who" hidden><span id="who-name"></span><span class="pill info" id="who-role"></span><a href="index.html">홈페이지로</a><button class="btn ghost small" id="logout" type="button">로그아웃</button></div>
+    </div>
+    <nav class="tabs" id="tabs" role="tablist" hidden>
+      <button role="tab" data-tab="dash" aria-selected="true">대시보드</button>
+      <button role="tab" data-tab="users" aria-selected="false">회원</button>
+      <button role="tab" data-tab="trips" aria-selected="false">모임</button>
+      <button role="tab" data-tab="reports" aria-selected="false">신고 센터 <span class="pill bad" id="rp-count" hidden></span></button>
+      <button role="tab" data-tab="logs" aria-selected="false" id="tab-logs" hidden>작업 로그</button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <p class="msg" id="boot">불러오는 중…</p>
+
+    <section class="login card" id="login" hidden>
+      <h2>관리자 로그인</h2>
+      <p class="muted">운영진 계정으로 로그인해 주세요.</p>
+      <form id="login-form" novalidate>
+        <input type="email" name="email" placeholder="이메일" autocomplete="email">
+        <input type="password" name="password" placeholder="비밀번호" autocomplete="current-password">
+        <button class="btn" type="submit">로그인</button>
+        <p class="msg" id="login-msg" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="card" id="denied" hidden>
+      <h2>접근 권한이 없어요</h2>
+      <p>이 계정은 관리자 권한이 없어요. 권한이 필요하면 최고 관리자에게 요청해 주세요.</p>
+      <p><a href="index.html">홈페이지로 돌아가기</a></p>
+    </section>
+
+    <section id="p-dash" class="panel" hidden>
+      <div class="grid" id="stats"></div>
+      <div class="charts" id="charts"></div>
+      <p class="muted" id="dau-note"></p>
+    </section>
+
+    <section id="p-users" class="panel" hidden>
+      <div class="bar">
+        <input type="search" id="u-q" placeholder="이름·이메일 검색" aria-label="회원 검색">
+        <select id="u-role" aria-label="역할"><option value="">모든 역할</option><option value="super_admin">최고 관리자</option><option value="operator">운영자</option><option value="cs">CS</option><option value="user">일반 회원</option></select>
+        <select id="u-status" aria-label="상태"><option value="">모든 상태</option><option value="active">정상</option><option value="warned">경고</option><option value="suspended">정지</option></select>
+        <span class="muted" id="u-total"></span>
+      </div>
+      <div class="tw"><table><thead><tr><th>이름</th><th>이메일</th><th>역할</th><th>상태</th><th>신뢰 점수</th><th>경고</th><th>신고 받음</th><th>가입일</th></tr></thead><tbody id="u-body"></tbody></table></div>
+      <div class="card" id="u-detail" hidden></div>
+    </section>
+
+    <section id="p-trips" class="panel" hidden>
+      <div class="tw"><table><thead><tr><th>모임</th><th>진행 상태</th><th>공개</th><th>승인</th><th>신청</th><th>출석</th><th>노쇼</th><th>관리</th></tr></thead><tbody id="t-body"></tbody></table></div>
+      <div class="card" id="t-detail" hidden></div>
+      <p class="msg" id="t-msg" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="p-reports" class="panel" hidden>
+      <div class="bar"><select id="r-status" aria-label="처리 상태"><option value="pending">대기 중</option><option value="done">처리 완료</option></select></div>
+      <div id="r-list"></div>
+    </section>
+
+    <section id="p-logs" class="panel" hidden>
+      <div class="tw"><table><thead><tr><th>시각</th><th>작업자</th><th>작업</th><th>대상</th><th>내용</th></tr></thead><tbody id="l-body"></tbody></table></div>
+    </section>
+  </main>
+
+  <dialog id="dlg">
+    <form method="dialog" id="dlg-form">
+      <h3 id="dlg-title"></h3>
+      <p class="muted" id="dlg-desc"></p>
+      <label id="dlg-sanction-row" hidden>함께 적용할 조치
+        <select id="dlg-sanction"></select></label>
+      <textarea id="dlg-text" maxlength="300" aria-label="사유"></textarea>
+      <div class="row"><button class="btn" id="dlg-ok" type="submit" value="ok">확인</button><button class="btn ghost" type="submit" value="cancel" formnovalidate>취소</button></div>
+    </form>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="monitor.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    const client = (window.supabase && window.APP_CONFIG) ? window.supabase.createClient(APP_CONFIG.url, APP_CONFIG.anonKey) : null;
+    const ROLE = { super_admin: '최고 관리자', operator: '운영자', cs: 'CS', user: '일반 회원' };
+    const STATUS = { active: ['정상', 'ok'], warned: ['경고', 'warn'], suspended: ['정지', 'bad'] };
+    const APPROVAL = { approved: ['승인', 'ok'], pending: ['대기', 'warn'], rejected: ['반려', 'bad'] };
+    const REASON = { spam: '스팸·광고', abuse: '욕설·괴롭힘', inappropriate: '부적절한 내용', noshow: '노쇼', other: '기타' };
+    const TTYPE = { user: '회원', trip: '모임', review: '후기' };
+    const ATT = { pending: '대기', attended: '출석', no_show: '노쇼' };
+    const fmt = (d) => (d ? new Date(d).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' }) : '-');
+    const fmtD = (d) => (d ? new Date(d).toLocaleDateString('ko-KR') : '-');
+    let me = null;
+
+    async function api(action, params) {
+      const { data } = await client.auth.getSession();
+      const token = data && data.session && data.session.access_token;
+      if (!token) return { status: 401, body: null };
+      try {
+        const res = await fetch('/api/admin', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ action, ...(params || {}) }) });
+        let body = null; try { body = await res.json(); } catch (e) { /* 서버 함수 없음 */ }
+        return { status: res.status, body };
+      } catch (e) { return { status: 0, body: null }; }
+    }
+    const errText = (r) => ({ forbidden: '권한이 없어요.', cannot_target_self: '자기 자신에게는 쓸 수 없어요.', reason_required: '사유를 입력해 주세요.', already_handled: '이미 처리된 신고예요.', sanction_not_applicable: '이 신고에는 적용할 수 없는 조치예요.', last_super_admin: '마지막 최고 관리자는 바꿀 수 없어요.', no_such_user: '회원을 찾을 수 없어요.' })[r.body && r.body.error] || (r.status === 0 || r.status === 404 || r.status === 503 ? '서버 기능을 사용할 수 없어요.' : '처리하지 못했어요. 잠시 후 다시 시도해 주세요.');
+    const flash = (el, text, kind) => { el.textContent = text; el.className = 'msg ' + (kind || ''); };
+
+    // 사유 입력 창: { title, desc, required, sanctions:[[값,이름]] } → { text, sanction } 또는 null
+    function ask(o) {
+      return new Promise((resolve) => {
+        const d = $('dlg');
+        $('dlg-title').textContent = o.title; $('dlg-desc').textContent = o.desc || '';
+        const t = $('dlg-text'); t.value = ''; t.placeholder = o.placeholder || '사유';
+        const sr = $('dlg-sanction-row'); sr.hidden = !o.sanctions;
+        if (o.sanctions) $('dlg-sanction').innerHTML = o.sanctions.map(([v, n]) => `<option value="${esc(v)}">${esc(n)}</option>`).join('');
+        d.returnValue = ''; d.showModal();
+        d.addEventListener('close', function once() {
+          d.removeEventListener('close', once);
+          if (d.returnValue !== 'ok') return resolve(null);
+          if (o.required && !t.value.trim()) return resolve(null);
+          resolve({ text: t.value.trim(), sanction: $('dlg-sanction').value });
+        });
+      });
+    }
+
+    /* ---- 간단한 SVG 차트 (외부 라이브러리 없이) ---- */
+    function chart(kind, data, color) {
+      const W = 600, H = 170, L = 30, B = 22, T = 10, R = 8;
+      const max = Math.max(1, ...data.map((d) => d.n));
+      const step = (W - L - R) / data.length;
+      const y = (n) => T + (H - T - B) * (1 - n / max);
+      let g = '';
+      for (const f of [0, 0.5, 1]) { const v = Math.round(max * f); g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(31,58,95,.12)"/><text x="${L - 4}" y="${y(v) + 4}" text-anchor="end" font-size="10" fill="#1F3A5F" opacity=".7">${v}</text>`; }
+      if (kind === 'bar') {
+        g += data.map((d, i) => `<rect x="${L + i * step + 1}" y="${y(d.n)}" width="${Math.max(1, step - 3)}" height="${H - B - y(d.n)}" rx="2" fill="${color}"><title>${esc(d.day)}: ${d.n}</title></rect>`).join('');
+      } else {
+        const pts = data.map((d, i) => `${L + i * step + step / 2},${y(d.n)}`).join(' ');
+        g += `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>` + data.map((d, i) => `<circle cx="${L + i * step + step / 2}" cy="${y(d.n)}" r="3" fill="${color}"><title>${esc(d.day)}: ${d.n}</title></circle>`).join('');
+      }
+      g += `<text x="${L}" y="${H - 5}" font-size="10" fill="#1F3A5F" opacity=".7">${esc(data[0].day.slice(5))}</text><text x="${W - R}" y="${H - 5}" text-anchor="end" font-size="10" fill="#1F3A5F" opacity=".7">${esc(data[data.length - 1].day.slice(5))}</text>`;
+      return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="차트">${g}</svg>`;
+    }
+    function hbars(map) {
+      const names = { open: '모집 중', upcoming: '오픈 예정', past: '지난 모임', hidden: '숨김', pending: '승인 대기', rejected: '반려' };
+      const rows = Object.entries(map); const max = Math.max(1, ...rows.map(([, n]) => n));
+      return rows.map(([k, n]) => `<div class="row" style="margin:4px 0"><span style="width:84px;font-size:.85rem">${esc(names[k] || k)}</span><span style="flex:1;background:rgba(31,58,95,.08);border-radius:6px;height:14px"><span style="display:block;height:14px;border-radius:6px;background:#1F3A5F;width:${(n / max) * 100}%"></span></span><b style="width:28px;text-align:right">${n}</b></div>`).join('') || '<p class="muted">데이터가 없어요.</p>';
+    }
+
+    /* ---- 대시보드 ---- */
+    async function loadDash() {
+      const r = await api('stats');
+      if (r.status === 403) { $('stats').innerHTML = '<p class="muted">대시보드는 최고 관리자와 운영자만 볼 수 있어요.</p>'; $('charts').innerHTML = ''; return; }
+      if (r.status !== 200) { $('stats').innerHTML = `<p class="msg err">${esc(errText(r))}</p>`; return; }
+      const s = r.body, t = s.totals;
+      const card = (v, label) => `<div class="stat"><b>${esc(v)}</b><span>${esc(label)}</span></div>`;
+      $('stats').innerHTML = card(t.members, `가입자 (최근 7일 +${t.new_members_7d})`) + card(t.dau_today, '오늘 활동 회원(DAU)') + card(`${t.trips_public} / ${t.trips}`, '공개 모임 / 전체 모임') + card(t.applications, `참여 신청 (참여 회원 ${t.participants}명)`) + card(s.rejoin.rate + '%', `재참여율 (${s.rejoin.rejoined}/${s.rejoin.participants}명)`);
+      $('charts').innerHTML = [
+        ['일별 가입자 (30일)', chart('bar', s.series.signups, '#FF6B5B')],
+        ['일별 활동 회원 DAU (30일)', chart('line', s.series.dau, '#1F3A5F')],
+        ['일별 참여 신청 (30일)', chart('bar', s.series.applications, '#3E8FC4')],
+        ['모임 상태', hbars(s.trips_by_status)]
+      ].map(([h, c]) => `<div class="card chart"><h3>${h}</h3>${c}</div>`).join('');
+      $('dau-note').textContent = s.dau_note || '';
+    }
+
+    /* ---- 회원 ---- */
+    let uTimer;
+    async function loadUsers() {
+      const r = await api('users.list', { q: $('u-q').value, role: $('u-role').value, status: $('u-status').value });
+      if (r.status !== 200) { $('u-body').innerHTML = `<tr><td colspan="8" class="msg err">${esc(errText(r))}</td></tr>`; return; }
+      $('u-total').textContent = `${r.body.total}명`;
+      $('u-body').innerHTML = r.body.users.map((u) => {
+        const st = STATUS[u.status] || [u.status, ''];
+        return `<tr class="click" data-uid="${esc(u.id)}" tabindex="0"><td>${esc(u.name || '(이름 없음)')}</td><td>${esc(u.email)}</td><td>${esc(ROLE[u.role] || u.role)}</td><td><span class="pill ${st[1]}">${st[0]}</span></td><td>${u.trust_score}</td><td>${u.warning_count}</td><td>${u.reports_against || 0}</td><td>${fmtD(u.created_at)}</td></tr>`;
+      }).join('') || '<tr><td colspan="8" class="muted">조건에 맞는 회원이 없어요.</td></tr>';
+    }
+    async function showUser(id, note) {
+      const box = $('u-detail'); box.hidden = false; box.innerHTML = '<p class="muted">불러오는 중…</p>';
+      const r = await api('users.get', { id });
+      if (r.status !== 200) { box.innerHTML = `<p class="msg err">${esc(errText(r))}</p>`; return; }
+      const { user: u, applications, reports_against: rep, reports_filed: filed, history } = r.body;
+      const st = STATUS[u.status] || [u.status, ''];
+      const canSuspend = me.permissions.includes('users.suspend'), canRole = me.permissions.includes('users.setRole');
+      const self = u.id === me.id;
+      box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>${esc(u.name || '(이름 없음)')} <span class="pill ${st[1]}">${st[0]}</span></h3><button class="btn ghost small" data-close-detail>닫기</button></div>
+        <p class="muted">${esc(u.email)} · ${esc(ROLE[u.role] || u.role)} · 가입 ${fmtD(u.created_at)} · 최근 로그인 ${fmt(u.last_sign_in_at)}</p>
+        <p>신뢰 점수 <b>${u.trust_score}</b> · 경고 <b>${u.warning_count}</b>회 · 신고 받음 <b>${rep.length}</b>건 · 신고함 <b>${filed}</b>건</p>
+        ${u.status === 'suspended' ? `<p class="msg err">정지 사유: ${esc(u.suspend_reason || '-')} (${fmt(u.suspended_at)})</p>` : ''}
+        ${self ? '<p class="muted">내 계정은 여기서 바꿀 수 없어요.</p>' : `<div class="row" style="margin:8px 0">
+          <button class="btn ghost small" data-act="warn" data-id="${esc(u.id)}">경고</button>
+          ${canSuspend ? (u.status === 'suspended' ? `<button class="btn small" data-act="unsuspend" data-id="${esc(u.id)}">정지 해제</button>` : `<button class="btn danger small" data-act="suspend" data-id="${esc(u.id)}">정지</button>`) : ''}
+          ${canRole ? `<select data-role-for="${esc(u.id)}" aria-label="역할 변경">${Object.entries(ROLE).map(([k, n]) => `<option value="${k}"${k === u.role ? ' selected' : ''}>${n}</option>`).join('')}</select>` : ''}
+        </div>`}
+        <p class="msg" id="u-msg" role="status" aria-live="polite"></p>
+        <h3 style="font-size:1rem;margin-top:10px">신청 내역</h3>
+        <div class="tw"><table><thead><tr><th>모임</th><th>상태</th><th>출석</th><th>신청일</th></tr></thead><tbody>${applications.map((a) => `<tr><td>${esc((a.trips || {}).title || '')}</td><td>${esc(a.status)}</td><td>${esc(ATT[a.attendance] || a.attendance)}</td><td>${fmtD(a.created_at)}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">없음</td></tr>'}</tbody></table></div>
+        <h3 style="font-size:1rem;margin-top:10px">받은 신고</h3>
+        <div class="tw"><table><thead><tr><th>사유</th><th>내용</th><th>상태</th><th>일시</th></tr></thead><tbody>${rep.map((x) => `<tr><td>${esc(REASON[x.reason] || x.reason)}</td><td>${esc(x.detail)}</td><td>${esc(x.status === 'pending' ? '대기' : x.status === 'resolved' ? '처리' : '기각')}</td><td>${fmtD(x.created_at)}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">없음</td></tr>'}</tbody></table></div>
+        <h3 style="font-size:1rem;margin-top:10px">조치 이력</h3>
+        <div class="tw"><table><thead><tr><th>일시</th><th>작업</th><th>내용</th></tr></thead><tbody>${history.map((h) => `<tr><td>${fmt(h.created_at)}</td><td>${esc(h.action)} (${esc(ROLE[h.actor_role] || h.actor_role)})</td><td>${esc(JSON.stringify(h.detail))}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">없음</td></tr>'}</tbody></table></div>`;
+      if (note) flash($('u-msg'), note, 'ok');
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    async function userAct(act, id) {
+      const msg = $('u-msg');
+      let params = { id };
+      if (act === 'warn' || act === 'suspend') {
+        const a = await ask({ title: act === 'warn' ? '경고 주기' : '회원 정지', desc: '사유는 작업 로그에 남아요.', required: true });
+        if (!a || !a.text) return flash(msg, '사유를 입력해야 해요.', 'err');
+        params.reason = a.text;
+      }
+      const r = await api('users.' + act, params);
+      if (r.status !== 200) return flash(msg, errText(r), 'err');
+      loadUsers(); showUser(id, '처리했어요.');
+    }
+
+    /* ---- 모임 ---- */
+    async function loadTrips() {
+      const r = await api('trips.list');
+      if (r.status !== 200) { $('t-body').innerHTML = `<tr><td colspan="8" class="msg err">${esc(r.status === 403 ? '모임 관리는 최고 관리자와 운영자만 할 수 있어요.' : errText(r))}</td></tr>`; return; }
+      const stN = { open: '모집 중', upcoming: '오픈 예정', past: '지난 모임' };
+      $('t-body').innerHTML = r.body.trips.map((t) => {
+        const ap = APPROVAL[t.approval_status] || [t.approval_status, ''];
+        return `<tr><td><b>${esc(t.title)}</b><br><span class="muted">${esc(t.location || '')}</span></td><td>${esc(stN[t.status] || t.status)}</td><td><span class="pill ${t.hidden ? 'bad' : 'ok'}">${t.hidden ? '숨김' : '공개'}</span></td><td><span class="pill ${ap[1]}">${ap[0]}</span></td><td>${t.applicants}${t.capacity ? ' / ' + t.capacity : ''}</td><td>${t.attended}</td><td>${t.no_show ? `<span class="pill bad">${t.no_show}</span>` : 0}</td>
+          <td><div class="row"><button class="btn ghost small" data-trip-hide="${esc(t.id)}" data-hidden="${t.hidden ? 0 : 1}">${t.hidden ? '공개하기' : '숨기기'}</button>
+          ${t.approval_status !== 'approved' ? `<button class="btn small" data-trip-approve="${esc(t.id)}" data-v="approved">승인</button>` : ''}${t.approval_status !== 'rejected' ? `<button class="btn ghost small" data-trip-approve="${esc(t.id)}" data-v="rejected">반려</button>` : ''}
+          <button class="btn ghost small" data-trip-people="${esc(t.id)}" data-title="${esc(t.title)}">참가자·출석</button></div></td></tr>`;
+      }).join('') || '<tr><td colspan="8" class="muted">모임이 없어요.</td></tr>';
+    }
+    async function showApplicants(id, title) {
+      const box = $('t-detail'); box.hidden = false; box.innerHTML = '<p class="muted">불러오는 중…</p>';
+      const r = await api('trips.applicants', { id });
+      if (r.status !== 200) { box.innerHTML = `<p class="msg err">${esc(errText(r))}</p>`; return; }
+      box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>${esc(title)} · 참가자 ${r.body.applicants.length}명</h3><button class="btn ghost small" data-close-detail>닫기</button></div>
+        <div class="tw"><table><thead><tr><th>이름</th><th>이메일</th><th>신청 상태</th><th>출석</th></tr></thead><tbody>${r.body.applicants.map((a) => `<tr><td>${esc(a.name)}</td><td>${esc(a.email)}</td><td>${esc(a.status)}</td><td><div class="row">${['attended', 'no_show', 'pending'].map((v) => `<button class="btn ${a.attendance === v ? '' : 'ghost'} small" data-att="${esc(a.id)}" data-v="${v}" data-trip="${esc(id)}" data-title="${esc(title)}">${ATT[v]}</button>`).join('')}</div></td></tr>`).join('') || '<tr><td colspan="4" class="muted">참가자가 없어요.</td></tr>'}</tbody></table></div>`;
+    }
+
+    /* ---- 신고 센터 ---- */
+    async function loadReports() {
+      const done = $('r-status').value === 'done';
+      const r = await api('reports.list', { status: done ? 'done' : 'pending' });
+      if (r.status !== 200) { $('r-list').innerHTML = `<p class="msg err">${esc(errText(r))}</p>`; return; }
+      if (!done) { const n = r.body.reports.length; $('rp-count').hidden = !n; $('rp-count').textContent = n; }
+      $('r-list').innerHTML = r.body.reports.map((x) => `<div class="card report"><div class="row" style="justify-content:space-between"><b>[${esc(TTYPE[x.target_type] || x.target_type)}] ${esc(x.target_label)}</b><span class="pill ${x.status === 'pending' ? 'warn' : x.status === 'resolved' ? 'ok' : ''}">${x.status === 'pending' ? '대기' : x.status === 'resolved' ? '처리 완료' : '기각'}</span></div>
+        <p>사유: <b>${esc(REASON[x.reason] || x.reason)}</b>${x.detail ? ` — ${esc(x.detail)}` : ''}</p>
+        <p class="muted">신고자 ${esc(x.reporter || '(알 수 없음)')} · ${fmt(x.created_at)}${x.resolution ? ` · 처리 메모: ${esc(x.resolution)}` : ''}</p>
+        ${x.status === 'pending' ? `<div class="row"><button class="btn small" data-rp="resolve" data-id="${esc(x.id)}" data-type="${esc(x.target_type)}">처리하기</button><button class="btn ghost small" data-rp="dismiss" data-id="${esc(x.id)}">기각</button></div>` : ''}</div>`).join('') || `<p class="muted">${done ? '처리 완료된 신고가 없어요.' : '대기 중인 신고가 없어요. 🎉'}</p>`;
+    }
+    async function handleReport(kind, id, type) {
+      const sanctions = [['none', '조치 없음(처리만)']];
+      if (kind === 'resolve') {
+        if (type === 'user' || type === 'review') sanctions.push(['warn_target', type === 'review' ? '작성자에게 경고' : '회원에게 경고']);
+        if (type === 'user' || type === 'review') sanctions.push(['suspend_target', type === 'review' ? '작성자 정지' : '회원 정지']);
+        if (type === 'trip' || type === 'review') sanctions.push(['hide_target', type === 'trip' ? '모임 숨기기' : '후기 비공개']);
+      }
+      const a = await ask({ title: kind === 'resolve' ? '신고 처리' : '신고 기각', desc: '처리 메모는 작업 로그에 남아요.', placeholder: '처리 메모', sanctions: kind === 'resolve' ? sanctions : null });
+      if (!a) return;
+      const r = await api('reports.resolve', { id, outcome: kind === 'resolve' ? 'resolved' : 'dismissed', resolution: a.text, sanction: kind === 'resolve' ? a.sanction : 'none' });
+      if (r.status !== 200) { alert(errText(r)); return; }
+      loadReports();
+    }
+
+    /* ---- 작업 로그 ---- */
+    async function loadLogs() {
+      const r = await api('logs.list');
+      $('l-body').innerHTML = r.status !== 200 ? `<tr><td colspan="5" class="msg err">${esc(errText(r))}</td></tr>` : r.body.logs.map((l) => `<tr><td>${fmt(l.created_at)}</td><td>${esc(l.actor || '')} <span class="muted">${esc(ROLE[l.actor_role] || l.actor_role)}</span></td><td>${esc(l.action)}</td><td>${esc(l.target_type || '')} ${esc((l.target_id || '').slice(0, 8))}</td><td>${esc(JSON.stringify(l.detail))}</td></tr>`).join('') || '<tr><td colspan="5" class="muted">기록이 없어요.</td></tr>';
+    }
+
+    /* ---- 탭·시작 ---- */
+    const LOADERS = { dash: loadDash, users: loadUsers, trips: loadTrips, reports: loadReports, logs: loadLogs };
+    function openTab(name) {
+      document.querySelectorAll('#tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+      for (const k of Object.keys(LOADERS)) $('p-' + k).hidden = k !== name;
+      LOADERS[name]();
+    }
+    async function start() {
+      $('boot').hidden = false;
+      if (!client) { flash($('boot'), '로그인 기능을 불러오지 못했어요.', 'err'); return; }
+      const { data } = await client.auth.getSession();
+      if (!data.session) { $('boot').hidden = true; $('login').hidden = false; return; }
+      const r = await api('me');
+      $('boot').hidden = true; $('login').hidden = true;
+      if (r.status === 403 || r.status === 401) { $('denied').hidden = false; $('who').hidden = false; $('who-name').textContent = data.session.user.email; $('who-role').hidden = true; return; }
+      if (r.status !== 200) { flash($('boot'), '관리자 서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.', 'err'); $('boot').hidden = false; return; }
+      me = { ...r.body };
+      $('who').hidden = false; $('tabs').hidden = false;
+      $('who-name').textContent = me.name || me.email; $('who-role').textContent = ROLE[me.role] || me.role;
+      $('tab-logs').hidden = !me.permissions.includes('logs.list');
+      document.querySelector('[data-tab=dash]').hidden = !me.permissions.includes('stats');
+      document.querySelector('[data-tab=trips]').hidden = !me.permissions.includes('trips.list');
+      openTab(me.permissions.includes('stats') ? 'dash' : 'users');
+      if (me.permissions.includes('reports.list')) api('reports.list', { status: 'pending' }).then((x) => { if (x.status === 200 && x.body.reports.length) { $('rp-count').hidden = false; $('rp-count').textContent = x.body.reports.length; } });
+    }
+
+    $('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target; flash($('login-msg'), '잠시만요…');
+      const { error } = await client.auth.signInWithPassword({ email: f.email.value.trim(), password: f.password.value });
+      if (error) return flash($('login-msg'), '이메일이나 비밀번호가 맞지 않아요.', 'err');
+      f.reset(); start();
+    });
+    $('logout').addEventListener('click', async () => { await client.auth.signOut(); location.reload(); });
+    $('tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-tab]'); if (b) openTab(b.dataset.tab); });
+    ['u-q', 'u-role', 'u-status'].forEach((id) => $(id).addEventListener(id === 'u-q' ? 'input' : 'change', () => { clearTimeout(uTimer); uTimer = setTimeout(loadUsers, 250); }));
+    $('r-status').addEventListener('change', loadReports);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const tr = e.target.closest && e.target.closest('tr[data-uid]'); if (tr) showUser(tr.dataset.uid); } });
+    document.addEventListener('change', async (e) => {
+      const sel = e.target.closest('[data-role-for]'); if (!sel) return;
+      const r = await api('users.setRole', { id: sel.dataset.roleFor, role: sel.value });
+      flash($('u-msg'), r.status === 200 ? '역할을 바꿨어요.' : errText(r), r.status === 200 ? 'ok' : 'err'); if (r.status === 200) { loadUsers(); showUser(sel.dataset.roleFor, '역할을 바꿨어요.'); } else showUser(sel.dataset.roleFor);
+    });
+    document.addEventListener('click', async (e) => {
+      const t = e.target;
+      const row = t.closest('tr[data-uid]'); if (row) return showUser(row.dataset.uid);
+      if (t.closest('[data-close-detail]')) { $('u-detail').hidden = true; $('t-detail').hidden = true; return; }
+      const act = t.closest('[data-act]'); if (act) return userAct(act.dataset.act, act.dataset.id);
+      const hide = t.closest('[data-trip-hide]');
+      if (hide) { const r = await api('trips.update', { id: hide.dataset.tripHide, hidden: hide.dataset.hidden === '1' }); flash($('t-msg'), r.status === 200 ? '바꿨어요.' : errText(r), r.status === 200 ? 'ok' : 'err'); return loadTrips(); }
+      const ap = t.closest('[data-trip-approve]');
+      if (ap) { const r = await api('trips.update', { id: ap.dataset.tripApprove, approval_status: ap.dataset.v }); flash($('t-msg'), r.status === 200 ? '바꿨어요.' : errText(r), r.status === 200 ? 'ok' : 'err'); return loadTrips(); }
+      const ppl = t.closest('[data-trip-people]'); if (ppl) return showApplicants(ppl.dataset.tripPeople, ppl.dataset.title);
+      const att = t.closest('[data-att]');
+      if (att) { const r = await api('trips.attendance', { application_id: att.dataset.att, attendance: att.dataset.v }); if (r.status !== 200) alert(errText(r)); showApplicants(att.dataset.trip, att.dataset.title); return loadTrips(); }
+      const rp = t.closest('[data-rp]'); if (rp) return handleReport(rp.dataset.rp, rp.dataset.id, rp.dataset.type);
+    });
+    start();
+  })();
+  </script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 // 같은 여행을 신청한 사람들 중 나와 성향이 맞는 사람을 골라 이유와 함께 돌려준다.
 // - 점수와 공통점은 서버가 직접 계산하고(AI 키가 없어도 동작), Claude는 이유 문장만 다듬는다.
 // - 다른 회원의 이름·연락처는 돌려주지 않는다. 동의(ai_consent)한 회원의 선택지 값만 쓰며, 개인 식별 정보는 AI에도 보내지 않는다.
-const { env, json, readBody, db, verifyUser } = require('./_lib');
+const { env, json, readBody, db, verifyUser, withErrors } = require('./_lib');
 const { opts, LANGS, aiEnv, pickLang, cleanProfile, hasAnyTrait, usedToday, recordUse, throttle, askClaude } = require('./_ai');
 
 const FEATURE = 'match';
@@ -27,7 +27,7 @@ function score(me, other) {
   return { shared, pct: max ? Math.min(95, Math.max(5, Math.round((raw / max) * 20) * 5)) : 0, raw };
 }
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return json(res, 405, { error: 'method_not_allowed' }); }
   const e = env();
   if (!(e.supabaseUrl && e.anonKey && e.serviceKey)) return json(res, 503, { error: 'ai_not_configured' });
@@ -112,4 +112,6 @@ module.exports = async function handler(req, res) {
     }
   }
   return json(res, 200, { matches, total_applicants: total, ai, limited });
-};
+}
+
+module.exports = withErrors('ai-match', handler);

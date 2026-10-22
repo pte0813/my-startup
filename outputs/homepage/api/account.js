@@ -3,9 +3,9 @@
 // - export: 내 프로필·신청·결제·후기·제안·재만남 선택·문의 내역을 JSON으로 돌려준다(다른 회원의 정보는 포함하지 않는다).
 // - delete: 확인용으로 본인 이메일을 다시 입력해야 한다. 업로드한 후기 사진과 같은 이메일로 접수된 문의를 지우고 계정을 삭제하면
 //   프로필·신청·후기·제안·재만남 선택·AI 사용 기록이 함께 삭제된다. 결제 기록은 법정 보관 의무(전자상거래법 5년)로 회원 연결만 끊고 남긴다.
-const { env, json, readBody, db, verifyUser } = require('./_lib');
+const { env, json, readBody, db, verifyUser, withErrors } = require('./_lib');
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return json(res, 405, { error: 'method_not_allowed' }); }
   const e = env();
   if (!(e.supabaseUrl && e.anonKey && e.serviceKey)) return json(res, 503, { error: 'not_configured' });
@@ -60,4 +60,6 @@ module.exports = async function handler(req, res) {
   }
 
   return json(res, 400, { error: 'invalid_input' });
-};
+}
+
+module.exports = withErrors('account', handler);

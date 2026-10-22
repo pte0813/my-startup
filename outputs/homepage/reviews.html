@@ -139,7 +139,25 @@
       <p class="dmsg" id="auth-msg" role="status" aria-live="polite"></p>
     </form>
   </dialog>
+  <dialog id="report-dialog" aria-labelledby="report-title">
+    <div class="dlg-head"><h2 id="report-title" data-i18n="report_title">신고하기</h2><button class="x" type="button" data-close data-i18n-attr="aria-label:auth_close" aria-label="닫기">×</button></div>
+    <form id="report-form" novalidate>
+      <p class="note" id="report-target"></p>
+      <label><span data-i18n="report_reason">신고 사유</span>
+        <select name="reason">
+          <option value="spam" data-i18n="reason_spam">스팸·광고</option>
+          <option value="abuse" data-i18n="reason_abuse">욕설·괴롭힘</option>
+          <option value="inappropriate" data-i18n="reason_inappropriate">부적절한 내용</option>
+          <option value="noshow" data-i18n="reason_noshow">노쇼</option>
+          <option value="other" data-i18n="reason_other">기타</option>
+        </select></label>
+      <label><span data-i18n="report_detail">자세한 내용 (선택)</span><textarea name="detail" rows="4" maxlength="1000"></textarea></label>
+      <button class="btn block" id="report-submit" type="submit" data-i18n="report_submit">신고 보내기</button>
+      <p class="dmsg" id="report-msg" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
   <script src="config.js"></script>
+  <script src="monitor.js"></script>
   <script src="ai-options.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="i18n.js"></script>

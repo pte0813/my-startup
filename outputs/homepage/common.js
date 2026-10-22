@@ -74,6 +74,16 @@ const authMsg = document.getElementById('auth-msg');
 function tr(key) { return (I18N[currentLang] || I18N.ko)[key]; }
 const say = (el, key, kind) => { el.textContent = key ? tr(key) : ''; el.className = 'dmsg ' + (kind || ''); };
 
+// 하루에 한 번 "오늘 활동했다"는 표시만 남긴다(회원 id와 날짜뿐, 관리자 페이지의 DAU 집계용). 실패해도 화면에는 영향이 없다.
+function pingActive(user) {
+  try {
+    var key = 'active:' + user.id, today = new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem(key) === today) return;
+    authClient.from('daily_active').insert({}).then(function (r) {
+      if (!r.error || r.error.code === '23505') { try { localStorage.setItem(key, today); } catch (e) { /* 저장 불가 */ } }
+    });
+  } catch (e) { /* 무시 */ }
+}
 const PRIVACY_VERSION = '2026-10-22';
 // 가입할 때 체크한 개인정보 동의를 프로필에 기록한다(이메일 확인을 켠 경우에는 첫 로그인 때 기록).
 async function recordPrivacyConsent(user) {
@@ -156,8 +166,8 @@ authForm.addEventListener('submit', async (e) => {
 });
 
 if (authClient) {
-  authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); if (authUser) setTimeout(() => recordPrivacyConsent(authUser), 0); });
-  authClient.auth.onAuthStateChange((_event, session) => { authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => recordPrivacyConsent(authUser), 0); });
+  authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); }, 0); });
+  authClient.auth.onAuthStateChange((_event, session) => { authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); }, 0); });
 }
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setOpen(false); setMega(false); } });
   

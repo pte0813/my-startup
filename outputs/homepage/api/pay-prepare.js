@@ -1,9 +1,9 @@
 // POST /api/pay-prepare  { trip_id }   (Authorization: Bearer <로그인 회원의 access token>)
 // 신청한 여행의 결제 주문을 만들고 결제창에 필요한 값을 돌려준다. 금액은 DB의 여행 가격만 쓴다(브라우저가 보낸 금액은 무시).
 const crypto = require('crypto');
-const { env, configured, json, readBody, db, verifyUser } = require('./_lib');
+const { env, configured, json, readBody, db, verifyUser, withErrors } = require('./_lib');
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return json(res, 405, { error: 'method_not_allowed' }); }
   const e = env();
   if (!configured(e)) return json(res, 503, { error: 'payment_not_configured' });
@@ -43,4 +43,6 @@ module.exports = async function handler(req, res) {
     buyerName: String(application.name || '').slice(0, 30),
     buyerEmail: String(user.email || '').slice(0, 60)
   });
-};
+}
+
+module.exports = withErrors('pay-prepare', handler);
