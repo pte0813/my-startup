@@ -262,8 +262,10 @@
         let ok = false;
         try {
           const r = await fetch('/api/inquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, message }) });
-          if (r.status !== 404 && r.status !== 405) ok = r.ok; // 서버 함수가 있으면 그 결과를 따른다
-          else throw new Error('no-api');
+          const info = await r.json().catch(() => ({}));
+          // 서버 함수가 없거나 환경변수가 아직 없으면 직접 저장으로 넘어가고, 그 외에는 서버 함수의 결과를 따른다
+          if (r.status === 404 || r.status === 405 || info.error === 'server_not_configured') throw new Error('no-api');
+          ok = r.ok;
         } catch (apiErr) {
           // 서버 함수가 없는 곳(로컬 파일 열기 등)에서는 Supabase에 바로 저장한다(확인 메일은 나가지 않음)
           if (!authClient) throw apiErr;
