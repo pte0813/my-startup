@@ -8,3 +8,4 @@
 | 2026-10-22 | 서비스 이름 5안 중 선택 후 브랜드 제작 | 함께닿 선정, brand/brand.json(슬로건·컬러 3색)과 brand/logo.svg 작성 |
 | 2026-10-22 | 로고 글씨체를 둥글둥글한 손글씨 느낌으로 변경 | 함께닿은 Jua, 슬로건은 Gaegu Bold로 교체(글자는 윤곽선 변환), brand.json에 글꼴 기록 |
 | 2026-10-22 | Supabase signups 표 SQL 작성(방문자는 신청만 가능) | outputs/signups.sql 작성, 붙여 넣는 위치 안내 |
+| 2026-10-22 | 사전신청 랜딩페이지(문제→해결→혜택→신청) 제작, 중복 이메일 차단·동의 문구 포함 | outputs/landing/index.html·build.py 작성, signups.sql에 중복 방지 추가 (Supabase 실연결은 샌드박스 제한으로 미확인) |

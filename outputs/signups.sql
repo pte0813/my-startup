@@ -19,3 +19,7 @@ create policy "방문자는 신청만 넣을 수 있다"
   for insert
   to anon, authenticated
   with check (true);
+
+-- 같은 이메일 중복 신청 막기 (대소문자 구분 없이)
+-- 이미 위의 표를 만든 경우에는 이 아래 한 줄만 따로 실행하면 된다.
+create unique index signups_email_unique on public.signups (lower(email));
