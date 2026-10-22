@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /account.html
+Disallow: /admin
+Disallow: /admin.html
 
 Sitemap: https://hamkkedat-homepage.vercel.app/sitemap.xml

@@ -2,14 +2,14 @@
 // 내가 쓴 후기(사진·별점·메모)를 인스타 공유용 카드 문구(제목·한두 문장·해시태그)로 다듬는다. 카드 이미지는 브라우저에서 그린다.
 // - 본인 후기만 사용한다(승인 전 후기도 가능). 이름·연락처는 AI에 보내지 않고, 후기 본문은 "자료"로만 취급하게 한다.
 // - AI를 쓸 수 없으면 후기 본문 앞부분과 여행 정보로 기본 문구를 만든다.
-const { env, json, readBody, db, verifyUser } = require('./_lib');
+const { env, json, readBody, db, verifyUser, withErrors } = require('./_lib');
 const { aiEnv, pickLang, LANGS, usedToday, recordUse, askClaude } = require('./_ai');
 
 const FEATURE = 'review_card';
 const UUID = /^[0-9a-f-]{36}$/i;
 const clip = (v, n) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, n) : '');
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return json(res, 405, { error: 'method_not_allowed' }); }
   const e = env();
   if (!(e.supabaseUrl && e.anonKey && e.serviceKey)) return json(res, 503, { error: 'ai_not_configured' });
@@ -55,4 +55,6 @@ module.exports = async function handler(req, res) {
   const hashtags = (Array.isArray(out.hashtags) ? out.hashtags : []).map((h) => clip(String(h).replace(/^#+/, '').replace(/\s+/g, ''), 20)).filter(Boolean).slice(0, 5);
   await recordUse(store, user.id, FEATURE);
   return json(res, 200, { headline, caption, hashtags, rating: r.rating, trip_title: title, ai: true, limited: false });
-};
+}
+
+module.exports = withErrors('ai-review-card', handler);

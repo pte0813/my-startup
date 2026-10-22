@@ -1,6 +1,6 @@
 // POST /api/pay-return  (나이스페이먼츠 결제창이 인증 결과를 보내는 주소: form-urlencoded)
 // 인증 결과를 검증(주문·금액·서명)한 뒤 승인 API를 호출하고, 결과를 DB에 기록한 다음 내 정보 페이지로 보낸다.
-const { env, configured, nicepayHost, sha256, safeEqual, db, readBody, basicAuth } = require('./_lib');
+const { env, configured, nicepayHost, sha256, safeEqual, db, readBody, basicAuth, withErrors } = require('./_lib');
 
 const back = (res, ok, code) => {
   res.statusCode = 303;
@@ -19,7 +19,7 @@ async function nicepay(e, path, payload) {
   return { ok: r.ok, data };
 }
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') { res.statusCode = 405; res.setHeader('Allow', 'POST'); return res.end(); }
   const e = env();
   if (!configured(e)) return back(res, false, 'not_configured');
@@ -80,4 +80,6 @@ module.exports = async function handler(req, res) {
     return back(res, false, 'record_failed');
   }
   return back(res, true);
-};
+}
+
+module.exports = withErrors('pay-return', handler);

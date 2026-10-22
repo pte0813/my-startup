@@ -49,3 +49,9 @@
 - `GET /api/purge` — 매주 일요일 크론. 문의 1년·AI 사용 기록 30일·아이스브레이킹 저장본 90일이 지난 데이터를 지운다. 환경변수 `CRON_SECRET`이 있어야 동작한다.
 - 호출 한도: `ai-match` 하루 30회, `ai-icebreaker` 하루 20회(반복 조회로 다른 참가자의 성향을 추측하는 것을 막는다), `inquiry`는 같은 이메일 1시간 3건·전체 1분 30건(서버 전용 키가 있을 때).
 - 응답은 모두 `Cache-Control: no-store`.
+
+### api/admin.js (1단계 관리자)
+- `POST /api/admin { action, ... }` — 운영자 전용. 매 요청마다 `profiles.role`을 서버가 확인한다(정지된 계정은 관리자여도 거절). 변경 작업은 모두 `admin_logs`에 남는다.
+- 권한: `stats`(super_admin·operator), 회원 조회/경고(모든 운영진)/정지·해제(super_admin·operator)/역할 변경(super_admin), 모임 관리(super_admin·operator), 신고 처리(모든 운영진), 작업 로그(super_admin). 자기 자신과 super_admin 계정은 super_admin만 건드릴 수 있다.
+- `POST /api/reunion`에 `action: 'report'` 추가: 같은 지난 여행 참가자를 신고(상대 계정 정보는 브라우저에 내려가지 않는다).
+- 처리되지 않은 오류는 `withErrors`가 Sentry(`SENTRY_DSN`)로 보내고 사용자에게는 `server_error`만 돌려준다.

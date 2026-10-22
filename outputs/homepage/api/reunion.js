@@ -1,16 +1,16 @@
-// POST /api/reunion  { action: 'list' | 'pick' | 'unpick' | 'suggest', trip_id, application_id?, lang? }
+// POST /api/reunion  { action: 'list' | 'pick' | 'unpick' | 'suggest' | 'report', trip_id, application_id?, lang?, reason?, detail? }
 // 지난 여행에서 "다시 만나고 싶은 사람"을 고르고, 서로 골랐을 때만 성사로 알려 준다.
 // - 내가 누구를 골랐는지는 상대에게 절대 보이지 않는다(상대가 나를 골랐는지는 내가 그 사람을 골랐을 때만 "성사"로 알 수 있다).
 // - 같은 여행의 참가자(신청 취소 제외)만 서로 보이고, 이름은 프로필 이름만 쓴다. 연락처는 어디에도 나오지 않는다.
 // - 모든 읽기·쓰기는 이 서버 함수(service_role)로만 한다. reunion_picks 표는 브라우저에서 접근할 수 없다.
-const { env, json, readBody, db, verifyUser } = require('./_lib');
+const { env, json, readBody, db, verifyUser, withErrors } = require('./_lib');
 const { aiEnv, pickLang, LANGS, cleanProfile, usedToday, recordUse, askClaude, opts } = require('./_ai');
 
 const UUID = /^[0-9a-f-]{36}$/i;
 const MAX_PICKS = 5;
 const FEATURE = 'reunion';
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return json(res, 405, { error: 'method_not_allowed' }); }
   const e = env();
   if (!(e.supabaseUrl && e.anonKey && e.serviceKey)) return json(res, 503, { error: 'not_configured' });
@@ -21,7 +21,7 @@ module.exports = async function handler(req, res) {
   const action = String(body.action || '');
   const tripId = String(body.trip_id || '');
   const appId = body.application_id == null ? '' : String(body.application_id);
-  if (!['list', 'pick', 'unpick', 'suggest'].includes(action) || !UUID.test(tripId) || (action !== 'list' && !UUID.test(appId))) return json(res, 400, { error: 'invalid_input' });
+  if (!['list', 'pick', 'unpick', 'suggest', 'report'].includes(action) || !UUID.test(tripId) || (action !== 'list' && !UUID.test(appId))) return json(res, 400, { error: 'invalid_input' });
   const lang = pickLang(body.lang);
   const store = db(e);
 
@@ -38,6 +38,18 @@ module.exports = async function handler(req, res) {
     const r = await store.select(`reunion_picks?select=from_user,to_user&trip_id=eq.${tripId}&${col}=eq.${val}&limit=200`);
     return r.ok && r.data ? r.data : [];
   };
+
+  if (action === 'report') {
+    // 같은 지난 여행의 참가자를 신고한다. 상대의 계정 정보는 브라우저로 내려보내지 않고 서버가 대상 회원을 찾아 신고를 접수한다.
+    const target = others.find((a) => a.id === appId);
+    const reason = ['spam', 'abuse', 'inappropriate', 'noshow', 'other'].includes(body.reason) ? body.reason : null;
+    if (!target || !reason) return json(res, 400, { error: 'invalid_input' });
+    const mine = await store.select(`profiles?select=status&id=eq.${user.id}&limit=1`);
+    if (mine.ok && mine.data && mine.data[0] && mine.data[0].status === 'suspended') return json(res, 403, { error: 'suspended' });
+    const ins = await store.insert('reports', { reporter_id: user.id, target_type: 'user', target_id: target.user_id, reason, detail: String(body.detail || '').trim().slice(0, 1000) });
+    if (!ins.ok) return json(res, ins.status === 409 ? 409 : 502, { error: ins.status === 409 ? 'already_reported' : 'save_failed' });
+    return json(res, 200, { ok: true });
+  }
 
   if (action === 'pick') {
     const target = others.find((a) => a.id === appId);
@@ -107,4 +119,6 @@ module.exports = async function handler(req, res) {
     matched: matchedSet.has(a.user_id)
   }));
   return json(res, 200, { candidates, max_picks: MAX_PICKS, picks_left: Math.max(0, MAX_PICKS - myPicks.length) });
-};
+}
+
+module.exports = withErrors('reunion', handler);

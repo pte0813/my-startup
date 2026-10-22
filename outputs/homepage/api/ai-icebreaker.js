@@ -3,7 +3,7 @@
 // - 신청자만 볼 수 있다. 개인별 정보·이름·연락처는 AI에도 응답에도 넣지 않고, 2명 이상 겹치는 항목의 인원 수만 쓴다.
 // - 여행·언어별로 한 번 만든 결과를 저장해 모든 참가자가 같은 내용을 본다(참가자 구성이 바뀌면 다시 만든다).
 const crypto = require('crypto');
-const { env, json, readBody, db, verifyUser } = require('./_lib');
+const { env, json, readBody, db, verifyUser, withErrors } = require('./_lib');
 const { opts, LANGS, aiEnv, pickLang, cleanProfile, usedToday, recordUse, throttle, askClaude } = require('./_ai');
 
 const FEATURE = 'icebreaker';
@@ -27,7 +27,7 @@ function cleanContent(c) {
   return topics.length && games.length && intro ? { topics, balance_games: games, intro_template: intro, opener } : null;
 }
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return json(res, 405, { error: 'method_not_allowed' }); }
   const e = env();
   if (!(e.supabaseUrl && e.anonKey && e.serviceKey)) return json(res, 503, { error: 'ai_not_configured' });
@@ -107,4 +107,6 @@ module.exports = async function handler(req, res) {
   await recordUse(store, user.id, FEATURE);
   await store.upsert('ai_icebreakers', { trip_id: tripId, lang, stats_hash: hash, content, created_at: new Date().toISOString() }, 'trip_id,lang');
   return json(res, 200, { content, stats, ai: true, cached: false, limited: false });
-};
+}
+
+module.exports = withErrors('ai-icebreaker', handler);

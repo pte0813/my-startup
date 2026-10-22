@@ -46,6 +46,11 @@ const db = (e) => {
   };
   return {
     select: (path) => call('GET', path),
+    count: async (path) => {
+      const r = await fetch(`${e.supabaseUrl}/rest/v1/${path}`, { headers: { ...headers, Prefer: 'count=exact', Range: '0-0' } });
+      const m = /\/(\d+)$/.exec(r.headers.get('content-range') || '');
+      return m ? Number(m[1]) : 0;
+    },
     insert: (table, row) => call('POST', table, row, { Prefer: 'return=representation' }),
     update: (path, row) => call('PATCH', path, row, { Prefer: 'return=representation' }),
     insertIgnore: (table, row, conflict) => call('POST', `${table}?on_conflict=${conflict}`, row, { Prefer: 'resolution=ignore-duplicates,return=minimal' }),
@@ -64,6 +69,37 @@ async function verifyUser(e, authHeader) {
   return u && u.id ? u : null;
 }
 
+// 오류 모니터링(Sentry): SENTRY_DSN이 있을 때만 동작한다. 개인정보(요청 본문·토큰·이메일)는 보내지 않고 오류 종류·메시지·스택·함수 이름만 보낸다.
+async function reportError(err, fn) {
+  try {
+    const dsn = process.env.SENTRY_DSN;
+    const m = dsn && /^https:\/\/([^@]+)@([^/]+)\/(\d+)$/.exec(dsn);
+    if (!m) return;
+    const [, key, host, project] = m;
+    const id = crypto.randomBytes(16).toString('hex');
+    const event = {
+      event_id: id, timestamp: Date.now() / 1000, platform: 'node', level: 'error', server_name: 'vercel',
+      environment: process.env.VERCEL_ENV || 'development', tags: { function: fn },
+      exception: { values: [{ type: (err && err.name) || 'Error', value: String((err && err.message) || err).slice(0, 500), stacktrace: { frames: String((err && err.stack) || '').split('\n').slice(1, 12).map((l) => ({ filename: l.trim().slice(0, 200) })).reverse() } }] }
+    };
+    const body = [JSON.stringify({ event_id: id, sent_at: new Date().toISOString() }), JSON.stringify({ type: 'event' }), JSON.stringify(event)].join('\n');
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 3000);
+    await fetch(`https://${host}/api/${project}/envelope/`, {
+      method: 'POST', signal: ctl.signal,
+      headers: { 'Content-Type': 'application/x-sentry-envelope', 'X-Sentry-Auth': `Sentry sentry_version=7, sentry_key=${key}, sentry_client=hamkkedat/1.0` }, body
+    }).finally(() => clearTimeout(timer));
+  } catch { /* 모니터링 실패가 서비스를 막지 않는다 */ }
+}
+
+// 처리되지 않은 오류는 Sentry에 보내고, 사용자에게는 내용 없이 500만 돌려준다
+const withErrors = (name, handler) => async (req, res) => {
+  try { return await handler(req, res); } catch (err) {
+    await reportError(err, name);
+    if (!res.writableEnded) json(res, 500, { error: 'server_error' });
+  }
+};
+
 const basicAuth = (e) => 'Basic ' + Buffer.from(`${e.clientId}:${e.secretKey}`).toString('base64');
 
-module.exports = { env, configured, nicepayHost, sha256, safeEqual, json, readBody, db, verifyUser, basicAuth };
+module.exports = { env, configured, nicepayHost, sha256, safeEqual, json, readBody, db, verifyUser, basicAuth, reportError, withErrors };
