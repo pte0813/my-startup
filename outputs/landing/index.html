@@ -151,7 +151,6 @@
 
   <footer><div class="wrap">© 함께닿 · 혼자 떠나도, 마음은 닿는다</div></footer>
 
-  <script src="config.js"></script>
   <script>
     const form = document.getElementById('form');
     const msg = document.getElementById('msg');
@@ -160,9 +159,6 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const cfg = window.APP_CONFIG;
-      if (!cfg) return show('신청 기능이 아직 연결되지 않았어요. 잠시 후 다시 시도해 주세요.', 'err');
-
       const name = form.name.value.trim();
       const email = form.email.value.trim();
       if (form.company.value) return show('신청이 접수되었어요!', 'ok'); // 봇은 조용히 통과
@@ -172,14 +168,9 @@
 
       btn.disabled = true; show('신청 중이에요…');
       try {
-        const res = await fetch(cfg.url + '/rest/v1/signups', {
+        const res = await fetch('/api/signup', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            apikey: cfg.anonKey,
-            Authorization: 'Bearer ' + cfg.anonKey,
-            Prefer: 'return=minimal'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, email })
         });
         if (res.ok) {
