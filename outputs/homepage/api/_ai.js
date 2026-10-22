@@ -27,6 +27,16 @@ async function usedToday(store, userId, feature) {
 }
 const recordUse = (store, userId, feature) => store.insert('ai_usage', { user_id: userId, feature });
 
+// 하루 호출 횟수 제한: 프로필을 바꿔 가며 반복 조회해 다른 참가자의 성향을 추측하는 것을 어렵게 한다.
+// 허용되면 호출 기록을 남기고 true, 한도를 넘으면 false. 30일 지난 기록은 함께 지운다.
+async function throttle(store, userId, feature, max) {
+  if ((await usedToday(store, userId, feature)) >= max) return false;
+  await recordUse(store, userId, feature);
+  const old = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+  await store.remove(`ai_usage?user_id=eq.${userId}&created_at=lt.${encodeURIComponent(old)}`);
+  return true;
+}
+
 // Claude 호출: 정해진 형식(도구 입력)으로만 답하게 해서 JSON 파싱 문제를 피한다. 실패하면 null.
 async function askClaude(cfg, { system, user, tool }) {
   if (!cfg.key) return null;
@@ -57,4 +67,4 @@ async function askClaude(cfg, { system, user, tool }) {
   }
 }
 
-module.exports = { opts, LANGS, aiEnv, pickLang, cleanProfile, hasAnyTrait, usedToday, recordUse, askClaude };
+module.exports = { opts, LANGS, aiEnv, pickLang, cleanProfile, hasAnyTrait, usedToday, recordUse, throttle, askClaude };

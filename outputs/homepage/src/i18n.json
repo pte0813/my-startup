@@ -119,8 +119,8 @@
   "ct_err": "이름, 이메일, 문의 내용(10자 이상)을 확인해 주세요.",
   "ct_fail": "접수하지 못했어요. 잠시 후 다시 시도해 주세요.",
   "ct_consent": "개인정보 수집·이용에 동의합니다. (필수)",
-  "ct_consent_d": "수집 항목: 이름, 이메일, 문의 내용 · 이용 목적: 문의 답변 · 보유 기간: 문의 처리가 끝날 때까지",
-  "err_consent": "개인정보 수집·이용에 동의해 주세요.",
+  "ct_consent_d": "수집 항목: 이름, 이메일, 문의 내용 · 이용 목적: 문의 답변, 접수 확인 메일 발송 · 보유 기간: 접수 후 1년(또는 탈퇴 시까지) · 접수 확인 메일은 Resend(미국)를 통해 발송돼요",
+  "err_consent": "개인정보 수집·이용 동의에 체크해 주세요.",
   "loading": "불러오는 중…",
   "trip_pay": "결제하기",
   "trip_paid": "결제 완료",
@@ -198,7 +198,14 @@
   "rc_basic": "AI 문구를 지금 쓸 수 없어 후기 내용으로 기본 카드를 만들었어요.",
   "rc_limit": "오늘 AI 사용 횟수를 모두 썼어요. 기본 카드를 만들었어요.",
   "rc_err": "카드를 만들지 못했어요. 잠시 후 다시 시도해 주세요.",
-  "rc_share_tip": "저장한 이미지를 인스타그램에 올려 보세요. #함께닿"
+  "rc_share_tip": "저장한 이미지를 인스타그램에 올려 보세요. #함께닿",
+  "privacy_link": "개인정보 처리방침",
+  "t_privacy": "개인정보 처리방침 | 함께닿",
+  "d_privacy": "함께닿이 어떤 개인정보를 왜 수집하고 어떻게 보호하는지 알려 드려요.",
+  "privacy_lang_note": "",
+  "signup_consent": "개인정보 수집·이용에 동의하고 만 14세 이상입니다. (필수)",
+  "signup_consent_d": "수집 항목: 이메일, 비밀번호, 이름 · 목적: 회원 식별과 서비스 제공 · 보유: 탈퇴 시까지 (결제 기록은 법령에 따라 5년)",
+  "rc_notice": "카드를 만들면 후기 내용이 AI 서비스(Anthropic, 미국)로 전달돼요."
  },
  "en": {
   "menu_label": "Main menu",
@@ -320,8 +327,8 @@
   "ct_err": "Please check your name, email and message (at least 10 characters).",
   "ct_fail": "Could not send. Please try again.",
   "ct_consent": "I agree to the collection and use of my personal information. (required)",
-  "ct_consent_d": "Collected: name, email, message · Purpose: replying to your inquiry · Retention: until your inquiry is resolved",
-  "err_consent": "Please agree to the privacy notice.",
+  "ct_consent_d": "Collected: name, email, message · Purpose: replying and sending a receipt email · Retention: 1 year after receipt (or until you leave) · The receipt email is sent through Resend (USA)",
+  "err_consent": "Please agree to the collection and use of personal information.",
   "loading": "Loading…",
   "trip_pay": "Pay now",
   "trip_paid": "Paid",
@@ -399,7 +406,14 @@
   "rc_basic": "The AI text is unavailable right now, so we made a basic card from your review.",
   "rc_limit": "You have used today's AI quota. We made a basic card instead.",
   "rc_err": "Could not create the card. Please try again shortly.",
-  "rc_share_tip": "Upload the saved image to Instagram. #Hamkkedat"
+  "rc_share_tip": "Upload the saved image to Instagram. #Hamkkedat",
+  "privacy_link": "Privacy Policy",
+  "t_privacy": "Privacy Policy | Hamkkedat",
+  "d_privacy": "How Hamkkedat collects, uses and protects your personal information.",
+  "privacy_lang_note": "",
+  "signup_consent": "I agree to the collection and use of my personal information and I am 14 or older. (required)",
+  "signup_consent_d": "Collected: email, password, name · Purpose: identifying members and providing the service · Retention: until you leave (payment records 5 years as required by law)",
+  "rc_notice": "Making a card sends your review text to an AI service (Anthropic, USA)."
  },
  "zh": {
   "menu_label": "主菜单",
@@ -521,8 +535,8 @@
   "ct_err": "请检查姓名、邮箱和咨询内容(至少10个字)。",
   "ct_fail": "提交失败,请稍后重试。",
   "ct_consent": "我同意收集和使用个人信息。(必填)",
-  "ct_consent_d": "收集项目:姓名、邮箱、咨询内容 · 目的:答复咨询 · 保存期限:至咨询处理完毕",
-  "err_consent": "请同意个人信息收集和使用。",
+  "ct_consent_d": "收集项目：姓名、邮箱、咨询内容 · 目的：答复咨询、发送受理确认邮件 · 保存期限：受理后1年（或至退出会员）· 受理确认邮件通过 Resend（美国）发送",
+  "err_consent": "请勾选同意收集和使用个人信息。",
   "loading": "加载中…",
   "trip_pay": "去支付",
   "trip_paid": "已付款",
@@ -600,7 +614,14 @@
   "rc_basic": "AI 文案暂时无法使用，已根据评价内容制作基础卡片。",
   "rc_limit": "今天的 AI 使用次数已用完，已制作基础卡片。",
   "rc_err": "无法制作卡片，请稍后重试。",
-  "rc_share_tip": "把保存的图片发到 Instagram 吧。#함께닿"
+  "rc_share_tip": "把保存的图片发到 Instagram 吧。#함께닿",
+  "privacy_link": "隐私政策",
+  "t_privacy": "隐私政策 | 함께닿",
+  "d_privacy": "了解함께닿如何收集、使用和保护您的个人信息。",
+  "privacy_lang_note": "本政策以韩文版为准，以下为英文参考译文。",
+  "signup_consent": "我同意收集和使用个人信息，并确认已年满14周岁。（必填）",
+  "signup_consent_d": "收集项目：邮箱、密码、姓名 · 目的：会员识别与提供服务 · 保存期限：至退出会员（支付记录依法保存5年）",
+  "rc_notice": "制作卡片时，评价内容会传送给 AI 服务（Anthropic，美国）。"
  },
  "ja": {
   "menu_label": "メインメニュー",
@@ -722,8 +743,8 @@
   "ct_err": "お名前、メール、お問い合わせ内容(10文字以上)をご確認ください。",
   "ct_fail": "送信に失敗しました。もう一度お試しください。",
   "ct_consent": "個人情報の収集・利用に同意します。(必須)",
-  "ct_consent_d": "収集項目:お名前、メール、内容 · 目的:お問い合わせへの回答 · 保有期間:対応が完了するまで",
-  "err_consent": "個人情報の収集・利用に同意してください。",
+  "ct_consent_d": "収集項目：お名前、メールアドレス、お問い合わせ内容 ・ 目的：回答、受付確認メールの送信 ・ 保有期間：受付後1年（または退会まで） ・ 受付確認メールはResend（米国）経由で送信されます",
+  "err_consent": "個人情報の収集・利用への同意にチェックしてください。",
   "loading": "読み込み中…",
   "trip_pay": "支払う",
   "trip_paid": "支払い済み",
@@ -801,7 +822,14 @@
   "rc_basic": "AI文面を現在利用できないため、レビュー内容で基本カードを作成しました。",
   "rc_limit": "本日のAI利用回数を使い切ったため、基本カードを作成しました。",
   "rc_err": "カードを作成できませんでした。しばらくしてからお試しください。",
-  "rc_share_tip": "保存した画像をInstagramに投稿してみましょう。#함께닿"
+  "rc_share_tip": "保存した画像をInstagramに投稿してみましょう。#함께닿",
+  "privacy_link": "プライバシーポリシー",
+  "t_privacy": "プライバシーポリシー | 함께닿",
+  "d_privacy": "함께닿が個人情報をどのように収集・利用・保護するかをご案内します。",
+  "privacy_lang_note": "本ポリシーは韓国語版が正本です。以下は英語の参考訳です。",
+  "signup_consent": "個人情報の収集・利用に同意し、14歳以上です。（必須）",
+  "signup_consent_d": "収集項目：メールアドレス、パスワード、お名前 ・ 目的：会員の識別とサービス提供 ・ 保有期間：退会まで（決済記録は法令により5年）",
+  "rc_notice": "カードを作成すると、レビュー内容がAIサービス（Anthropic、米国）に送信されます。"
  },
  "es": {
   "menu_label": "Menú principal",
@@ -923,8 +951,8 @@
   "ct_err": "Revisa tu nombre, correo y mensaje (mín. 10 caracteres).",
   "ct_fail": "No se pudo enviar. Inténtalo de nuevo.",
   "ct_consent": "Acepto la recopilación y el uso de mis datos personales. (obligatorio)",
-  "ct_consent_d": "Datos: nombre, correo, mensaje · Finalidad: responder tu consulta · Conservación: hasta resolver la consulta",
-  "err_consent": "Acepta el aviso de privacidad.",
+  "ct_consent_d": "Datos: nombre, correo, mensaje · Finalidad: responder y enviar un correo de confirmación · Conservación: 1 año desde la recepción (o hasta que te des de baja) · El correo se envía a través de Resend (EE. UU.)",
+  "err_consent": "Marca la aceptación de la recopilación y el uso de datos personales.",
   "loading": "Cargando…",
   "trip_pay": "Pagar",
   "trip_paid": "Pagado",
@@ -1002,6 +1030,13 @@
   "rc_basic": "El texto de IA no está disponible ahora, así que creamos una tarjeta básica con tu reseña.",
   "rc_limit": "Has usado la cuota de IA de hoy; creamos una tarjeta básica.",
   "rc_err": "No se pudo crear la tarjeta. Inténtalo de nuevo en un momento.",
-  "rc_share_tip": "Sube la imagen guardada a Instagram. #Hamkkedat"
+  "rc_share_tip": "Sube la imagen guardada a Instagram. #Hamkkedat",
+  "privacy_link": "Política de privacidad",
+  "t_privacy": "Política de privacidad | Hamkkedat",
+  "d_privacy": "Cómo Hamkkedat recopila, usa y protege tu información personal.",
+  "privacy_lang_note": "La versión en coreano es la oficial; a continuación se muestra una traducción de referencia en inglés.",
+  "signup_consent": "Acepto la recopilación y el uso de mis datos personales y tengo 14 años o más. (obligatorio)",
+  "signup_consent_d": "Datos: correo, contraseña, nombre · Finalidad: identificar a los miembros y prestar el servicio · Conservación: hasta que te des de baja (registros de pago 5 años según la ley)",
+  "rc_notice": "Al crear la tarjeta, el texto de tu reseña se envía a un servicio de IA (Anthropic, EE. UU.)."
  }
 }

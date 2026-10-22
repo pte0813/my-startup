@@ -483,7 +483,7 @@
       <p class="review-body">${esc(r.body)}</p>
       ${photos ? `<div class="review-photos">${photos}</div>` : ''}
       <time datetime="${esc(r.created_at)}">${esc(fmtDate(r.created_at))}</time>
-      ${mine ? `<button class="btn ghost small rc-btn" type="button" data-rc="${esc(r.id)}">${esc(T('rc_btn'))}</button><div class="rc-panel" data-rc-panel="${esc(r.id)}" aria-live="polite"></div>` : ''}</article>`;
+      ${mine ? `<button class="btn ghost small rc-btn" type="button" data-rc="${esc(r.id)}">${esc(T('rc_btn'))}</button><p class="rc-notice">${esc(T('rc_notice'))}</p><div class="rc-panel" data-rc-panel="${esc(r.id)}" aria-live="polite"></div>` : ''}</article>`;
   }
 
   function renderReviews() {
@@ -522,6 +522,18 @@
   }
 
   const okType = (f) => /^image\/(jpeg|png|webp)$/.test(f.type);
+  // 사진에 들어 있는 위치·기기 정보(EXIF)를 지우기 위해 캔버스에 다시 그려서 올린다(긴 변 2000px 이하). 실패하면 올리지 않는다.
+  async function stripPhoto(file) {
+    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const k = Math.min(1, 2000 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    const type = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+    const blob = await new Promise((res) => c.toBlob(res, type, 0.88));
+    if (!blob) throw new Error('strip_failed');
+    return { blob, type };
+  }
   async function submitReview(e) {
     e.preventDefault();
     const f = e.target, msg = $('#rv-msg'), btn = $('#rv-submit');
@@ -533,9 +545,9 @@
     try {
       const urls = [];
       for (const file of files) {
-        const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }[file.type];
-        const path = `${authUser.id}/${crypto.randomUUID()}.${ext}`;
-        const up = await authClient.storage.from('review-photos').upload(path, file, { contentType: file.type });
+        const { blob, type } = await stripPhoto(file);
+        const path = `${authUser.id}/${crypto.randomUUID()}.${type === 'image/png' ? 'png' : 'jpg'}`;
+        const up = await authClient.storage.from('review-photos').upload(path, blob, { contentType: type });
         if (up.error) throw up.error;
         urls.push(authClient.storage.from('review-photos').getPublicUrl(path).data.publicUrl);
       }
@@ -618,6 +630,16 @@
     });
   }
 
+  /* ---------------- 개인정보 처리방침: 한국어가 정본, 그 외 언어는 영어 참고 번역 + 안내 ---------------- */
+  function renderPrivacy() {
+    const ko = document.querySelector('[data-policy="ko"]'), en = document.querySelector('[data-policy="en"]');
+    if (!ko || !en) return;
+    const isKo = currentLang === 'ko';
+    ko.hidden = !isKo; en.hidden = isKo;
+    const note = $('#policy-lang-note'), text = tr('privacy_lang_note');
+    note.hidden = !(text && !isKo && currentLang !== 'en'); note.textContent = text || '';
+  }
+
   /* ---------------- 시작 ---------------- */
   let lastUid;
   window.pageHooks = window.pageHooks || [];
@@ -626,7 +648,7 @@
     const changed = lastUid !== undefined && uid !== lastUid;
     lastUid = uid;
     if (changed) { if (tripState.loaded) loadTrips(); if (rv.loaded) loadReviews(); }
-    renderTrips(); renderReviews(); renderSuggest();
+    renderTrips(); renderReviews(); renderSuggest(); renderPrivacy();
   });
   initTrips(); initReviews(); initSuggest(); initContact();
 })();

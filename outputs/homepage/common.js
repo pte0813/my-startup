@@ -74,6 +74,18 @@ const authMsg = document.getElementById('auth-msg');
 function tr(key) { return (I18N[currentLang] || I18N.ko)[key]; }
 const say = (el, key, kind) => { el.textContent = key ? tr(key) : ''; el.className = 'dmsg ' + (kind || ''); };
 
+const PRIVACY_VERSION = '2026-10-22';
+// 가입할 때 체크한 개인정보 동의를 프로필에 기록한다(이메일 확인을 켠 경우에는 첫 로그인 때 기록).
+async function recordPrivacyConsent(user) {
+  try {
+    const meta = user && user.user_metadata;
+    if (!authClient || !meta || !meta.privacy_consent_at) return;
+    const { data } = await authClient.from('profiles').select('privacy_consent_at').eq('id', user.id).maybeSingle();
+    if (data && data.privacy_consent_at) return;
+    await authClient.from('profiles').upsert({ id: user.id, privacy_consent_at: meta.privacy_consent_at, privacy_consent_version: meta.privacy_consent_version || PRIVACY_VERSION });
+  } catch (e) { /* 기록 실패는 로그인을 막지 않는다 */ }
+}
+
 function renderAuthNav() {
   const btn = document.getElementById('auth-nav');
   btn.dataset.i18n = authUser ? 'auth_account' : 'auth_login';
@@ -87,6 +99,7 @@ function setAuthMode(mode) {
   document.getElementById('tab-signup').setAttribute('aria-selected', String(signup));
   document.getElementById('name-row').hidden = !signup;
   document.getElementById('pw-hint').hidden = !signup;
+  document.getElementById('consent-row').hidden = !signup;
   authForm.password.autocomplete = signup ? 'new-password' : 'current-password';
   const submit = document.getElementById('auth-submit');
   submit.dataset.i18n = signup ? 'auth_signup' : 'auth_login';
@@ -119,13 +132,15 @@ authForm.addEventListener('submit', async (e) => {
   if (!authClient) return say(authMsg, 'err_unavailable', 'err');
   const name = authForm.name.value.trim(), email = authForm.email.value.trim(), password = authForm.password.value;
   if (authMode === 'signup' && !name) return say(authMsg, 'err_name', 'err');
+  if (authMode === 'signup' && !authForm.consent.checked) return say(authMsg, 'err_consent', 'err');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return say(authMsg, 'err_email', 'err');
   if (password.length < 8) return say(authMsg, 'err_pw', 'err');
   const submit = document.getElementById('auth-submit');
   submit.disabled = true; say(authMsg, 'auth_wait');
   try {
     if (authMode === 'signup') {
-      const { data, error } = await authClient.auth.signUp({ email, password, options: { data: { name } } });
+      const consentAt = new Date().toISOString();
+      const { data, error } = await authClient.auth.signUp({ email, password, options: { data: { name, privacy_consent_at: consentAt, privacy_consent_version: PRIVACY_VERSION } } });
       if (error) return say(authMsg, errKey(error), 'err');
       if (data.session) { authForm.reset(); authDlg.close(); } else { say(authMsg, 'msg_signup_confirm', 'ok'); }
     } else {
@@ -141,8 +156,8 @@ authForm.addEventListener('submit', async (e) => {
 });
 
 if (authClient) {
-  authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); });
-  authClient.auth.onAuthStateChange((_event, session) => { authUser = session ? session.user : null; renderAuthNav(); });
+  authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); if (authUser) setTimeout(() => recordPrivacyConsent(authUser), 0); });
+  authClient.auth.onAuthStateChange((_event, session) => { authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => recordPrivacyConsent(authUser), 0); });
 }
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setOpen(false); setMega(false); } });
   

@@ -3,10 +3,11 @@
 // - 점수와 공통점은 서버가 직접 계산하고(AI 키가 없어도 동작), Claude는 이유 문장만 다듬는다.
 // - 다른 회원의 이름·연락처는 돌려주지 않는다. 동의(ai_consent)한 회원의 선택지 값만 쓰며, 개인 식별 정보는 AI에도 보내지 않는다.
 const { env, json, readBody, db, verifyUser } = require('./_lib');
-const { opts, LANGS, aiEnv, pickLang, cleanProfile, hasAnyTrait, usedToday, recordUse, askClaude } = require('./_ai');
+const { opts, LANGS, aiEnv, pickLang, cleanProfile, hasAnyTrait, usedToday, recordUse, throttle, askClaude } = require('./_ai');
 
 const FEATURE = 'match';
 const MAX_MATCHES = 3;
+const MAX_CALLS_PER_DAY = 30; // 반복 조회로 다른 사람의 성향을 추측하는 것을 막는 하루 호출 한도
 const FIELDS = 'id,mbti,interests,travel_styles,active_times';
 
 const overlap = (a, b) => a.filter((x) => b.includes(x));
@@ -22,7 +23,8 @@ function score(me, other) {
   const mbtiPts = shared.mbti_letters >= 3 ? 2 : shared.mbti_letters === 2 ? 1 : 0;
   const raw = shared.interests.length * 2 + shared.travel_styles.length * 2 + shared.active_times.length * 1.5 + mbtiPts;
   const max = me.interests.length * 2 + me.travel_styles.length * 2 + me.active_times.length * 1.5 + (me.mbti ? 2 : 0);
-  return { shared, pct: max ? Math.min(99, Math.round((raw / max) * 100)) : 0, raw };
+  // 일치율은 5% 단위로 뭉뚱그려 보여 준다(정확한 값으로 상대 프로필을 역추적하기 어렵게)
+  return { shared, pct: max ? Math.min(95, Math.max(5, Math.round((raw / max) * 20) * 5)) : 0, raw };
 }
 
 module.exports = async function handler(req, res) {
@@ -44,6 +46,8 @@ module.exports = async function handler(req, res) {
   if (!mineRow || !mineRow.ai_consent) return json(res, 403, { error: 'consent_required' });
   const me = cleanProfile(mineRow);
   if (!hasAnyTrait(me)) return json(res, 403, { error: 'profile_empty' });
+
+  if (!(await throttle(store, user.id, 'match_call', MAX_CALLS_PER_DAY))) return json(res, 429, { error: 'too_many_requests' });
 
   const trip = await store.select(`trips?select=id,title,status&id=eq.${tripId}&limit=1`);
   const t = trip.ok && trip.data && trip.data[0];

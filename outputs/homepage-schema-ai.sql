@@ -44,3 +44,13 @@ create table if not exists public.reunion_picks (
 create index if not exists reunion_picks_to on public.reunion_picks (trip_id, to_user);
 alter table public.reunion_picks enable row level security;
 revoke all on public.reunion_picks from anon, authenticated;
+
+-- 개인정보 보호 개선 (이미 test 프로젝트에 적용됨: privacy_hardening_payments_consent)
+-- 결제 기록은 법정 보관 의무가 있어, 회원이 탈퇴해도 지우지 않고 회원 연결만 끊는다.
+alter table public.payments alter column user_id drop not null;
+alter table public.payments drop constraint if exists payments_user_id_fkey;
+alter table public.payments add constraint payments_user_id_fkey foreign key (user_id) references auth.users (id) on delete set null;
+-- 개인정보 수집·이용 동의 기록
+alter table public.profiles
+  add column if not exists privacy_consent_at timestamptz,
+  add column if not exists privacy_consent_version text;

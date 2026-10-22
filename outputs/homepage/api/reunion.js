@@ -51,6 +51,9 @@ module.exports = async function handler(req, res) {
   } else if (action === 'unpick') {
     const target = others.find((a) => a.id === appId);
     if (!target) return json(res, 404, { error: 'no_such_attendee' });
+    // 상대도 나를 골랐다면(성사) 취소할 수 없다. 취소가 가능하면 "선택해 보고 상대 마음만 확인한 뒤 취소"하는 엿보기가 되기 때문이다.
+    const theirs = await picksOf('from_user', target.user_id);
+    if (theirs.some((p) => p.to_user === user.id)) return json(res, 409, { error: 'already_matched' });
     const del = await store.remove(`reunion_picks?trip_id=eq.${tripId}&from_user=eq.${user.id}&to_user=eq.${target.user_id}`);
     if (!del.ok) return json(res, 502, { error: 'save_failed' });
   }

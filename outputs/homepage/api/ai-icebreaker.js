@@ -4,9 +4,11 @@
 // - 여행·언어별로 한 번 만든 결과를 저장해 모든 참가자가 같은 내용을 본다(참가자 구성이 바뀌면 다시 만든다).
 const crypto = require('crypto');
 const { env, json, readBody, db, verifyUser } = require('./_lib');
-const { opts, LANGS, aiEnv, pickLang, cleanProfile, usedToday, recordUse, askClaude } = require('./_ai');
+const { opts, LANGS, aiEnv, pickLang, cleanProfile, usedToday, recordUse, throttle, askClaude } = require('./_ai');
 
 const FEATURE = 'icebreaker';
+const MIN_PEOPLE = 3; // 동의한 참가자가 이보다 적으면 공통점 통계를 내지 않는다(소수일 때 특정인의 성향이 드러나지 않게)
+const MAX_CALLS_PER_DAY = 20;
 const UUID = /^[0-9a-f-]{36}$/i;
 
 const countBy = (profiles, key) => {
@@ -46,16 +48,19 @@ module.exports = async function handler(req, res) {
   const t = trip.ok && trip.data && trip.data[0];
   if (!t || t.status !== 'open') return json(res, 404, { error: 'trip_not_open' });
 
+  if (!(await throttle(store, user.id, 'ice_call', MAX_CALLS_PER_DAY))) return json(res, 429, { error: 'too_many_requests' });
+
   const apps = await store.select(`trip_applications?select=user_id&trip_id=eq.${tripId}&status=neq.cancelled&limit=200`);
   const ids = (apps.ok && apps.data ? apps.data : []).map((a) => a.user_id).filter((x) => UUID.test(x));
   const profs = ids.length ? await store.select(`profiles?select=id,interests,travel_styles,active_times&ai_consent=eq.true&id=in.(${ids.join(',')})&limit=200`) : { ok: true, data: [] };
   const people = (profs.ok && profs.data ? profs.data : []).map(cleanProfile);
+  const enough = people.length >= MIN_PEOPLE;
   const stats = {
     participants: ids.length,
     consenting: people.length,
-    interests: countBy(people, 'interests'),
-    travel_styles: countBy(people, 'travel_styles'),
-    active_times: countBy(people, 'active_times')
+    interests: enough ? countBy(people, 'interests') : [],
+    travel_styles: enough ? countBy(people, 'travel_styles') : [],
+    active_times: enough ? countBy(people, 'active_times') : []
   };
   const hash = crypto.createHash('sha256').update(JSON.stringify([stats, lang])).digest('hex').slice(0, 16);
 

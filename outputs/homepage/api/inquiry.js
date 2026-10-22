@@ -8,6 +8,7 @@ const escapeHtml = (s) =>
 const send = (res, status, body) => {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-store');
   res.end(JSON.stringify(body));
 };
 
@@ -74,6 +75,21 @@ module.exports = async function handler(req, res) {
 
   const { SUPABASE_URL, SUPABASE_ANON_KEY } = process.env;
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return send(res, 500, { error: 'server_not_configured' });
+
+  // 남용 방지: 같은 이메일로 1시간에 3건, 전체로 1분에 30건을 넘으면 거절한다(남의 이메일로 접수 확인 메일을 쏟아내는 것도 막는다).
+  // 조회에는 서버 전용 키가 필요해서, 그 키가 설정된 환경에서만 적용한다.
+  const svc = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (svc) {
+    const count = async (filter) => {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/inquiries?select=id&${filter}&limit=31`, { headers: { apikey: svc, Authorization: `Bearer ${svc}` } });
+      const rows = r.ok ? await r.json().catch(() => []) : [];
+      return Array.isArray(rows) ? rows.length : 0;
+    };
+    const ago = (ms) => encodeURIComponent(new Date(Date.now() - ms).toISOString());
+    if ((await count(`email=eq.${encodeURIComponent(email)}&created_at=gte.${ago(3600e3)}`)) >= 3 || (await count(`created_at=gte.${ago(60e3)}`)) >= 30) {
+      return send(res, 429, { error: 'too_many_requests' });
+    }
+  }
 
   const ins = await fetch(`${SUPABASE_URL}/rest/v1/inquiries`, {
     method: 'POST',

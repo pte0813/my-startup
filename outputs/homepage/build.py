@@ -14,6 +14,7 @@ PAGES = {  # 파일명: 메뉴에서 강조할 그룹
     "reviews": "reviews",
     "community": "community",
     "contact": "contact",
+    "privacy": "",
 }
 
 root = Path(__file__).resolve().parents[2]
@@ -68,7 +69,7 @@ for page, group in PAGES.items():
         .replace("{{DESC}}", ko[f"d_{page}"])
         .replace("{{PAGE}}", page)
         .replace("{{URL}}", SITE_URL + ("/" if page == "index" else f"/{page}.html"))
-        .replace("{{OG}}", "og-image.png" if page == "index" else f"og-{page}.png")
+        .replace("{{OG}}", f"og-{page}.png" if (out / f"og-{page}.png").exists() else "og-image.png")
         .replace("{{SITE_URL}}", SITE_URL)
     )
     (out / f"{page}.html").write_text(html, encoding="utf-8")

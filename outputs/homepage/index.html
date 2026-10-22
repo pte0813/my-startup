@@ -113,7 +113,7 @@
       </div>
     </section>
   </main>
-  <footer><div class="wrap" data-i18n="footer">© 함께닿 · 혼자 떠나도, 마음은 닿는다</div></footer>
+  <footer><div class="wrap"><p data-i18n="footer">© 함께닿 · 혼자 떠나도, 마음은 닿는다</p><p><a href="privacy.html" data-i18n="privacy_link">개인정보 처리방침</a></p></div></footer>
 
   <button id="to-top" type="button" aria-label="맨 위로" data-i18n-attr="aria-label:to_top">↑</button>
 
@@ -127,6 +127,7 @@
       <label id="name-row" hidden><span data-i18n="auth_name">이름</span><input type="text" name="name" autocomplete="name" maxlength="100"></label>
       <label><span data-i18n="auth_email">이메일</span><input type="email" name="email" autocomplete="email" maxlength="254"></label>
       <label><span data-i18n="auth_password">비밀번호</span><input type="password" name="password" autocomplete="current-password" maxlength="72"><small id="pw-hint" data-i18n="auth_pw_hint" hidden>8자 이상</small></label>
+      <label class="consent" id="consent-row" hidden><input type="checkbox" name="consent"><span><span data-i18n="signup_consent">개인정보 수집·이용에 동의하고 만 14세 이상입니다. (필수)</span> <a href="privacy.html" target="_blank" rel="noopener" data-i18n="privacy_link">개인정보 처리방침</a><small data-i18n="signup_consent_d">수집 항목: 이메일, 비밀번호, 이름 · 목적: 회원 식별과 서비스 제공 · 보유: 탈퇴 시까지 (결제 기록은 법령에 따라 5년)</small></span></label>
       <button class="btn block" id="auth-submit" type="submit" data-i18n="auth_login">로그인</button>
       <p class="dmsg" id="auth-msg" role="status" aria-live="polite"></p>
     </form>

@@ -43,3 +43,9 @@
 ### api/ai-review-card.js · api/reunion.js (3단계)
 - `POST /api/ai-review-card { review_id, lang }` — 내가 쓴 후기를 인스타 공유용 카드 문구(제목·문구·해시태그)로 다듬는다. 카드 이미지(피드 4:5, 스토리 9:16)는 브라우저 canvas로 그린다. AI를 쓸 수 없으면 후기 본문으로 기본 문구를 만든다. 후기 본문은 "자료"로만 취급하게 해서 본문 속 지시문을 따르지 않는다.
 - `POST /api/reunion { action: list|pick|unpick|suggest, trip_id, application_id? }` — 지난 여행(status=past)에서 다시 만나고 싶은 사람을 최대 5명까지 고른다. **서로 골랐을 때만** 성사로 보이고, 내가 누구를 골랐는지는 상대에게 보이지 않는다. 성사된 사람과는 `suggest`로 다음 모임(모집 중인 여행) 제안을 받는다. 연락처는 어디에도 나오지 않는다. `reunion_picks` 표는 브라우저에서 접근할 수 없다.
+
+### 개인정보 보호 관련 (api/account.js · api/purge.js)
+- `POST /api/account { action: 'export' | 'delete', confirm? }` — 내 데이터 내려받기(JSON)와 회원 탈퇴. 탈퇴하면 업로드한 후기 사진과 같은 이메일의 문의를 지우고 계정을 삭제해 프로필·신청·후기·제안·재만남 선택이 함께 삭제된다. 결제 기록은 법정 보관(5년)으로 회원 연결만 끊고 남긴다.
+- `GET /api/purge` — 매주 일요일 크론. 문의 1년·AI 사용 기록 30일·아이스브레이킹 저장본 90일이 지난 데이터를 지운다. 환경변수 `CRON_SECRET`이 있어야 동작한다.
+- 호출 한도: `ai-match` 하루 30회, `ai-icebreaker` 하루 20회(반복 조회로 다른 참가자의 성향을 추측하는 것을 막는다), `inquiry`는 같은 이메일 1시간 3건·전체 1분 30건(서버 전용 키가 있을 때).
+- 응답은 모두 `Cache-Control: no-store`.

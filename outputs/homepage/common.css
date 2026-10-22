@@ -300,3 +300,18 @@ footer { padding: 24px 0; text-align: center; font-size: .85rem; opacity: .8; }
 .rc-cards canvas { width: 100%; height: auto; border-radius: 16px; box-shadow: 0 4px 16px rgba(31,58,95,.15); background: #fff; }
 .rc-cards figcaption { font-size: .85rem; opacity: .8; }
 .review .rc-btn { margin-top: 10px; }
+
+/* 푸터 링크 · 가입 동의 · 개인정보 처리방침 */
+footer p { margin: 0; }
+footer a { color: inherit; text-decoration: underline; }
+dialog .consent { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; font-size: .88rem; font-weight: 400; }
+dialog .consent input { width: 20px; height: 20px; margin-top: 4px; accent-color: var(--primary); }
+dialog .consent small { display: block; opacity: .75; margin-top: 2px; }
+.policy h2 { font-size: 1.3rem; margin: 28px 0 10px; }
+.policy p, .policy li { font-size: .95rem; }
+.policy ul { padding-left: 1.2em; display: grid; gap: 6px; }
+.table-wrap { overflow-x: auto; }
+.policy-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; font-size: .88rem; min-width: 560px; }
+.policy-table th, .policy-table td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid rgba(31,58,95,.1); }
+.policy-table th { background: rgba(31,58,95,.06); font-weight: 500; white-space: nowrap; }
+.rc-notice { font-size: .82rem; opacity: .75; margin: 6px 0 0; }
