@@ -1,0 +1,18 @@
+  <footer><div class="wrap" data-i18n="footer">© 함께닿 · 혼자 떠나도, 마음은 닿는다</div></footer>
+
+  <button id="to-top" type="button" aria-label="맨 위로" data-i18n-attr="aria-label:to_top">↑</button>
+
+  <dialog id="auth-dialog" aria-labelledby="auth-title">
+    <div class="dlg-head"><h2 id="auth-title" data-i18n="auth_login">로그인</h2><button class="x" type="button" data-close data-i18n-attr="aria-label:auth_close" aria-label="닫기">×</button></div>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" id="tab-login" aria-selected="true" data-i18n="auth_login">로그인</button>
+      <button type="button" role="tab" id="tab-signup" aria-selected="false" data-i18n="auth_signup">회원가입</button>
+    </div>
+    <form id="auth-form" novalidate>
+      <label id="name-row" hidden><span data-i18n="auth_name">이름</span><input type="text" name="name" autocomplete="name" maxlength="100"></label>
+      <label><span data-i18n="auth_email">이메일</span><input type="email" name="email" autocomplete="email" maxlength="254"></label>
+      <label><span data-i18n="auth_password">비밀번호</span><input type="password" name="password" autocomplete="current-password" maxlength="72"><small id="pw-hint" data-i18n="auth_pw_hint" hidden>8자 이상</small></label>
+      <button class="btn block" id="auth-submit" type="submit" data-i18n="auth_login">로그인</button>
+      <p class="dmsg" id="auth-msg" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>

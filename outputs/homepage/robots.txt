@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /account.html
+
+Sitemap: https://hamkkedat-homepage.vercel.app/sitemap.xml

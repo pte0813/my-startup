@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>여행 신청 | 함께닿</title>
+  <meta name="description" content="함께닿의 진행 중인 여행, 오픈 예정 여행, 진행했던 여행을 확인하세요.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:site_name" content="함께닿">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:title" content="여행 신청 | 함께닿">
+  <meta property="og:description" content="함께닿의 진행 중인 여행, 오픈 예정 여행, 진행했던 여행을 확인하세요.">
+  <meta property="og:url" content="https://hamkkedat-homepage.vercel.app/trips.html">
+  <meta property="og:image" content="https://hamkkedat-homepage.vercel.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="여행 신청 | 함께닿">
+  <meta name="twitter:description" content="함께닿의 진행 중인 여행, 오픈 예정 여행, 진행했던 여행을 확인하세요.">
+  <meta name="twitter:image" content="https://hamkkedat-homepage.vercel.app/og-image.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Jua&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="brand.css">
+  <link rel="stylesheet" href="common.css">
+</head>
+<body data-page="trips">
+  <header>
+    <div class="mega-bg" aria-hidden="true"></div>
+    <div class="wrap bar">
+      <a class="logo" href="index.html" aria-label="함께닿"><span class="dots-mini" aria-hidden="true"><i></i><i></i></span><span class="logo-name">함께닿</span></a>
+      <nav id="menu" aria-label="주 메뉴" data-i18n-attr="aria-label:menu_label">
+        <ul>
+          <li class="group"><a class="top" href="index.html" data-i18n="g_about">함께닿이란?</a>
+            <ul class="sub">
+              <li><a href="index.html#intro" data-i18n="s_company">회사 소개</a></li>
+              <li><a href="index.html#service" data-i18n="s_service">서비스 소개</a></li>
+              <li><a href="index.html#team" data-i18n="s_team">팀 소개</a></li>
+            </ul></li>
+          <li class="group current"><a class="top" href="trips.html" data-i18n="g_trips">여행 신청</a>
+            <ul class="sub">
+              <li><a href="trips.html#trip-open" data-i18n="s_open">진행 중인 여행</a></li>
+              <li><a href="trips.html#trip-soon" data-i18n="s_soon">오픈 예정 여행</a></li>
+              <li><a href="trips.html#trip-past" data-i18n="s_past">진행했던 여행</a></li>
+            </ul></li>
+          <li class="group"><a class="top" href="reviews.html" data-i18n="g_reviews">여행 후기</a>
+            <ul class="sub">
+              <li><a href="reviews.html" data-i18n="s_reviews">여행 후기 모음</a></li>
+            </ul></li>
+          <li class="group"><a class="top" href="community.html" data-i18n="g_community">커뮤니티</a>
+            <ul class="sub">
+              <li><a href="community.html#events" data-i18n="s_events">이벤트</a></li>
+              <li><a href="community.html#faq" data-i18n="s_faq">자주 묻는 질문</a></li>
+              <li><a href="community.html#suggest" data-i18n="s_suggest">상품 제안하기</a></li>
+            </ul></li>
+          <li class="group"><a class="top" href="contact.html" data-i18n="g_contact">연락하기</a>
+            <ul class="sub">
+              <li><a href="contact.html#contact-form" data-i18n="s_contact">문의하기</a></li>
+              <li><a href="contact.html#jobs" data-i18n="s_jobs">채용공고</a></li>
+            </ul></li>
+          <li class="auth"><button type="button" class="navbtn" id="auth-nav" data-i18n="auth_login">로그인</button></li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <label class="lang"><span class="sr" data-i18n="lang_label">언어</span>
+          <select id="lang">
+            <option value="ko">한국어</option>
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+            <option value="ja">日本語</option>
+            <option value="es">Español</option>
+          </select>
+          <span class="lang-ico" id="lang-ico" aria-hidden="true"></span>
+        </label>
+        <a class="btn" href="https://hamkkedat-landing.vercel.app" target="_blank" rel="noopener" data-i18n="apply">사전 신청</a>
+        <button class="burger" id="burger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu"><span></span></button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="page-head">
+      <div class="wrap">
+        <p class="eyebrow" data-i18n="g_trips">여행 신청</p>
+        <h1 data-i18n="g_trips">여행 신청</h1>
+      </div>
+    </section>
+
+    <section id="trip-open">
+      <div class="wrap">
+        <h2 data-i18n="s_open">진행 중인 여행</h2>
+        <div class="blank"></div>
+      </div>
+    </section>
+
+    <section id="trip-soon">
+      <div class="wrap">
+        <h2 data-i18n="s_soon">오픈 예정 여행</h2>
+        <div class="blank"></div>
+      </div>
+    </section>
+
+    <section id="trip-past">
+      <div class="wrap">
+        <h2 data-i18n="s_past">진행했던 여행</h2>
+        <div class="blank"></div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap" data-i18n="footer">© 함께닿 · 혼자 떠나도, 마음은 닿는다</div></footer>
+
+  <button id="to-top" type="button" aria-label="맨 위로" data-i18n-attr="aria-label:to_top">↑</button>
+
+  <dialog id="auth-dialog" aria-labelledby="auth-title">
+    <div class="dlg-head"><h2 id="auth-title" data-i18n="auth_login">로그인</h2><button class="x" type="button" data-close data-i18n-attr="aria-label:auth_close" aria-label="닫기">×</button></div>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" id="tab-login" aria-selected="true" data-i18n="auth_login">로그인</button>
+      <button type="button" role="tab" id="tab-signup" aria-selected="false" data-i18n="auth_signup">회원가입</button>
+    </div>
+    <form id="auth-form" novalidate>
+      <label id="name-row" hidden><span data-i18n="auth_name">이름</span><input type="text" name="name" autocomplete="name" maxlength="100"></label>
+      <label><span data-i18n="auth_email">이메일</span><input type="email" name="email" autocomplete="email" maxlength="254"></label>
+      <label><span data-i18n="auth_password">비밀번호</span><input type="password" name="password" autocomplete="current-password" maxlength="72"><small id="pw-hint" data-i18n="auth_pw_hint" hidden>8자 이상</small></label>
+      <button class="btn block" id="auth-submit" type="submit" data-i18n="auth_login">로그인</button>
+      <p class="dmsg" id="auth-msg" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="i18n.js"></script>
+  <script src="common.js"></script>
+</body>
+</html>

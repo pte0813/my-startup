@@ -1,16 +1,22 @@
-"""테스트용으로 brand.css와 config.js를 각 HTML 안에 합쳐 dist/ 에 만든다.
+"""테스트용으로 홈페이지 파일을 dist/ 폴더와 zip으로 묶는다.
 사용법: python3 outputs/homepage/build.py && python3 outputs/homepage/bundle.py
-dist/는 공개용 키가 들어 있어 커밋하지 않는다(.gitignore)."""
+config.js에 공개용 anon 키가 들어 있어 dist/는 커밋하지 않는다(.gitignore)."""
+import shutil
+import zipfile
 from pathlib import Path
 
 here = Path(__file__).resolve().parent
 dist = here / "dist"
-dist.mkdir(exist_ok=True)
-css = (here / "brand.css").read_text(encoding="utf-8")
-cfg = (here / "config.js").read_text(encoding="utf-8")
-for name in ("index.html", "account.html"):
-    s = (here / name).read_text(encoding="utf-8")
-    s = s.replace('<link rel="stylesheet" href="brand.css">', "<style>\n" + css + "</style>")
-    s = s.replace('<script src="config.js"></script>', "<script>\n" + cfg + "</script>")
-    (dist / name).write_text(s, encoding="utf-8")
-    print("만듦:", dist / name)
+shutil.rmtree(dist, ignore_errors=True)
+dist.mkdir()
+files = [
+    "index.html", "trips.html", "reviews.html", "community.html", "contact.html", "account.html",
+    "brand.css", "common.css", "common.js", "i18n.js", "config.js",
+    "favicon.svg", "og-image.png", "robots.txt", "sitemap.xml",
+]
+for f in files:
+    shutil.copy(here / f, dist / f)
+with zipfile.ZipFile(dist / "hamkkedat-homepage-test.zip", "w", zipfile.ZIP_DEFLATED) as z:
+    for f in files:
+        z.write(dist / f, f)
+print("만듦:", dist / "hamkkedat-homepage-test.zip")
