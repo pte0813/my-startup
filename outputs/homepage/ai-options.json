@@ -1,0 +1,180 @@
+{
+ "mbti_types": [
+  "ISTJ",
+  "ISFJ",
+  "INFJ",
+  "INTJ",
+  "ISTP",
+  "ISFP",
+  "INFP",
+  "INTP",
+  "ESTP",
+  "ESFP",
+  "ENFP",
+  "ENTP",
+  "ESTJ",
+  "ESFJ",
+  "ENFJ",
+  "ENTJ"
+ ],
+ "interests": {
+  "cafe": {
+   "ko": "카페",
+   "en": "Cafés",
+   "zh": "咖啡馆",
+   "ja": "カフェ",
+   "es": "Cafeterías"
+  },
+  "food": {
+   "ko": "맛집",
+   "en": "Foodie spots",
+   "zh": "美食",
+   "ja": "グルメ",
+   "es": "Gastronomía"
+  },
+  "photo": {
+   "ko": "사진",
+   "en": "Photography",
+   "zh": "摄影",
+   "ja": "写真",
+   "es": "Fotografía"
+  },
+  "hiking": {
+   "ko": "등산",
+   "en": "Hiking",
+   "zh": "登山",
+   "ja": "登山",
+   "es": "Senderismo"
+  },
+  "camping": {
+   "ko": "캠핑",
+   "en": "Camping",
+   "zh": "露营",
+   "ja": "キャンプ",
+   "es": "Camping"
+  },
+  "sea": {
+   "ko": "바다",
+   "en": "The sea",
+   "zh": "大海",
+   "ja": "海",
+   "es": "Mar"
+  },
+  "exhibition": {
+   "ko": "전시",
+   "en": "Exhibitions",
+   "zh": "展览",
+   "ja": "展覧会",
+   "es": "Exposiciones"
+  },
+  "music": {
+   "ko": "음악",
+   "en": "Music",
+   "zh": "音乐",
+   "ja": "音楽",
+   "es": "Música"
+  },
+  "reading": {
+   "ko": "독서",
+   "en": "Reading",
+   "zh": "阅读",
+   "ja": "読書",
+   "es": "Lectura"
+  },
+  "workout": {
+   "ko": "운동",
+   "en": "Working out",
+   "zh": "运动",
+   "ja": "運動",
+   "es": "Deporte"
+  },
+  "movie": {
+   "ko": "영화",
+   "en": "Movies",
+   "zh": "电影",
+   "ja": "映画",
+   "es": "Cine"
+  },
+  "boardgame": {
+   "ko": "보드게임",
+   "en": "Board games",
+   "zh": "桌游",
+   "ja": "ボードゲーム",
+   "es": "Juegos de mesa"
+  }
+ },
+ "travel_styles": {
+  "relaxed": {
+   "ko": "느긋한 휴식형",
+   "en": "Relaxed",
+   "zh": "悠闲休息型",
+   "ja": "のんびり休息型",
+   "es": "Relajado"
+  },
+  "active": {
+   "ko": "활동적인 액티비티형",
+   "en": "Active",
+   "zh": "活力活动型",
+   "ja": "アクティブ型",
+   "es": "Activo"
+  },
+  "foodie": {
+   "ko": "먹방·미식형",
+   "en": "Food-focused",
+   "zh": "美食型",
+   "ja": "食べ歩き型",
+   "es": "Gastronómico"
+  },
+  "culture": {
+   "ko": "문화·탐방형",
+   "en": "Culture-focused",
+   "zh": "文化探访型",
+   "ja": "文化探訪型",
+   "es": "Cultural"
+  },
+  "nature": {
+   "ko": "자연·힐링형",
+   "en": "Nature & healing",
+   "zh": "自然疗愈型",
+   "ja": "自然・癒し型",
+   "es": "Naturaleza"
+  },
+  "spontaneous": {
+   "ko": "즉흥·모험형",
+   "en": "Spontaneous",
+   "zh": "随性冒险型",
+   "ja": "即興・冒険型",
+   "es": "Espontáneo"
+  }
+ },
+ "active_times": {
+  "weekday_day": {
+   "ko": "평일 낮",
+   "en": "Weekday daytime",
+   "zh": "工作日白天",
+   "ja": "平日の昼",
+   "es": "Entre semana, de día"
+  },
+  "weekday_eve": {
+   "ko": "평일 저녁",
+   "en": "Weekday evenings",
+   "zh": "工作日晚上",
+   "ja": "平日の夜",
+   "es": "Entre semana, por la noche"
+  },
+  "weekend_day": {
+   "ko": "주말 낮",
+   "en": "Weekend daytime",
+   "zh": "周末白天",
+   "ja": "週末の昼",
+   "es": "Fin de semana, de día"
+  },
+  "weekend_eve": {
+   "ko": "주말 저녁",
+   "en": "Weekend evenings",
+   "zh": "周末晚上",
+   "ja": "週末の夜",
+   "es": "Fin de semana, por la noche"
+  }
+ }
+}

@@ -68,6 +68,55 @@
     return kinds[h % kinds.length];
   }
 
+  /* ---- AI 추천: 같은 여행 신청자 중 나와 잘 맞는 사람 ---- */
+  const aiState = {}; // 여행 id → { status: 'loading'|'done'|'error'|'consent'|'off', data }
+  const AIO = () => window.AI_OPTIONS || { interests: {}, travel_styles: {}, active_times: {} };
+  const aiName = (group, k) => { const o = AIO()[group][k]; return o ? (o[currentLang] || o.ko) : k; };
+  function aiPanelHtml(id) {
+    const st = aiState[id];
+    if (!st) return '';
+    if (st.status === 'loading') return `<p class="note">${esc(T('ai_loading'))}</p>`;
+    if (st.status === 'consent') return `<p class="note">${esc(T('ai_need_consent'))}</p><a class="btn ghost small" href="account.html">${esc(T('ai_go_profile'))}</a>`;
+    if (st.status === 'off') return `<p class="note">${esc(T('ai_unavailable'))}</p>`;
+    if (st.status === 'error') return `<p class="note">${esc(T('ai_err'))}</p>`;
+    const d = st.data, ms = d.matches || [];
+    if (!ms.length) return `<p class="note">${esc(T('ai_none'))}</p>`;
+    const items = ms.map((m) => {
+      const tags = [].concat(m.shared.interests.map((k) => aiName('interests', k)), m.shared.travel_styles.map((k) => aiName('travel_styles', k)), m.shared.active_times.map((k) => aiName('active_times', k)));
+      if (m.shared.mbti) tags.push(T('ai_mbti_similar'));
+      const why = m.reason && st.lang === currentLang ? esc(m.reason) : esc(T('ai_common', { list: tags.join(', ') }));
+      return `<li><div class="ai-top"><strong>${esc(T('ai_person', { id: m.id }))}</strong><span class="pill">${esc(T('ai_score', { n: m.score }))}</span></div><p>${why}</p><div class="ai-tags">${tags.map((x) => `<span>${esc(x)}</span>`).join('')}</div></li>`;
+    }).join('');
+    return `<p class="ai-head">${esc(T('ai_headline', { n: ms.length }))}</p><ul class="ai-list">${items}</ul>${d.limited ? `<p class="note">${esc(T('ai_limit'))}</p>` : ''}<p class="note">${esc(T('ai_note'))}</p>`;
+  }
+  function aiBlock(id) {
+    return `<button class="btn ghost ai-btn" type="button" data-ai="${esc(id)}">✨ ${esc(T('ai_btn'))}</button><div class="ai-panel" data-ai-panel="${esc(id)}" aria-live="polite">${aiPanelHtml(id)}</div>`;
+  }
+  function paintAi(id) {
+    const el = document.querySelector(`[data-ai-panel="${id}"]`);
+    if (el) el.innerHTML = aiPanelHtml(id);
+  }
+  async function loadAiMatch(id, btn) {
+    aiState[id] = { status: 'loading' }; paintAi(id); btn.disabled = true;
+    try {
+      const { data } = await authClient.auth.getSession();
+      const token = data && data.session && data.session.access_token;
+      if (!token) { aiState[id] = { status: 'error' }; return; }
+      const res = await fetch('/api/ai-match', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ trip_id: id, lang: currentLang }) });
+      let body = null;
+      try { body = await res.json(); } catch (e) { /* 서버 함수가 없는 환경 */ }
+      if (res.status === 403 && body && (body.error === 'consent_required' || body.error === 'profile_empty')) aiState[id] = { status: 'consent' };
+      else if (res.status === 404 && !body) aiState[id] = { status: 'off' };
+      else if (res.status === 503 || res.status === 405 || res.status === 404) aiState[id] = { status: 'off' };
+      else if (!res.ok || !body) aiState[id] = { status: 'error' };
+      else aiState[id] = { status: 'done', data: body, lang: currentLang };
+    } catch (e) {
+      aiState[id] = { status: 'off' };
+    } finally {
+      btn.disabled = false; paintAi(id);
+    }
+  }
+
   function tripCard(t) {
     const n = tripState.counts[t.id] || 0;
     const mine = tripState.mine[t.id];
@@ -93,6 +142,7 @@
         ${t.summary ? `<p class="trip-sum">${esc(t.summary)}</p>` : ''}
         <p class="trip-foot"><strong>${t.price > 0 ? esc(money(t.price)) : ''}</strong><span>${esc(seats)}</span></p>
         ${btn}
+        ${t.status === 'open' && authUser && !(t.capacity && n >= t.capacity) ? aiBlock(t.id) : ''}
       </div></article>`;
   }
 
@@ -143,6 +193,8 @@
       if (b) applyTrip(b.dataset.apply, b);
       const pb = e.target.closest('[data-pay]');
       if (pb) payTrip(pb.dataset.pay, pb);
+      const ab = e.target.closest('[data-ai]');
+      if (ab) loadAiMatch(ab.dataset.ai, ab);
     });
     window.addEventListener('pay-error', () => setMsg($('#trip-msg'), 'pay_fail', 'err'));
     ['open', 'upcoming', 'past'].forEach((s) => { const g = $('#' + GRIDS[s]); if (g) g.innerHTML = `<p class="note">${esc(T('loading'))}</p>`; });

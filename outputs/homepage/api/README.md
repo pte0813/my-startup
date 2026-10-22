@@ -27,3 +27,10 @@
 3. 결제창이 `/api/pay-return`으로 인증 결과를 POST → 검증 후 승인 API 호출
 4. 성공: `payments.status='paid'`, `trip_applications.status='paid'` → `/account.html?pay=ok`
 5. 승인 응답이 없으면 망취소, 승인 후 기록에 실패하면 자동 취소
+
+## AI 기능 (api/ai-match.js, api/_ai.js)
+- `POST /api/ai-match { trip_id, lang }` — 같은 여행 신청자 중 나와 잘 맞는 사람을 점수·공통점·이유와 함께 돌려준다.
+- 점수와 공통점은 서버가 계산한다(AI 키가 없어도 동작). Claude는 "이유" 문장만 쓴다. 이름·연락처는 응답에도, AI 요청에도 넣지 않는다.
+- 동의(`profiles.ai_consent`)한 회원의 선택지 값(MBTI·관심사·여행 스타일·활동 시간대)만 사용한다. 선택지는 `ai-options.json` 하나로 관리한다.
+- 환경변수: `ANTHROPIC_API_KEY`(필수), `AI_MODEL`(기본 `claude-haiku-5-5`), `AI_DAILY_LIMIT`(회원당 하루 호출 수, 기본 10). `SUPABASE_*`는 결제와 같은 값을 쓴다.
+- DB 변경은 `outputs/homepage-schema-ai.sql`.

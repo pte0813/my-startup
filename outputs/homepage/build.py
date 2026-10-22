@@ -46,6 +46,10 @@ for line in (root / ".env").read_text(encoding="utf-8").splitlines():
 i18n = json.loads((src / "i18n.json").read_text(encoding="utf-8"))
 (out / "i18n.js").write_text("window.I18N = " + json.dumps(i18n, ensure_ascii=False) + ";\n", encoding="utf-8")
 
+# 3-2) AI 추천용 선택지 (api/도 같은 ai-options.json을 읽는다)
+opts = json.loads((out / "ai-options.json").read_text(encoding="utf-8"))
+(out / "ai-options.js").write_text("window.AI_OPTIONS = " + json.dumps(opts, ensure_ascii=False) + ";\n", encoding="utf-8")
+
 # 4) 페이지
 template = (src / "template.html").read_text(encoding="utf-8")
 header = (src / "header.html").read_text(encoding="utf-8")
