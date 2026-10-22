@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" role="img" aria-label="함께닿 로고">
+  <rect width="360" height="120" rx="16" fill="#FFF1D6"/>
+  <circle cx="44" cy="60" r="22" fill="#1F3A5F"/>
+  <circle cx="78" cy="60" r="22" fill="#FF6B5B"/>
+  <path d="M56 60a10 10 0 0 0 10 0" fill="none" stroke="#FFF1D6" stroke-width="0"/>
+  <text x="120" y="72" font-family="'Noto Sans KR','Apple SD Gothic Neo',sans-serif" font-size="40" font-weight="800" fill="#1F3A5F">함께닿</text>
+  <text x="122" y="94" font-family="'Noto Sans KR','Apple SD Gothic Neo',sans-serif" font-size="12" fill="#FF6B5B">혼자 떠나도, 마음은 닿는다</text>
+</svg>
