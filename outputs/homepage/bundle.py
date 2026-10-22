@@ -12,9 +12,11 @@ dist.mkdir()
 files = [
     "index.html", "trips.html", "reviews.html", "community.html", "contact.html", "account.html",
     "brand.css", "common.css", "common.js", "pay.js", "app.js", "i18n.js", "config.js",
-    "favicon.svg", "og-image.png", "robots.txt", "sitemap.xml",
+    "favicon.svg", "og-image.png", "og-trips.png", "og-reviews.png", "og-community.png", "og-contact.png", "robots.txt", "sitemap.xml",
 ]
+files += sorted(str(p.relative_to(here)) for p in (here / "art").glob("*.svg"))
 for f in files:
+    (dist / f).parent.mkdir(exist_ok=True)
     shutil.copy(here / f, dist / f)
 with zipfile.ZipFile(dist / "hamkkedat-homepage-test.zip", "w", zipfile.ZIP_DEFLATED) as z:
     for f in files:

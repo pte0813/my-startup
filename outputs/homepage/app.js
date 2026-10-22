@@ -56,10 +56,22 @@
     renderTrips();
   }
 
+  // 사진(cover_url)이 없으면 장소 이름으로 어울리는 일러스트를 고르고, 단서가 없으면 여행마다 고정된 일러스트를 쓴다
+  function coverKind(t) {
+    const text = ((t.location || '') + ' ' + (t.title || '')).toLowerCase();
+    if (/바다|해변|해수욕|섬|제주|부산|강릉|속초|양양|여수|거제|울릉|발리|하와이|괌|세부|보라카이|다낭|푸껫|beach|sea|island|bali|hawaii|jeju/.test(text)) return 'sea';
+    if (/산|설악|한라|지리|등산|트레킹|캠핑|알프스|히말라야|mount|hike|trek|alps/.test(text)) return 'mountain';
+    if (/서울|도쿄|동경|오사카|교토|후쿠오카|파리|런던|뉴욕|방콕|홍콩|타이베이|상하이|싱가포르|도시|seoul|tokyo|osaka|kyoto|paris|london|bangkok|city/.test(text)) return 'city';
+    const kinds = ['sky', 'sea', 'mountain', 'city'];
+    let h = 0;
+    for (const ch of String(t.id || t.title || '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    return kinds[h % kinds.length];
+  }
+
   function tripCard(t) {
     const n = tripState.counts[t.id] || 0;
     const mine = tripState.mine[t.id];
-    const cover = safeUrl(t.cover_url) ? `<img src="${esc(t.cover_url)}" alt="" loading="lazy">` : '';
+    const cover = safeUrl(t.cover_url) ? `<img src="${esc(t.cover_url)}" alt="" loading="lazy">` : `<img class="art" src="art/cover-${coverKind(t)}.svg" alt="" loading="lazy">`;
     const dates = t.start_date ? (t.end_date && t.end_date !== t.start_date ? fmtDay(t.start_date) + ' – ' + fmtDay(t.end_date) : fmtDay(t.start_date)) : '';
     const meta = [t.location, dates].filter(Boolean).map(esc).join(' · ');
     const seats = t.capacity ? T('trip_seats', { n, cap: t.capacity }) : (n ? T('trip_count', { n }) : '');
