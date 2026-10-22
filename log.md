@@ -19,3 +19,4 @@
 | 2026-10-20 | 브랜드 전체를 하늘색 계열로 변경 | brand.json·logo.svg·brand-kit·intro·lean-canvas·competitors 색 교체, 작은 글씨용 진한 하늘색(accent-text) 추가, 미리보기 4개 갱신 (이전 카드뉴스 1·2는 그대로) |
 | 2026-10-20 | 랜딩페이지용 .env.example 만들고 .env로 복사 | .env.example(SUPABASE_URL, SUPABASE_ANON_KEY, SITE_NAME)과 .env 생성, .env는 .gitignore에 등록해 저장소에서 제외 |
 | 2026-10-20 | 랜딩페이지 제작, Supabase signups 신청 폼 연결, .env에 Supabase 주소·publishable 키 입력 | outputs/landing/index.html 작성(문제·해결·사전신청 폼), 네트워크 제한으로 실제 전송은 미확인, secret 키는 사용하지 않고 폐기 권고 |
+| 2026-10-22 | 랜딩페이지 문의하기 폼을 Resend 이메일 발송으로 연결 | outputs/landing에 api/contact.js·dev.js·package.json·README.md 추가, 문의 폼 추가, 가짜 Resend로 검증·스팸 방지·상태 표시 시험 완료, 실제 메일 발송은 키·네트워크 없어 미확인 |

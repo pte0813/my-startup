@@ -1,0 +1,15 @@
+{
+  "name": "x-landing",
+  "private": true,
+  "version": "1.0.0",
+  "description": "X 사전신청 랜딩페이지와 문의하기 서버리스 함수",
+  "scripts": {
+    "dev": "node dev.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "resend": "^6.34.1"
+  }
+}
