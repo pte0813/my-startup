@@ -341,7 +341,13 @@
   "rs_mismatch": "두 비밀번호가 서로 달라요.",
   "rs_done": "비밀번호를 바꿨어요! 잠시 후 홈으로 이동해요.",
   "rs_invalid": "링크가 만료됐거나 올바르지 않아요. 로그인 창에서 \"비밀번호를 잊으셨나요?\"로 메일을 다시 받아 주세요.",
-  "rs_same": "현재 비밀번호와 같은 비밀번호는 쓸 수 없어요."
+  "rs_same": "현재 비밀번호와 같은 비밀번호는 쓸 수 없어요.",
+  "pop_title_open": "지금 모집 중인 여행",
+  "pop_title_soon": "곧 열리는 여행",
+  "pop_cta": "여행 보러 가기",
+  "pop_hide": "오늘 하루 보지 않기",
+  "pop_close": "닫기",
+  "pop_low": "마감 임박 · {n}석 남음"
  },
  "en": {
   "menu_label": "Main menu",
@@ -685,7 +691,13 @@
   "rs_mismatch": "The passwords do not match.",
   "rs_done": "Password changed! Taking you home…",
   "rs_invalid": "This link has expired or is invalid. Use \"Forgot your password?\" in the log-in window to get a new email.",
-  "rs_same": "The new password must differ from the current one."
+  "rs_same": "The new password must differ from the current one.",
+  "pop_title_open": "Trips open now",
+  "pop_title_soon": "Coming soon",
+  "pop_cta": "See trips",
+  "pop_hide": "Do not show today",
+  "pop_close": "Close",
+  "pop_low": "Almost full · {n} left"
  },
  "zh": {
   "menu_label": "主菜单",
@@ -1029,7 +1041,13 @@
   "rs_mismatch": "两次输入的密码不一致。",
   "rs_done": "密码已修改！即将返回首页。",
   "rs_invalid": "链接已过期或无效。请在登录窗口点击“忘记密码？”重新获取邮件。",
-  "rs_same": "新密码不能与当前密码相同。"
+  "rs_same": "新密码不能与当前密码相同。",
+  "pop_title_open": "正在招募的行程",
+  "pop_title_soon": "即将开放的行程",
+  "pop_cta": "查看行程",
+  "pop_hide": "今天不再显示",
+  "pop_close": "关闭",
+  "pop_low": "即将满员 · 剩 {n} 个名额"
  },
  "ja": {
   "menu_label": "メインメニュー",
@@ -1373,7 +1391,13 @@
   "rs_mismatch": "パスワードが一致しません。",
   "rs_done": "パスワードを変更しました！まもなくホームへ移動します。",
   "rs_invalid": "リンクの期限切れか無効です。ログイン画面の「パスワードをお忘れですか？」で再送してください。",
-  "rs_same": "現在と同じパスワードは使えません。"
+  "rs_same": "現在と同じパスワードは使えません。",
+  "pop_title_open": "募集中の旅行",
+  "pop_title_soon": "まもなくオープンの旅行",
+  "pop_cta": "旅行を見る",
+  "pop_hide": "今日は表示しない",
+  "pop_close": "閉じる",
+  "pop_low": "まもなく満席 · 残り{n}席"
  },
  "es": {
   "menu_label": "Menú principal",
@@ -1717,6 +1741,12 @@
   "rs_mismatch": "Las contraseñas no coinciden.",
   "rs_done": "¡Contraseña cambiada! Te llevamos al inicio…",
   "rs_invalid": "El enlace caducó o no es válido. Usa «¿Olvidaste tu contraseña?» para recibir otro correo.",
-  "rs_same": "La nueva contraseña debe ser distinta."
+  "rs_same": "La nueva contraseña debe ser distinta.",
+  "pop_title_open": "Viajes abiertos ahora",
+  "pop_title_soon": "Próximamente",
+  "pop_cta": "Ver viajes",
+  "pop_hide": "No mostrar hoy",
+  "pop_close": "Cerrar",
+  "pop_low": "Casi lleno · quedan {n}"
  }
 }

@@ -372,3 +372,16 @@ dialog .consent small { display: block; opacity: .75; margin-top: 2px; }
 .pay-coupon { display: flex; gap: 8px; align-items: center; font-size: .9rem; margin: 6px 0; }
 .pay-coupon select { flex: 1; min-width: 0; font: inherit; padding: 6px 8px; border-radius: 10px; border: 2px solid rgba(31,58,95,.15); }
 .reset-links { margin: 8px 0 0; text-align: center; }
+
+/* 홈 팝업 */
+dialog.popup { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); overflow: auto; background: #fff; }
+.pop-list { display: grid; gap: 12px; margin: 4px 0 16px; }
+.pop-item { display: grid; grid-template-columns: 84px 1fr; gap: 12px; align-items: center; text-decoration: none; color: inherit; background: var(--accent); border-radius: 16px; padding: 8px; }
+.pop-item:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+.pop-cover { width: 84px; height: 64px; border-radius: 12px; overflow: hidden; background: #fff; display: block; }
+.pop-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pop-text { display: grid; gap: 2px; min-width: 0; }
+.pop-text strong { font-size: 1rem; line-height: 1.3; }
+.pop-text small { opacity: .8; }
+.pop-low { color: var(--primary); }
+.pop-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; }
