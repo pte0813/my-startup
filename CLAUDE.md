@@ -23,7 +23,7 @@
 - 가입하면 트리거 `handle_new_user`가 `profiles` 행을 만든다. 관리자 권한은 `profiles.role`(user/cs/operator/super_admin)이다.
 
 ## DB 스키마 요약 (Supabase `test`, 서울)
-- `signups`(사전 신청), `profiles`(이름·AI 프로필·동의·**role·status·trust_score·warning_count**, 이 컬럼들은 회원이 못 바꾸게 컬럼 권한으로 막음), `trips`, `trip_applications`, `trip_counts`(인원수 뷰), `payments`, `reviews`(+저장소 `review-photos`), `suggestions`, `inquiries`
+- `signups`(사전 신청), `profiles`(이름·AI 프로필·동의·**role·status·trust_score·warning_count**, 이 컬럼들은 회원이 못 바꾸게 컬럼 권한으로 막음), `trips`(이름·장소·설명은 한국어 원문 + `title_i18n`/`location_i18n`/`summary_i18n` 언어별 번역 jsonb, 번역이 없으면 한국어로 표시, 관리자 모임 관리의 "번역"에서 입력·AI로 채우기), `trip_applications`, `trip_counts`(인원수 뷰), `payments`, `reviews`(+저장소 `review-photos`), `suggestions`, `inquiries`
 - AI·재만남: `ai_usage`, `ai_icebreakers`, `reunion_picks`(서로 고르면 성사), `manner_tags`(매너 칭찬, 서버만 접근)
 - 신뢰: `trust_score = 80 + 3×출석 − 20×노쇼 − 5×경고`(0~100)를 DB 함수 `recompute_trust`가 트리거(`on_attendance_changed`, `on_warning_changed`)로 매번 다시 계산한다. 배지는 `user_badges`(회원은 자기 것만 조회, 부여는 트리거 `award_badges`), 알림은 `notifications`(회원은 자기 것 조회·읽음 표시만, 생성은 서버/트리거)
 - 운영: `admin_logs`(최고 관리자만 조회), `reports`(회원은 신고 등록·내 신고 조회, 운영진은 전체), `daily_active`(DAU 집계, 회원은 오늘 자기 행만 insert), `trips.hidden/approval_status`(숨김·승인, 방문자는 공개된 모임만 조회), `trip_applications.attendance`(출석/노쇼)

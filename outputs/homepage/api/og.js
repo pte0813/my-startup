@@ -39,10 +39,11 @@ function frame(size, lang, ...content) {
     h({ fontSize: story ? 38 : 28, color: CORAL }, t.slogan));
 }
 
-async function loadTrip(store, id) {
-  const r = await store.select(`trips?select=id,title,location,start_date,end_date,price,capacity,status&id=eq.${id}&hidden=eq.false&approval_status=eq.approved&limit=1`);
+async function loadTrip(store, id, lang) {
+  const r = await store.select(`trips?select=id,title,location,title_i18n,location_i18n,start_date,end_date,price,capacity,status&id=eq.${id}&hidden=eq.false&approval_status=eq.approved&limit=1`);
   const t = r.ok && r.data && r.data[0];
   if (!t) return null;
+  for (const f of ['title', 'location']) { const tr = (t[f + '_i18n'] || {})[lang]; if (tr) t[f] = tr; } // 카드 언어(ko/en)의 번역이 있으면 쓴다
   t.n = await store.count(`trip_applications?select=id&trip_id=eq.${id}&status=neq.cancelled`);
   return t;
 }
@@ -58,7 +59,7 @@ async function build(req, e, store) {
 
   if (type === 'trip') {
     const id = q.get('id') || '';
-    const trip = UUID.test(id) && await loadTrip(store, id);
+    const trip = UUID.test(id) && await loadTrip(store, id, lang);
     if (!trip) return { status: 404 };
     const left = trip.capacity ? trip.capacity - trip.n : null;
     const low = left != null && left > 0 && left <= 2 && trip.status === 'open';
@@ -75,7 +76,7 @@ async function build(req, e, store) {
     const r = UUID.test(id) && await store.select(`reviews?select=rating,body,author_name,trip_id&id=eq.${id}&approved=eq.true&limit=1`);
     const rv = r && r.ok && r.data && r.data[0];
     if (!rv) return { status: 404 };
-    const trip = rv.trip_id ? await loadTrip(store, rv.trip_id) : null;
+    const trip = rv.trip_id ? await loadTrip(store, rv.trip_id, lang) : null;
     const who = Array.from(String(rv.author_name || ''))[0] || '';
     return { size, lang, pub: true, el: frame(size, lang,
       h({ fontSize: mid, color: CORAL }, `${rv.rating} / 5`),

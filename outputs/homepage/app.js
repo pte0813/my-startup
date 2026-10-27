@@ -8,6 +8,8 @@
     for (const k in (vars || {})) s = s.replace('{' + k + '}', vars[k]);
     return s;
   };
+  // 여행 이름·장소·설명은 DB에 한국어 원문과 언어별 번역(*_i18n)이 있다. 번역이 없으면 한국어로 보여 준다
+  const trx = (t, f) => { const m = t && t[f + '_i18n']; return (m && m[currentLang]) || (t && t[f]) || ''; };
   const loc = () => (currentLang === 'zh' ? 'zh-CN' : currentLang);
   const fmtDay = (d) => (d ? new Date(d + 'T00:00:00').toLocaleDateString(loc(), { month: 'short', day: 'numeric' }) : '');
   const fmtDate = (ts) => new Date(ts).toLocaleDateString(loc());
@@ -223,7 +225,7 @@
         else if (sg && sg.status === 'done') {
           const trips = sg.data.trips || [];
           extra += trips.length
-            ? `<p class="re-sug">${esc(sg.data.text || '')}</p><ul class="re-trips">${trips.map((x) => `<li>${esc(x.title)}${x.location ? ` · ${esc(x.location)}` : ''}</li>`).join('')}</ul><a class="btn small" href="trips.html#trip-open">${esc(T('re_suggest_go'))}</a>`
+            ? `<p class="re-sug">${esc(sg.data.text || '')}</p><ul class="re-trips">${trips.map((x) => `<li>${esc(trx(x, 'title'))}${trx(x, 'location') ? ` · ${esc(trx(x, 'location'))}` : ''}</li>`).join('')}</ul><a class="btn small" href="trips.html#trip-open">${esc(T('re_suggest_go'))}</a>`
             : `<p class="note">${esc(T('re_suggest_none'))}</p>`;
         } else if (sg) extra += `<p class="note">${esc(T('re_err'))}</p>`;
       }
@@ -316,7 +318,7 @@
     const mine = tripState.mine[t.id];
     const cover = safeUrl(t.cover_url) ? `<img src="${esc(t.cover_url)}" alt="" loading="lazy">` : `<img class="art" src="art/cover-${coverKind(t)}.svg" alt="" loading="lazy">`;
     const dates = t.start_date ? (t.end_date && t.end_date !== t.start_date ? fmtDay(t.start_date) + ' – ' + fmtDay(t.end_date) : fmtDay(t.start_date)) : '';
-    const meta = [t.location, dates].filter(Boolean).map(esc).join(' · ');
+    const meta = [trx(t, 'location'), dates].filter(Boolean).map(esc).join(' · ');
     const seats = t.capacity ? T('trip_seats', { n, cap: t.capacity }) : (n ? T('trip_count', { n }) : '');
     let btn = '';
     if (t.status === 'open') {
@@ -331,17 +333,17 @@
     return `<article class="trip-card">
       <div class="trip-cover">${cover}<span class="badge st-${esc(t.status)}">${esc(T('st_' + t.status))}</span></div>
       <div class="trip-body">
-        <h3>${esc(t.title)}</h3>
+        <h3>${esc(trx(t, 'title'))}</h3>
         ${meta ? `<p class="trip-meta">${meta}</p>` : ''}
-        ${t.summary ? `<p class="trip-sum">${esc(t.summary)}</p>` : ''}
+        ${trx(t, 'summary') ? `<p class="trip-sum">${esc(trx(t, 'summary'))}</p>` : ''}
         <p class="trip-foot"><strong>${t.price > 0 ? esc(money(t.price)) : ''}</strong><span>${esc(seats)}</span></p>
         ${btn}
         ${t.status === 'open' && authUser && !mine ? `<button class="link-btn" type="button" data-watch="${esc(t.id)}">${esc(T(tripState.watch[t.id] ? 'trip_watching' : 'trip_watch'))}</button>` : ''}
-        ${`<button class="link-btn" type="button" data-share-trip="${esc(t.id)}" data-title="${esc(t.title)}">${esc(T('trip_share'))}</button>`}
+        ${`<button class="link-btn" type="button" data-share-trip="${esc(t.id)}" data-title="${esc(trx(t, 'title'))}">${esc(T('trip_share'))}</button>`}
         ${t.status === 'open' && authUser && !(t.capacity && n >= t.capacity) ? aiBlock(t.id) : ''}
         ${t.status === 'open' && authUser && mine && mine !== 'cancelled' ? iceBlock(t.id) : ''}
         ${t.status === 'past' && authUser && mine && mine !== 'cancelled' ? reBlock(t.id) : ''}
-        <button class="link-btn" type="button" data-report="trip" data-id="${esc(t.id)}" data-label="${esc(t.title)}">${esc(T('report_btn'))}</button>
+        <button class="link-btn" type="button" data-report="trip" data-id="${esc(t.id)}" data-label="${esc(trx(t, 'title'))}">${esc(T('report_btn'))}</button>
       </div></article>`;
   }
 
@@ -581,7 +583,7 @@
   function reviewCard(r, mine) {
     const photos = (r.photo_urls || []).filter((u) => safeUrl(u) && u.startsWith(APP_CONFIG.url))
       .map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="" loading="lazy"></a>`).join('');
-    const tripTitle = (rv.trips.find((t) => t.id === r.trip_id) || {}).title;
+    const tripTitle = trx(rv.trips.find((t) => t.id === r.trip_id) || {}, 'title');
     return `<article class="review">
       <div class="review-head"><strong>${esc(r.author_name)}${mine && !r.approved ? `<span class="pill">${esc(T('rv_pending'))}</span>` : ''}</strong><span class="stars" aria-label="${r.rating}/5">${stars(r.rating)}</span></div>
       ${tripTitle ? `<p class="trip-meta">${esc(tripTitle)}</p>` : ''}
@@ -603,7 +605,7 @@
     $('#rv-mine-wrap').hidden = !(signedIn && rv.mine.length);
     $('#rv-mine').innerHTML = rv.mine.map((r) => reviewCard(r, true)).join('');
     const sel = $('#rv-trip'), keep = sel.value;
-    sel.innerHTML = `<option value="">${esc(T('rv_trip_none'))}</option>` + rv.trips.map((t) => `<option value="${esc(t.id)}">${esc(t.title)}</option>`).join('');
+    sel.innerHTML = `<option value="">${esc(T('rv_trip_none'))}</option>` + rv.trips.map((t) => `<option value="${esc(t.id)}">${esc(trx(t, 'title'))}</option>`).join('');
     sel.value = keep;
     Object.keys(rcState).forEach(rcPaint);
   }
@@ -612,7 +614,7 @@
     try {
       const [a, tr_] = await Promise.all([
         authClient.from('reviews').select('*').eq('approved', true).order('created_at', { ascending: false }).limit(30),
-        authClient.from('trips').select('id,title,location')
+        authClient.from('trips').select('id,title,location,title_i18n,location_i18n')
       ]);
       if (a.error) throw a.error;
       rv.list = a.data || []; rv.trips = tr_.data || [];
@@ -990,7 +992,7 @@
     try { if (localStorage.getItem(POP_KEY) === popToday()) return; } catch (e) { /* 저장소를 못 써도 팝업은 보여 준다 */ }
     let kind = 'open', list = [], counts = {};
     try {
-      const t = await authClient.from('trips').select('id,title,location,start_date,end_date,price,capacity,status,cover_url,sort_order').in('status', ['open', 'upcoming']).order('sort_order').order('start_date').limit(12);
+      const t = await authClient.from('trips').select('id,title,location,title_i18n,location_i18n,start_date,end_date,price,capacity,status,cover_url,sort_order').in('status', ['open', 'upcoming']).order('sort_order').order('start_date').limit(12);
       if (t.error) return;
       const rows = t.data || [];
       list = rows.filter((x) => x.status === 'open');
@@ -1019,10 +1021,10 @@
     const items = list.map((t) => {
       const n = counts[t.id] || 0, left = t.capacity ? t.capacity - n : null;
       const dates = t.start_date ? (t.end_date && t.end_date !== t.start_date ? fmtDay(t.start_date) + ' – ' + fmtDay(t.end_date) : fmtDay(t.start_date)) : '';
-      const meta = [t.location, dates].filter(Boolean).map(esc).join(' · ');
+      const meta = [trx(t, 'location'), dates].filter(Boolean).map(esc).join(' · ');
       const cover = safeUrl(t.cover_url) ? `<img src="${esc(t.cover_url)}" alt="" loading="lazy">` : `<img class="art" src="art/cover-${coverKind(t)}.svg" alt="" loading="lazy">`;
       const low = kind === 'open' && left != null && left > 0 && left <= 2;
-      return `<a class="pop-item" href="trips.html#trip-${kind === 'open' ? 'open' : 'soon'}"><span class="pop-cover">${cover}</span><span class="pop-text"><strong>${esc(t.title)}</strong>${meta ? `<small>${meta}</small>` : ''}<small>${t.price > 0 ? esc(money(t.price)) : ''}${low ? ` <b class="pop-low">${esc(T('pop_low', { n: left }))}</b>` : ''}</small></span></a>`;
+      return `<a class="pop-item" href="trips.html#trip-${kind === 'open' ? 'open' : 'soon'}"><span class="pop-cover">${cover}</span><span class="pop-text"><strong>${esc(trx(t, 'title'))}</strong>${meta ? `<small>${meta}</small>` : ''}<small>${t.price > 0 ? esc(money(t.price)) : ''}${low ? ` <b class="pop-low">${esc(T('pop_low', { n: left }))}</b>` : ''}</small></span></a>`;
     }).join('');
     dlg.innerHTML = `<div class="dlg-head"><h2 id="popup-title">${esc(T(kind === 'open' ? 'pop_title_open' : 'pop_title_soon'))}</h2><button class="x" type="button" data-pop-close aria-label="${esc(T('pop_close'))}">×</button></div>
       <div class="pop-list">${items}</div>

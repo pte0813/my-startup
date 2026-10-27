@@ -67,8 +67,9 @@ async function handler(req, res) {
   let trip = null;
   if (UUID.test(id) && e.supabaseUrl && e.serviceKey) {
     const store = db(e);
-    const r = await store.select(`trips?select=id,title,summary,location,start_date,end_date,price,capacity,status,cover_url&id=eq.${id}&hidden=eq.false&approval_status=eq.approved&limit=1`);
+    const r = await store.select(`trips?select=id,title,summary,location,title_i18n,summary_i18n,location_i18n,start_date,end_date,price,capacity,status,cover_url&id=eq.${id}&hidden=eq.false&approval_status=eq.approved&limit=1`);
     trip = r.ok && r.data && r.data[0];
+    if (trip) { for (const f of ['title', 'summary', 'location']) { const tr = (trip[f + '_i18n'] || {})[lang]; if (tr) trip[f] = tr; } } // 요청 언어의 번역으로 바꿔 쓴다
     if (trip) trip.n = await store.count(`trip_applications?select=id&trip_id=eq.${id}&status=neq.cancelled`);
   }
   if (!trip) {
@@ -90,7 +91,7 @@ ${trip.summary ? `<p>${esc(trip.summary)}</p>` : ''}
 <p><strong>${esc(trip.price > 0 ? money(trip.price, lang) : t.free)}</strong>${trip.capacity ? ` · ${esc(t.seats(trip.n, trip.capacity))}` : ''}</p>
 <p><a class="btn" href="/trips.html${refQ}">${esc(trip.status === 'past' ? t.ctaPast : t.cta)}</a></p>
 <p class="note">${esc(t.note)}</p></div></article>`;
-  return send(200, page({ lang, t, title: t.title(trip.title), desc, canonical: `${base}/trip/${trip.id}`, image: `${base}/api/og?type=trip&id=${trip.id}`, body }), 'public, s-maxage=300, stale-while-revalidate=3600');
+  return send(200, page({ lang, t, title: t.title(trip.title), desc, canonical: `${base}/trip/${trip.id}`, image: `${base}/api/og?type=trip&id=${trip.id}${lang === 'ko' ? '' : '&lang=en'}`, body }), 'public, s-maxage=300, stale-while-revalidate=3600');
 }
 
 module.exports = { tripPage: handler };
