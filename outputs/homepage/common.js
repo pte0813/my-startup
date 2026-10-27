@@ -106,6 +106,7 @@ function notifText(n) {
   if (n.kind === 'trust_down') return tr('notif_trust_down');
   if (n.kind === 'level_up') return tr('notif_level_up').replace('{level}', d.level || '');
   if (n.kind === 'coupon') return tr('notif_coupon');
+  if (n.kind === 'seats_low') return tr('notif_seats_low').replace('{title}', d.title || '').replace('{left}', d.left || '');
   if (n.kind === 'title') { var it = (opts.interests || {})[d.interest]; return tr('notif_title_earned').replace('{title}', tr('q_title_name').replace('{interest}', it ? (it[currentLang] || it.ko) : (d.interest || ''))); }
   return '';
 }
@@ -155,6 +156,28 @@ document.addEventListener('click', function (e) {
   }
   if (notifState.open && !(e.target.closest && e.target.closest('#notif-panel'))) { notifState.open = false; var b = document.getElementById('notif-btn'); if (b) b.setAttribute('aria-expanded', 'false'); renderNotifs(); }
 });
+
+// 친구 초대: 링크의 ?ref=코드를 기억해 두었다가 가입·로그인 직후 서버에 등록한다(보상은 서버가 지급)
+(function () {
+  try {
+    var m = /[?&]ref=([A-Za-z0-9]{8})(?:&|$)/.exec(location.search);
+    if (m) localStorage.setItem('hk_ref', m[1].toUpperCase());
+  } catch (e) { /* 저장소를 못 쓰면 초대 보상만 건너뛴다 */ }
+})();
+async function redeemInvite() {
+  var code = null;
+  try { code = localStorage.getItem('hk_ref'); } catch (e) { return; }
+  if (!code || !authClient || !authUser) return;
+  try {
+    var s = await authClient.auth.getSession();
+    var token = s.data && s.data.session && s.data.session.access_token;
+    if (!token) return;
+    var r = await fetch('/api/growth', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ action: 'invite.redeem', code: code }) });
+    if (r.status === 503 || r.status >= 500 || r.status === 401) return; // 서버가 준비되지 않았으면 다음에 다시 시도
+    try { localStorage.removeItem('hk_ref'); } catch (e) { /* 무시 */ }
+    if (r.ok) { loadNotifs(); alert(tr('inv_redeemed')); }
+  } catch (e) { /* 네트워크 오류: 다음에 다시 시도 */ }
+}
 
 function renderAuthNav() {
   const btn = document.getElementById('auth-nav');
@@ -227,8 +250,8 @@ authForm.addEventListener('submit', async (e) => {
 });
 
 if (authClient) {
-  authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); }, 0); });
-  authClient.auth.onAuthStateChange((_event, session) => { authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); }, 0); });
+  authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); redeemInvite(); }, 0); });
+  authClient.auth.onAuthStateChange((_event, session) => { authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); redeemInvite(); }, 0); });
 }
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setOpen(false); setMega(false); } });
   

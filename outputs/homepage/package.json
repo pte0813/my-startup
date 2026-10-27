@@ -1,0 +1,9 @@
+{
+  "name": "hamkkedat-homepage",
+  "private": true,
+  "description": "정적 홈페이지 + Vercel 서버리스 함수. 의존 패키지는 공유 카드(OG) 이미지 생성용뿐이다.",
+  "dependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "satori": "0.10.14"
+  }
+}

@@ -69,3 +69,9 @@
 - `POST /api/gamify { action, ... }` — `overview`(XP·레벨·스트릭·오늘의 질문·칭호·쿠폰·도장판·시즌/크루), `checkin{choice:a|b}`, `crew.create{name}`, `crew.join{code}`, `crew.leave`, `crew.ranking`, `crew.claim{mission_id}`, `priority.apply{trip_id}`(오픈 예정 모임에 우선 참여권으로 먼저 신청). XP·쿠폰·크루는 서버와 DB 트리거만 바꾼다. 정지 회원은 체크인·크루·우선 참여를 쓸 수 없다.
 - `POST /api/pay-prepare`는 `coupon_id`(선택)를 받아 서버가 할인 금액을 계산한다(정률·정액, 본인 쿠폰·사용 가능·미만료만, 결제 금액 최소 100원). 쿠폰은 `pay-return`에서 결제가 확정될 때 사용 처리한다.
 - 관리자 `api/admin.js`에 `gamify.*` 작업 추가(XP 규칙·쿠폰·레벨 보상·도장판·시즌·미션·질문 은행·쿠폰 수동 지급).
+
+### api/growth.js · api/og.js · api/trip-page.js (4단계 유입과 공유)
+- `POST /api/growth { action: overview | invite.redeem{code} }` — 내 초대 코드·초대 수 조회, 가입 직후 초대 코드 등록(양쪽에 쿠폰 INVITE5000). 브라우저는 링크의 `?ref=코드`를 localStorage에 기억했다가 로그인 직후 한 번 호출한다(`common.js redeemInvite`).
+- `GET /api/og?type=trip|review&id=&size=og|story` — 공개된 모임·승인된 후기의 공유 이미지(PNG, CDN 캐시). `type=me-title|me-report`는 `Authorization: Bearer` 필요, 이름·연락처 없이 레벨·칭호·성향만 담는다. 문구는 ko/en만(글꼴 한계). Vercel 함수에 글꼴을 넣으려고 `vercel.json functions.includeFiles`를 쓴다.
+- `GET /trip/<id>?ref=&lang=` — 로그인 없이 보는 모임 상세 미리보기 + OG 메타. 숨김·미승인 모임은 404.
+- 마감 임박 알림은 DB 트리거(`notify_seats_low`)가 만들고, 모임 카드의 "마감 임박 알림 받기"는 `trip_watch`를 브라우저가 RLS로 직접 넣고 뺀다.
