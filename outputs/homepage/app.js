@@ -76,10 +76,13 @@
   }
 
   // 여행 대표 이미지 우선순위: 올린 실제 사진(trip-photos) → cover_url → 여행지별 일러스트(art_key, art/dest/<키>-1.svg) → 장소 이름으로 고른 기본 일러스트
-  const ourPhoto = (u) => typeof u === 'string' && !!window.APP_CONFIG && u.startsWith(APP_CONFIG.url + '/storage/v1/object/public/trip-photos/');
+  const UNSPLASH = 'https://images.unsplash.com/photo-';
+  const ourPhoto = (u) => typeof u === 'string' && ((!!window.APP_CONFIG && u.startsWith(APP_CONFIG.url + '/storage/v1/object/public/trip-photos/')) || /^https:\/\/images\.unsplash\.com\/photo-[\w-]+$/.test(u));
+  // Unsplash 사진은 원본이 매우 커서 용도별 너비로 줄여 불러온다
+  const sized = (u, w) => (u.startsWith(UNSPLASH) ? `${u}?auto=format&fit=crop&w=${w}&q=75` : u);
   function tripImage(t) {
     const p = (t.photos || []).find(ourPhoto);
-    if (p) return p;
+    if (p) return sized(p, 640);
     if (safeUrl(t.cover_url)) return t.cover_url;
     if (t.art_key && /^[a-z0-9-]{2,30}$/.test(t.art_key)) return 'art/dest/' + t.art_key + '-1.svg';
     return null;

@@ -290,13 +290,16 @@ async function handler(req, res) {
     case 'trips.photo.remove': {
       if (!needId(body.id) || typeof body.url !== 'string') return json(res, 400, { error: 'invalid_input' });
       const prefix = `${e.supabaseUrl}/storage/v1/object/public/trip-photos/${body.id}/`;
-      if (!body.url.startsWith(prefix)) return json(res, 400, { error: 'invalid_input' });
-      const t = (await rows(`trips?select=photos&id=eq.${body.id}&limit=1`))[0];
+      const stored = body.url.startsWith(prefix);
+      if (!stored && !/^https:\/\/images\.unsplash\.com\/photo-[\w-]+$/.test(body.url)) return json(res, 400, { error: 'invalid_input' });
+      const t = (await rows(`trips?select=photos,photo_credits&id=eq.${body.id}&limit=1`))[0];
       if (!t) return json(res, 404, { error: 'no_such_trip' });
       const rest = (t.photos || []).filter((u) => u !== body.url);
-      const upd = await store.update(`trips?id=eq.${body.id}`, { photos: rest });
+      // 촬영자 표기(photo_credits)는 photos와 같은 순서라 함께 줄인다
+      const credits = (t.photo_credits || []).filter((_, i) => (t.photos || [])[i] !== body.url);
+      const upd = await store.update(`trips?id=eq.${body.id}`, { photos: rest, photo_credits: credits });
       if (!upd.ok) return json(res, 502, { error: 'save_failed' });
-      await fetch(`${e.supabaseUrl}/storage/v1/object/trip-photos/${body.url.slice(prefix.length - body.id.length - 1)}`, { method: 'DELETE', headers: { apikey: e.serviceKey, Authorization: `Bearer ${e.serviceKey}` } }).catch(() => {});
+      if (stored) await fetch(`${e.supabaseUrl}/storage/v1/object/trip-photos/${body.url.slice(prefix.length - body.id.length - 1)}`, { method: 'DELETE', headers: { apikey: e.serviceKey, Authorization: `Bearer ${e.serviceKey}` } }).catch(() => {});
       await log('trip.photo.remove', 'trip', body.id, { url: body.url });
       return json(res, 200, { photos: rest });
     }

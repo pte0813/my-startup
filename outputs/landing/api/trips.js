@@ -34,10 +34,11 @@ module.exports = async function handler(req, res) {
     list = list.slice(0, 3);
     const counts = {};
     if (list.length) (await get('trip_counts?select=trip_id,n')).forEach((c) => { counts[c.trip_id] = c.n; });
-    const ours = (u) => typeof u === 'string' && u.startsWith(`${SUPABASE_URL}/storage/v1/object/public/trip-photos/`);
+    const ours = (u) => typeof u === 'string' && (u.startsWith(`${SUPABASE_URL}/storage/v1/object/public/trip-photos/`) || /^https:\/\/images\.unsplash\.com\/photo-[\w-]+$/.test(u));
     const trips = list.map((t) => {
       const left = t.capacity ? t.capacity - (counts[t.id] || 0) : null;
-      const photo = (t.photos || []).find(ours);
+      const found = (t.photos || []).find(ours);
+      const photo = found && found.startsWith('https://images.unsplash.com/') ? `${found}?auto=format&fit=crop&w=640&q=75` : found;
       return { id: t.id, title: t.title, location: t.location, price: t.price, start: t.start_date, end: t.end_date, status: t.status, sample: !!t.is_sample, left: left != null && left > 0 && left <= 2 && t.status === 'open' ? left : null, image: photo || (/^[a-z0-9-]{2,30}$/.test(t.art_key || '') ? `${MAIN}/art/dest/${t.art_key}-1.svg` : `${MAIN}/art/cover-${coverKind(t)}.svg`), url: `${MAIN}/trip/${t.id}` };
     });
     return send(res, 200, { kind, trips, main: MAIN }, 'public, s-maxage=120, stale-while-revalidate=600');

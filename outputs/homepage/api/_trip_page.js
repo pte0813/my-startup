@@ -53,6 +53,7 @@ const STYLE = `
 .td .lead{margin:6px 0 0;font-size:1.05rem}
 .td .gal{display:grid;gap:8px;margin:16px 0}
 .td .gal img{width:100%;border-radius:20px;display:block;object-fit:cover;aspect-ratio:16/10;background:#fff}
+.td .gal .credit{margin:0;font-size:12px}
 .td .gal .thumbs{display:flex;gap:8px;overflow-x:auto}
 .td .gal .thumbs img{width:96px;aspect-ratio:1;border-radius:12px;flex:none}
 .td .sample{background:var(--secondary);color:#fff;border-radius:14px;padding:10px 14px;margin:12px 0;font-size:.95rem}
@@ -188,13 +189,19 @@ async function handler(req, res) {
   const priceTxt = trip.price > 0 ? money(trip.price, lang) : t.free;
   const status = trip.status === 'open' ? t.open : trip.status === 'upcoming' ? t.upcoming : t.past;
   const desc = summary || [location, dates, priceTxt].filter(Boolean).join(' · ') || t.fallbackDesc;
-  const supa = (u) => new RegExp(`^${e.supabaseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/storage/v1/object/public/trip-photos/`).test(u || '');
+  const supa = (u) => new RegExp(`^${e.supabaseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/storage/v1/object/public/trip-photos/`).test(u || '') || /^https:\/\/images\.unsplash\.com\/photo-[\w-]+$/.test(u || '');
+  // Unsplash 사진은 원본이 커서 용도별 너비로 줄인다
+  const sized = (u, w) => (/^https:\/\/images\.unsplash\.com\//.test(u) ? `${u}?auto=format&fit=crop&w=${w}&q=75` : u);
   const real = (trip.photos || []).filter(supa).slice(0, 8);
   // 실제 사진이 있으면 그것을, 없으면 여행지별 일러스트 3장(art_key)을 갤러리로 쓴다
   const artSet = /^[a-z0-9-]{2,30}$/.test(trip.art_key || '') ? [1, 2, 3].map((i) => `/art/dest/${trip.art_key}-${i}.svg`) : [];
   const photos = real.length ? real : artSet;
   const heroImg = photos[0] || (/^https:\/\//i.test(trip.cover_url || '') && /\.supabase\.co\//.test(trip.cover_url) ? trip.cover_url : `/art/cover-${coverKind(trip)}.svg`);
-  const gallery = `<div class="gal"><img src="${esc(heroImg)}" alt="${esc(title)}"${photos.length ? ` data-lb="${esc(photos[0])}"` : ''}>${photos.length > 1 ? `<div class="thumbs">${photos.slice(1).map((u) => `<img src="${esc(u)}" alt="" loading="lazy" data-lb="${esc(u)}">`).join('')}</div>` : ''}</div>`;
+  // 촬영자 표기(Unsplash 이용 약관): 사진 순서와 같은 photo_credits 배열에서 이 갤러리에 쓰인 Unsplash 사진의 촬영자만 모은다
+  const credits = [];
+  (trip.photos || []).forEach((u, i) => { const c = (trip.photo_credits || [])[i]; if (real.includes(u) && /^https:\/\/images\.unsplash\.com\//.test(u) && c && c.n && /^[\w.-]{1,40}$/.test(c.u || '') && !credits.some((x) => x.u === c.u)) credits.push(c); });
+  const creditLine = credits.length ? `<p class="note credit">Photo by ${credits.map((c) => `<a href="https://unsplash.com/@${esc(c.u)}?utm_source=hamkkedat&utm_medium=referral" rel="noopener nofollow" target="_blank">${esc(String(c.n).slice(0, 40))}</a>`).join(', ')} on <a href="https://unsplash.com/?utm_source=hamkkedat&utm_medium=referral" rel="noopener nofollow" target="_blank">Unsplash</a></p>` : '';
+  const gallery = `<div class="gal"><img src="${esc(sized(heroImg, 1200))}" alt="${esc(title)}"${photos.length ? ` data-lb="${esc(sized(photos[0], 1600))}"` : ''}>${photos.length > 1 ? `<div class="thumbs">${photos.slice(1).map((u) => `<img src="${esc(sized(u, 480))}" alt="" loading="lazy" data-lb="${esc(sized(u, 1600))}">`).join('')}</div>` : ''}${creditLine}</div>`;
   // 사진을 누르면 크게 보는 뷰어(좌우 이동·ESC)
   const lightbox = photos.length ? `<dialog id="lb" aria-label="${esc(title)}"><img alt=""><div class="ctl"><button type="button" data-prev>${esc(t.prev)}</button><span class="n"></span><button type="button" data-next>${esc(t.next)}</button><button type="button" data-x>${esc(t.close)}</button></div></dialog>
 <script>(function(){var imgs=[].slice.call(document.querySelectorAll('.gal img[data-lb]'));var d=document.getElementById('lb');if(!imgs.length||!d)return;var im=d.querySelector('img'),n=d.querySelector('.n'),i=0;function show(k){i=(k+imgs.length)%imgs.length;im.src=imgs[i].getAttribute('data-lb');n.textContent=(i+1)+' / '+imgs.length}function open(k){show(k);d.showModal()}imgs.forEach(function(el,k){el.tabIndex=0;el.style.cursor='zoom-in';el.addEventListener('click',function(){open(k)});el.addEventListener('keydown',function(e){if(e.key==='Enter')open(k)})});d.addEventListener('click',function(e){if(e.target.closest('[data-prev]'))show(i-1);else if(e.target.closest('[data-next]'))show(i+1);else if(e.target.closest('[data-x]')||!e.target.closest('img,.ctl'))d.close()});d.addEventListener('keydown',function(e){if(e.key==='ArrowLeft')show(i-1);if(e.key==='ArrowRight')show(i+1)})})();</script>` : '';
@@ -229,7 +236,7 @@ ${mates.length ? `<h2>${esc(t.mateTitle)}</h2><p>${esc(t.mateDesc(n))}</p><p cla
 ${reviews.length ? `<h2>${esc(t.reviewTitle)}</h2>${reviews.map((r) => `<div class="rev"><b>${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</b><p style="margin:4px 0">${esc(String(r.body).slice(0, 200))}</p><small class="note">${esc(Array.from(String(r.author_name || ''))[0] || '')}**</small></div>`).join('')}` : ''}
 ${similar.length ? `<h2>${esc(t.similar)}</h2><div class="sim">${similar.map((o) => {
   const ph = (o.photos || []).find(supa);
-  const img = ph || (/^[a-z0-9-]{2,30}$/.test(o.art_key || '') ? `/art/dest/${o.art_key}-1.svg` : `/art/cover-${coverKind(o)}.svg`);
+  const img = ph ? sized(ph, 480) : (/^[a-z0-9-]{2,30}$/.test(o.art_key || '') ? `/art/dest/${o.art_key}-1.svg` : `/art/cover-${coverKind(o)}.svg`);
   return `<a href="/trip/${esc(o.id)}${lang === 'ko' ? '' : `?lang=${lang}`}"><img src="${esc(img)}" alt="" loading="lazy"><div><strong>${esc(pick(o.title_i18n, lang) || o.title)}</strong><small>${esc(pick(o.location_i18n, lang) || o.location || '')}${o.price > 0 ? ' · ' + esc(money(o.price, lang)) : ''}</small></div></a>`;
 }).join('')}</div>` : ''}
 <h2>${esc(t.safeTitle)}</h2>

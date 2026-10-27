@@ -350,7 +350,7 @@
     function showTranslate(id, filled) {
       const t = TRIPS[id]; if (!t) return;
       const box = $('t-detail'); box.hidden = false;
-      const photos = (t.photos || []).map((u) => `<span class="ph"><img src="${esc(u)}" alt="" width="72" height="72"><button class="btn ghost small" data-photo-rm="${esc(id)}" data-url="${esc(u)}">삭제</button></span>`).join('');
+      const photos = (t.photos || []).map((u) => `<span class="ph"><img src="${esc(/^https:\/\/images\.unsplash\.com\//.test(u) ? u + '?auto=format&fit=crop&w=144&q=70' : u)}" alt="" width="72" height="72"><button class="btn ghost small" data-photo-rm="${esc(id)}" data-url="${esc(u)}">삭제</button></span>`).join('');
       box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>${esc(t.title)} · 상세·번역</h3><div class="row"><button class="btn ghost small" data-tr-ai="${esc(id)}">AI로 번역 채우기</button><button class="btn small" data-tr-save="${esc(id)}">저장</button><button class="btn ghost small" data-close-detail>닫기</button></div></div>
         <p class="muted">여행 상세 페이지(/trip/…)에 보이는 내용이에요. 한국어를 입력하고 "AI로 번역 채우기"를 누르면 다른 언어 입력칸이 채워지고, 확인한 뒤 "저장"을 눌러야 반영돼요. 비워 둔 항목은 화면에서 숨기거나 한국어로 보여요.</p>
         <fieldset class="tr-set"><legend>기본 정보</legend>
