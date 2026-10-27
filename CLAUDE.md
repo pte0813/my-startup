@@ -10,7 +10,8 @@
 - 웹: `outputs/homepage/`
   - `src/`(template.html, header.html, footer.html, pages/*.html, i18n.json) → `python3 outputs/homepage/build.py`가 `*.html`, `i18n.js`, `ai-options.js`, `brand.css`, `config.js`, `sitemap.xml`을 만든다. **`src/`를 고치고 build.py를 실행한다**(생성된 html을 직접 고치지 않는다). 예외: `account.html`, `admin.html`은 독립 파일이다.
   - 공용 스크립트: `common.js`(로그인·언어), `app.js`(여행·후기·AI·재만남 등 페이지 기능), `pay.js`(나이스페이먼츠), `common.css`, `i18n.json`(한·영·중·일·스페인어 5개 언어)
-  - 서버 함수: `api/*.js` (`_lib.js` 공통, `_ai.js` AI 공통). 설명은 `api/README.md`
+  - 서버 함수: `api/*.js` (`_lib.js` 공통·오류 보고, `_ai.js` AI 공통). 설명은 `api/README.md`
+  - **관리자**: `/admin`(= `admin.html`, 독립 파일) + `api/admin.js`. 권한은 `profiles.role`(super_admin/operator/cs/user)을 서버가 매번 확인하고, 변경 작업은 `admin_logs`에 기록한다. 데이터는 service_role로 서버에서만 읽는다. 오류 모니터링은 `monitor.js` + `SENTRY_DSN`(`outputs/monitoring-guide.md`)
   - 배포 설정: `vercel.json`(빌드 `node write-config.js`로 환경변수에서 `config.js` 생성, 보안 헤더, 크론), `.vercelignore`
   - 랜딩(사전 신청): `outputs/landing/` (별도 Vercel 프로젝트 `hamkkedat-landing`)
 - DB: `supabase/migrations/` (규칙은 `supabase/README.md`). 옛 SQL 메모는 `outputs/*.sql`(기록용)
@@ -22,8 +23,9 @@
 - 가입하면 트리거 `handle_new_user`가 `profiles` 행을 만든다. 관리자 권한은 `profiles.role`(user/cs/operator/super_admin)이다.
 
 ## DB 스키마 요약 (Supabase `test`, 서울)
-- `signups`(사전 신청), `profiles`(이름·AI 프로필·동의·role), `trips`, `trip_applications`, `trip_counts`(인원수 뷰), `payments`, `reviews`(+저장소 `review-photos`), `suggestions`, `inquiries`
+- `signups`(사전 신청), `profiles`(이름·AI 프로필·동의·**role·status·trust_score·warning_count**, 이 컬럼들은 회원이 못 바꾸게 컬럼 권한으로 막음), `trips`, `trip_applications`, `trip_counts`(인원수 뷰), `payments`, `reviews`(+저장소 `review-photos`), `suggestions`, `inquiries`
 - AI: `ai_usage`, `ai_icebreakers`, `reunion_picks`
+- 운영: `admin_logs`(최고 관리자만 조회), `reports`(회원은 신고 등록·내 신고 조회, 운영진은 전체), `daily_active`(DAU 집계, 회원은 오늘 자기 행만 insert), `trips.hidden/approval_status`(숨김·승인, 방문자는 공개된 모임만 조회), `trip_applications.attendance`(출석/노쇼)
 - 모든 표 RLS 켜짐. 서버만 다루는 표(`payments`, `ai_*`, `reunion_picks` 등)는 정책이 없고 브라우저 접근 권한도 없다.
 
 ## 개발 원칙
