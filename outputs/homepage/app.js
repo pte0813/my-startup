@@ -63,6 +63,16 @@
     } catch (e) { tripState.failed = true; }
     tripState.loaded = true;
     renderTrips();
+    highlightTrip();
+  }
+
+  // 여행 상세 페이지의 "신청하러 가기"(trips.html?trip=<id>#card-<id>)로 들어오면 그 카드로 이동해 강조한다
+  function highlightTrip() {
+    const m = /^#card-([0-9a-f-]{36})$/i.exec(location.hash);
+    const card = m && document.getElementById('card-' + m[1]);
+    if (!card || card.dataset.hl) return;
+    card.dataset.hl = '1'; card.classList.add('hl');
+    card.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }
 
   // 사진(cover_url)이 없으면 장소 이름으로 어울리는 일러스트를 고르고, 단서가 없으면 여행마다 고정된 일러스트를 쓴다
@@ -330,8 +340,8 @@
     } else if (t.status === 'upcoming') {
       btn = tripState.passes && !mine ? `<button class="btn" type="button" data-priority="${esc(t.id)}">${esc(T('trip_priority'))}</button>` : `<button class="btn ghost" type="button" disabled>${esc(T('st_upcoming'))}</button>`;
     }
-    return `<article class="trip-card">
-      <div class="trip-cover">${cover}<span class="badge st-${esc(t.status)}">${esc(T('st_' + t.status))}</span></div>
+    return `<article class="trip-card" id="card-${esc(t.id)}">
+      <div class="trip-cover">${cover}<span class="badge st-${esc(t.status)}">${esc(T('st_' + t.status))}</span>${t.is_sample ? `<span class="badge sample">${esc(T('sample_badge'))}</span>` : ''}</div>
       <div class="trip-body">
         <h3>${esc(trx(t, 'title'))}</h3>
         ${meta ? `<p class="trip-meta">${meta}</p>` : ''}
@@ -339,6 +349,7 @@
         <p class="trip-foot"><strong>${t.price > 0 ? esc(money(t.price)) : ''}</strong><span>${esc(seats)}</span></p>
         ${btn}
         ${t.status === 'open' && authUser && !mine ? `<button class="link-btn" type="button" data-watch="${esc(t.id)}">${esc(T(tripState.watch[t.id] ? 'trip_watching' : 'trip_watch'))}</button>` : ''}
+        <a class="link-btn trip-more" href="/trip/${esc(t.id)}?lang=${esc(currentLang)}">${esc(T('trip_detail'))}</a>
         ${`<button class="link-btn" type="button" data-share-trip="${esc(t.id)}" data-title="${esc(trx(t, 'title'))}">${esc(T('trip_share'))}</button>`}
         ${t.status === 'open' && authUser && !(t.capacity && n >= t.capacity) ? aiBlock(t.id) : ''}
         ${t.status === 'open' && authUser && mine && mine !== 'cancelled' ? iceBlock(t.id) : ''}
@@ -983,6 +994,42 @@
     });
   }
 
+  /* ---------------- 홈: 지금 모집 중인 여행(없으면 곧 열리는 여행) 카드 ---------------- */
+  const home = { kind: 'open', list: [], counts: {}, loaded: false };
+  async function initHomeTrips() {
+    if (document.body.dataset.page !== 'index' || !authClient) return;
+    try {
+      const t = await authClient.from('trips').select('id,title,location,title_i18n,location_i18n,start_date,end_date,price,capacity,status,cover_url,is_sample,sort_order').in('status', ['open', 'upcoming']).order('sort_order').order('start_date').limit(12);
+      if (t.error) return;
+      const rows = t.data || [];
+      let list = rows.filter((x) => x.status === 'open'), kind = 'open';
+      if (!list.length) { list = rows.filter((x) => x.status === 'upcoming'); kind = 'soon'; }
+      const c = await authClient.from('trip_counts').select('trip_id,n');
+      const counts = {}; (c.data || []).forEach((r) => { counts[r.trip_id] = r.n; });
+      Object.assign(home, { kind, list: list.slice(0, 3), counts, loaded: true });
+    } catch (e) { return; }
+    renderHomeTrips();
+  }
+  function renderHomeTrips() {
+    const sec = $('#home-trips'), grid = $('#home-trip-grid');
+    if (!sec || !grid || !home.loaded) return;
+    sec.hidden = false;
+    $('#home-trips-title').textContent = T(home.kind === 'open' ? 'home_trips_t' : 'home_trips_soon_t');
+    if (!home.list.length) { grid.innerHTML = `<p class="note">${esc(T('home_trips_empty'))}</p>`; return; }
+    grid.innerHTML = home.list.map((t) => {
+      const n = home.counts[t.id] || 0, left = t.capacity ? t.capacity - n : null;
+      const dates = t.start_date ? (t.end_date && t.end_date !== t.start_date ? fmtDay(t.start_date) + ' – ' + fmtDay(t.end_date) : fmtDay(t.start_date)) : '';
+      const meta = [trx(t, 'location'), dates].filter(Boolean).map(esc).join(' · ');
+      const cover = safeUrl(t.cover_url) ? `<img src="${esc(t.cover_url)}" alt="" loading="lazy">` : `<img class="art" src="art/cover-${coverKind(t)}.svg" alt="" loading="lazy">`;
+      const low = home.kind === 'open' && left != null && left > 0 && left <= 2;
+      return `<article class="trip-card"><a class="trip-link" href="/trip/${esc(t.id)}?lang=${esc(currentLang)}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;flex:1">
+        <div class="trip-cover">${cover}<span class="badge st-${esc(t.status)}">${esc(T('st_' + t.status))}</span>${t.is_sample ? `<span class="badge sample">${esc(T('sample_badge'))}</span>` : ''}</div>
+        <div class="trip-body"><h3>${esc(trx(t, 'title'))}</h3>${meta ? `<p class="trip-meta">${meta}</p>` : ''}
+        <p class="trip-foot"><strong>${t.price > 0 ? esc(money(t.price)) : ''}</strong><span>${low ? esc(T('pop_low', { n: left })) : t.capacity ? esc(T('trip_seats', { n, cap: t.capacity })) : ''}</span></p>
+        <span class="btn small">${esc(T('trip_detail'))}</span></div></a></article>`;
+    }).join('');
+  }
+
   /* ---------------- 홈 팝업: 접속하면 지금 모집 중인(없으면 곧 열리는) 여행을 보여 준다 ---------------- */
   const POP_KEY = 'hk_popup_hide_until';
   const popToday = () => new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10); // KST 날짜
@@ -1051,9 +1098,9 @@
     lastUid = uid;
     if (changed) { if (tripState.loaded) loadTrips(); if (rv.loaded) loadReviews(); }
     if ($('#q-body') && questUid !== uid) { questUid = uid; loadQuest(); }
-    renderTrips(); renderReviews(); renderSuggest(); renderPrivacy(); renderQuest(); renderPopup();
+    renderTrips(); renderReviews(); renderSuggest(); renderPrivacy(); renderQuest(); renderPopup(); renderHomeTrips();
   };
   window.pageHooks.push(pageHook);
-  initTrips(); initReviews(); initSuggest(); initContact(); initReports(); initQuest(); initReset(); initPopup();
+  initTrips(); initReviews(); initSuggest(); initContact(); initReports(); initQuest(); initReset(); initPopup(); initHomeTrips();
   if ($('#q-body')) pageHook(); // 로그인 확인이 이 파일보다 먼저 끝났을 수 있어 한 번 직접 실행한다
 })();

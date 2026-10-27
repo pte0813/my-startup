@@ -62,9 +62,11 @@
     }
   ],
   "functions": {
+    "api/admin.js": {
+      "maxDuration": 60
+    },
     "api/og.js": {
-      "includeFiles": "{fonts/**,ai-options.json}",
-      "memory": 1024
+      "includeFiles": "{fonts/**,ai-options.json}"
     }
   }
 }

@@ -385,3 +385,14 @@ dialog.popup { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 
 .pop-text small { opacity: .8; }
 .pop-low { color: var(--primary); }
 .pop-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; }
+
+/* 홈: 이렇게 진행돼요 · 첫 버튼 줄 · 예시 상품 */
+.cta-row { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin: 12px 0 0; }
+.how { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.how li { background: #fff; border-radius: 20px; padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start; }
+.how b { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: #fff; display: grid; place-items: center; font: 400 1.1rem "Jua", sans-serif; }
+.how h3 { margin: 0 0 4px; font-size: 1.05rem; }
+.how p { margin: 0; font-size: .95rem; }
+.badge.sample { left: auto; right: 12px; background: var(--secondary); }
+.trip-card.hl { outline: 4px solid var(--primary); outline-offset: 3px; }
+.trip-more { font-size: .95rem; }

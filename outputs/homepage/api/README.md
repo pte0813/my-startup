@@ -76,3 +76,7 @@
 - `GET /api/og?type=trip|review&id=&size=og|story` — 공개된 모임·승인된 후기의 공유 이미지(PNG, CDN 캐시). `type=me-title|me-report`는 `Authorization: Bearer` 필요, 이름·연락처 없이 레벨·칭호·성향만 담는다. 문구는 ko/en만(글꼴 한계). Vercel 함수에 글꼴을 넣으려고 `vercel.json functions.includeFiles`를 쓴다.
 - `GET /trip/<id>?ref=&lang=`(= `/api/og?type=page&id=`) — 로그인 없이 보는 모임 상세 미리보기 + OG 메타. 숨김·미승인 모임은 404.
 - 마감 임박 알림은 DB 트리거(`notify_seats_low`)가 만들고, 모임 카드의 "마감 임박 알림 받기"는 `trip_watch`를 브라우저가 RLS로 직접 넣고 뺀다.
+
+### 여행 상세 페이지 · 관리자 상세 입력
+- `/trip/<id>?lang=ko|en|zh|ja|es`(= `/api/og?type=page`)는 로그인 없이 보는 여행 상세 페이지다. 숨김·미승인 모임은 404. 사진은 우리 저장소(`trip-photos`) 주소만 보여 준다.
+- 관리자 `api/admin.js`: `trips.update`가 상세 필드(`is_sample`, `min_participants`, `host_name`, `*_i18n` 일정·포함·불포함·집합 장소·호스트 소개)를 받고(허용 언어만·길이 제한), `trips.translate`는 한국어 입력을 Claude로 영·중·일·스페인어로 번역해 돌려주며(저장은 하지 않음, 최대 60초), `trips.photo.add`(브라우저가 줄인 JPEG base64, 3MB 이하, 최대 8장)·`trips.photo.remove`가 사진을 관리한다.

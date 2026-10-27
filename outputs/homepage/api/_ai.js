@@ -41,7 +41,7 @@ async function throttle(store, userId, feature, max) {
 async function askClaude(cfg, { system, user, tool }) {
   if (!cfg.key) return null;
   const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), 15000);
+  const timer = setTimeout(() => ctl.abort(), cfg.timeoutMs || 15000);
   try {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -49,7 +49,7 @@ async function askClaude(cfg, { system, user, tool }) {
       headers: { 'content-type': 'application/json', 'x-api-key': cfg.key, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: cfg.model,
-        max_tokens: 1200,
+        max_tokens: cfg.maxTokens || 1200,
         system,
         messages: [{ role: 'user', content: user }],
         tools: [tool],
