@@ -10,7 +10,7 @@ dist = here / "dist"
 shutil.rmtree(dist, ignore_errors=True)
 dist.mkdir()
 files = [
-    "index.html", "trips.html", "reviews.html", "community.html", "quest.html", "contact.html", "privacy.html", "account.html", "admin.html", "monitor.js",
+    "index.html", "trips.html", "reviews.html", "community.html", "quest.html", "reset.html", "contact.html", "privacy.html", "account.html", "admin.html", "monitor.js",
     "brand.css", "common.css", "common.js", "pay.js", "app.js", "i18n.js", "config.js", "ai-options.js",
     "favicon.svg", "og-image.png", "og-trips.png", "og-reviews.png", "og-community.png", "og-contact.png", "robots.txt", "sitemap.xml",
 ]

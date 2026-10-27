@@ -131,17 +131,19 @@
 
   <dialog id="auth-dialog" aria-labelledby="auth-title">
     <div class="dlg-head"><h2 id="auth-title" data-i18n="auth_login">로그인</h2><button class="x" type="button" data-close data-i18n-attr="aria-label:auth_close" aria-label="닫기">×</button></div>
-    <div class="tabs" role="tablist">
+    <div class="tabs" id="auth-tabs" role="tablist">
       <button type="button" role="tab" id="tab-login" aria-selected="true" data-i18n="auth_login">로그인</button>
       <button type="button" role="tab" id="tab-signup" aria-selected="false" data-i18n="auth_signup">회원가입</button>
     </div>
     <form id="auth-form" novalidate>
       <label id="name-row" hidden><span data-i18n="auth_name">이름</span><input type="text" name="name" autocomplete="name" maxlength="100"></label>
       <label><span data-i18n="auth_email">이메일</span><input type="email" name="email" autocomplete="email" maxlength="254"></label>
-      <label><span data-i18n="auth_password">비밀번호</span><input type="password" name="password" autocomplete="current-password" maxlength="72"><small id="pw-hint" data-i18n="auth_pw_hint" hidden>8자 이상</small></label>
+      <label id="pw-row"><span data-i18n="auth_password">비밀번호</span><input type="password" name="password" autocomplete="current-password" maxlength="72"><small id="pw-hint" data-i18n="auth_pw_hint" hidden>8자 이상</small></label>
       <label class="consent" id="consent-row" hidden><input type="checkbox" name="consent"><span><span data-i18n="signup_consent">개인정보 수집·이용에 동의하고 만 14세 이상입니다. (필수)</span> <a href="privacy.html" target="_blank" rel="noopener" data-i18n="privacy_link">개인정보 처리방침</a><small data-i18n="signup_consent_d">수집 항목: 이메일, 비밀번호, 이름 · 목적: 회원 식별과 서비스 제공 · 보유: 탈퇴 시까지 (결제 기록은 법령에 따라 5년)</small></span></label>
       <button class="btn block" id="auth-submit" type="submit" data-i18n="auth_login">로그인</button>
       <p class="dmsg" id="auth-msg" role="status" aria-live="polite"></p>
+      <p class="reset-links"><button class="link-btn" type="button" id="forgot-link" data-i18n="auth_forgot">비밀번호를 잊으셨나요?</button><button class="link-btn" type="button" id="back-login" data-i18n="auth_back_login" hidden>로그인으로 돌아가기</button></p>
+      <p class="note" id="find-id-note" data-i18n="auth_find_id_note" hidden>아이디는 가입할 때 쓴 이메일이에요. 가입한 이메일이 기억나지 않으면 문의하기로 알려 주세요.</p>
     </form>
   </dialog>
   <dialog id="report-dialog" aria-labelledby="report-title">

@@ -16,6 +16,7 @@ PAGES = {  # 파일명: 메뉴에서 강조할 그룹
     "quest": "quest",
     "contact": "contact",
     "privacy": "",
+    "reset": "",
 }
 
 root = Path(__file__).resolve().parents[2]
@@ -77,11 +78,11 @@ for page, group in PAGES.items():
 
 # 5) 검색 노출용 파일
 urls = "".join(
-    f"  <url><loc>{SITE_URL}{'/' if p == 'index' else '/' + p + '.html'}</loc></url>\n" for p in PAGES
+    f"  <url><loc>{SITE_URL}{'/' if p == 'index' else '/' + p + '.html'}</loc></url>\n" for p in PAGES if p != "reset"
 )
 (out / "sitemap.xml").write_text(
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + "</urlset>\n",
     encoding="utf-8",
 )
-(out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /account.html\nDisallow: /admin\nDisallow: /admin.html\n\nSitemap: {SITE_URL}/sitemap.xml\n", encoding="utf-8")
+(out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /account.html\nDisallow: /admin\nDisallow: /admin.html\nDisallow: /reset.html\n\nSitemap: {SITE_URL}/sitemap.xml\n", encoding="utf-8")
 print("완료:", ", ".join(f"{p}.html" for p in PAGES))

@@ -1,0 +1,24 @@
+    <section class="page-head">
+      <div class="wrap hero">
+        <div class="hero-text">
+        <p class="eyebrow" data-i18n="rs_title">새 비밀번호 설정</p>
+        <h1 data-i18n="rs_title">새 비밀번호 설정</h1>
+        <p class="lead" data-i18n="rs_lead">메일로 받은 링크로 들어오면 새 비밀번호를 정할 수 있어요.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="reset">
+      <div class="wrap">
+        <form class="form-card" id="rs-form" novalidate hidden>
+          <label><span data-i18n="rs_new">새 비밀번호</span><input type="password" name="pw" autocomplete="new-password" maxlength="72"><small data-i18n="auth_pw_hint">8자 이상</small></label>
+          <label><span data-i18n="rs_confirm">새 비밀번호 확인</span><input type="password" name="pw2" autocomplete="new-password" maxlength="72"></label>
+          <button class="btn" id="rs-submit" type="submit" data-i18n="rs_submit">비밀번호 바꾸기</button>
+          <p class="fmsg" id="rs-msg" role="status" aria-live="polite"></p>
+        </form>
+        <div class="form-card" id="rs-invalid" hidden>
+          <p data-i18n="rs_invalid">링크가 만료됐거나 올바르지 않아요. 로그인 창에서 "비밀번호를 잊으셨나요?"로 메일을 다시 받아 주세요.</p>
+          <button class="btn" type="button" data-open-login data-i18n="auth_login">로그인</button>
+        </div>
+      </div>
+    </section>

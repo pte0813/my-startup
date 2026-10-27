@@ -3,5 +3,6 @@ Allow: /
 Disallow: /account.html
 Disallow: /admin
 Disallow: /admin.html
+Disallow: /reset.html
 
 Sitemap: https://hamkkedat-homepage.vercel.app/sitemap.xml

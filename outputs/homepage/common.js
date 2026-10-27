@@ -188,7 +188,12 @@ function renderAuthNav() {
 }
 function setAuthMode(mode) {
   authMode = mode;
-  const signup = mode === 'signup';
+  const signup = mode === 'signup', reset = mode === 'reset';
+  document.getElementById('auth-tabs').hidden = reset;
+  document.getElementById('pw-row').hidden = reset;
+  document.getElementById('forgot-link').hidden = reset || signup;
+  document.getElementById('back-login').hidden = !reset;
+  document.getElementById('find-id-note').hidden = !reset;
   document.getElementById('tab-login').setAttribute('aria-selected', String(!signup));
   document.getElementById('tab-signup').setAttribute('aria-selected', String(signup));
   document.getElementById('name-row').hidden = !signup;
@@ -196,10 +201,12 @@ function setAuthMode(mode) {
   document.getElementById('consent-row').hidden = !signup;
   authForm.password.autocomplete = signup ? 'new-password' : 'current-password';
   const submit = document.getElementById('auth-submit');
-  submit.dataset.i18n = signup ? 'auth_signup' : 'auth_login';
-  submit.textContent = tr(submit.dataset.i18n);
-  document.getElementById('auth-title').dataset.i18n = signup ? 'auth_signup' : 'auth_login';
-  document.getElementById('auth-title').textContent = tr(signup ? 'auth_signup' : 'auth_login');
+  const key = reset ? 'auth_reset_submit' : signup ? 'auth_signup' : 'auth_login';
+  const titleKey = reset ? 'auth_reset_title' : key;
+  submit.dataset.i18n = key;
+  submit.textContent = tr(key);
+  document.getElementById('auth-title').dataset.i18n = titleKey;
+  document.getElementById('auth-title').textContent = tr(titleKey);
   say(authMsg, '');
 }
 function errKey(err) {
@@ -218,6 +225,8 @@ document.getElementById('auth-nav').addEventListener('click', () => {
 });
 document.getElementById('tab-login').addEventListener('click', () => setAuthMode('login'));
 document.getElementById('tab-signup').addEventListener('click', () => setAuthMode('signup'));
+document.getElementById('forgot-link').addEventListener('click', () => { setAuthMode('reset'); authForm.email.focus(); });
+document.getElementById('back-login').addEventListener('click', () => setAuthMode('login'));
 document.querySelectorAll('dialog [data-close]').forEach((b) => b.addEventListener('click', () => b.closest('dialog').close()));
 document.querySelectorAll('dialog').forEach((d) => d.addEventListener('click', (e) => { if (e.target === d) d.close(); }));
 
@@ -225,6 +234,19 @@ authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!authClient) return say(authMsg, 'err_unavailable', 'err');
   const name = authForm.name.value.trim(), email = authForm.email.value.trim(), password = authForm.password.value;
+  if (authMode === 'reset') {
+    // 비밀번호 재설정 메일: 가입 여부와 상관없이 같은 안내를 보여 준다(계정 존재 여부를 알려 주지 않는다)
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return say(authMsg, 'err_email', 'err');
+    const btn = document.getElementById('auth-submit');
+    btn.disabled = true; say(authMsg, 'auth_wait');
+    try {
+      const { error } = await authClient.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/reset.html' });
+      if (error && (error.status === 429 || (error.code || '').includes('rate_limit'))) say(authMsg, 'err_rate', 'err');
+      else say(authMsg, 'msg_reset_sent', 'ok');
+    } catch (err) { say(authMsg, 'err_generic', 'err'); }
+    btn.disabled = false;
+    return;
+  }
   if (authMode === 'signup' && !name) return say(authMsg, 'err_name', 'err');
   if (authMode === 'signup' && !authForm.consent.checked) return say(authMsg, 'err_consent', 'err');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return say(authMsg, 'err_email', 'err');
@@ -251,7 +273,10 @@ authForm.addEventListener('submit', async (e) => {
 
 if (authClient) {
   authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); redeemInvite(); }, 0); });
-  authClient.auth.onAuthStateChange((_event, session) => { authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); redeemInvite(); }, 0); });
+  authClient.auth.onAuthStateChange((_event, session) => {
+    // 재설정 메일 링크로 들어오면 어느 페이지든 새 비밀번호 화면으로 보낸다
+    if (_event === 'PASSWORD_RECOVERY' && !/reset\.html/.test(location.pathname)) { location.href = 'reset.html'; return; }
+    authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); redeemInvite(); }, 0); });
 }
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setOpen(false); setMega(false); } });
   
