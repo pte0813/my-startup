@@ -195,7 +195,11 @@ async function handler(req, res) {
     if (stats[mission.kind] < mission.goal) return json(res, 409, { error: 'not_done' });
     const claim = await store.insert('crew_mission_claims', { user_id: user.id, mission_id: mission.id, crew_id: c.id });
     if (!claim.ok) return json(res, 409, { error: 'already_claimed' });
-    if (mission.coupon_template_id) await rpc('issue_coupon', { uid: user.id, tpl: mission.coupon_template_id, src: 'crew', ref: mission.id });
+    if (mission.coupon_template_id) {
+      // 쿠폰이 안 만들어졌으면 수령 기록을 되돌려 다시 받을 수 있게 한다(이전에는 실패해도 받은 것으로 남았다)
+      const given = await rpc('issue_coupon', { uid: user.id, tpl: mission.coupon_template_id, src: 'crew', ref: mission.id });
+      if (!given) { await store.remove(`crew_mission_claims?user_id=eq.${user.id}&mission_id=eq.${mission.id}`); return json(res, 502, { error: 'reward_failed' }); }
+    }
     return json(res, 200, await overview());
   }
 
