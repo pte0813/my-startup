@@ -247,8 +247,9 @@ async function handler(req, res) {
       if (!ins.ok || !(ins.data && ins.data[0])) return json(res, ins.status === 409 ? 409 : 502, { error: ins.status === 409 ? 'already_redeemed' : 'save_failed' });
       const inviteId = ins.data[0].id;
       if (tpl) {
-        await rpc('issue_coupon', { uid: inviter.id, tpl: tpl.id, src: 'invite', ref: inviteId });
-        await rpc('issue_coupon', { uid: user.id, tpl: tpl.id, src: 'invite', ref: inviteId });
+        // 출처는 user_coupons_source_check가 허용하는 'referral'. 쿠폰이 하나도 안 만들어졌으면 초대 기록을 되돌려 다시 시도할 수 있게 한다
+        const given = await Promise.all([inviter.id, user.id].map((uid) => rpc('issue_coupon', { uid, tpl: tpl.id, src: 'referral', ref: inviteId })));
+        if (!given.some(Boolean)) { await store.remove(`invites?id=eq.${inviteId}`); return json(res, 502, { error: 'reward_failed' }); }
       }
       return json(res, 200, { ok: true, rewarded: !!tpl });
     }
