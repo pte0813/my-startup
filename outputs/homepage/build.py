@@ -13,6 +13,7 @@ PAGES = {  # 파일명: 메뉴에서 강조할 그룹
     "trips": "trips",
     "reviews": "reviews",
     "community": "community",
+    "quest": "quest",
     "contact": "contact",
     "privacy": "",
 }
@@ -58,7 +59,7 @@ footer = (src / "footer.html").read_text(encoding="utf-8")
 ko = i18n["ko"]
 for page, group in PAGES.items():
     h = header
-    for g in ("about", "trips", "reviews", "community", "contact"):
+    for g in ("about", "trips", "reviews", "community", "quest", "contact"):
         h = h.replace("{{cur_%s}}" % g, " current" if g == group else "")
     body = (src / "pages" / f"{page}.html").read_text(encoding="utf-8").rstrip("\n")
     html = (

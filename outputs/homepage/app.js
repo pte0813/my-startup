@@ -32,7 +32,7 @@
   }
 
   /* ---------------- 여행 목록·신청 ---------------- */
-  const tripState = { trips: [], counts: {}, mine: {}, loaded: false, failed: false };
+  const tripState = { trips: [], counts: {}, mine: {}, coupons: [], loaded: false, failed: false };
   const GRIDS = { open: 'grid-open', upcoming: 'grid-upcoming', past: 'grid-past' };
 
   async function loadTrips() {
@@ -49,7 +49,11 @@
       if (authUser) {
         const m = await authClient.from('trip_applications').select('trip_id,status');
         (m.data || []).forEach((r) => { tripState.mine[r.trip_id] = r.status; });
-      }
+        // 결제 때 고를 수 있는 내 할인 쿠폰(정률·정액, 사용 가능·미만료)
+        const cp = await authClient.from('user_coupons').select('id,expires_at,coupon_templates(name,type,value)').eq('status', 'active').gt('expires_at', new Date().toISOString()).order('expires_at');
+        tripState.coupons = (cp.data || []).filter((c) => c.coupon_templates && (c.coupon_templates.type === 'percent' || c.coupon_templates.type === 'amount'));
+        tripState.passes = (cp.data || []).filter((c) => c.coupon_templates && c.coupon_templates.type === 'priority').length;
+      } else { tripState.coupons = []; tripState.passes = 0; }
       tripState.failed = false;
     } catch (e) { tripState.failed = true; }
     tripState.loaded = true;
@@ -284,6 +288,12 @@
     if (panel) btn.disabled = false;
   }
 
+  function couponPicker(tripId) {
+    if (!tripState.coupons.length) return '';
+    const opts = tripState.coupons.map((c) => `<option value="${esc(c.id)}">${esc(L10n(c.coupon_templates.name))}</option>`).join('');
+    return `<label class="pay-coupon">${esc(T('pay_coupon_label'))}<select data-coupon-for="${esc(tripId)}"><option value="">${esc(T('pay_coupon_none'))}</option>${opts}</select></label>`;
+  }
+
   function tripCard(t) {
     const n = tripState.counts[t.id] || 0;
     const mine = tripState.mine[t.id];
@@ -294,12 +304,12 @@
     let btn = '';
     if (t.status === 'open') {
       if (mine === 'paid') btn = `<button class="btn ghost" type="button" disabled>${esc(T('trip_paid'))}</button>`;
-      else if (mine === 'applied' && t.price > 0) btn = `<button class="btn" type="button" data-pay="${esc(t.id)}">${esc(T('trip_pay'))}</button>`;
+      else if (mine === 'applied' && t.price > 0) btn = couponPicker(t.id) + `<button class="btn" type="button" data-pay="${esc(t.id)}">${esc(T('trip_pay'))}</button>`;
       else if (mine && mine !== 'cancelled') btn = `<button class="btn ghost" type="button" disabled>${esc(T('trip_applied'))}</button>`;
       else if (t.capacity && n >= t.capacity) btn = `<button class="btn ghost" type="button" disabled>${esc(T('trip_full'))}</button>`;
       else btn = `<button class="btn" type="button" data-apply="${esc(t.id)}">${esc(T(authUser ? 'trip_apply' : 'trip_apply_login'))}</button>`;
     } else if (t.status === 'upcoming') {
-      btn = `<button class="btn ghost" type="button" disabled>${esc(T('st_upcoming'))}</button>`;
+      btn = tripState.passes && !mine ? `<button class="btn" type="button" data-priority="${esc(t.id)}">${esc(T('trip_priority'))}</button>` : `<button class="btn ghost" type="button" disabled>${esc(T('st_upcoming'))}</button>`;
     }
     return `<article class="trip-card">
       <div class="trip-cover">${cover}<span class="badge st-${esc(t.status)}">${esc(T('st_' + t.status))}</span></div>
@@ -348,11 +358,21 @@
   async function payTrip(id, btn) {
     const msg = $('#trip-msg');
     btn.disabled = true; setMsg(msg, 'pay_opening');
-    const key = await startPayment(authClient, id);
+    const sel = document.querySelector('[data-coupon-for="' + id + '"]');
+    const key = await startPayment(authClient, id, sel && sel.value ? sel.value : null);
     if (key === 'need_login') { setMsg(msg, ''); openLogin(); }
     else if (key === 'ok') setMsg(msg, '');
     else setMsg(msg, key, 'err');
     btn.disabled = false;
+  }
+
+  async function priorityTrip(id, btn) {
+    const msg = $('#trip-msg');
+    btn.disabled = true;
+    const r = await gamify('priority.apply', { trip_id: id });
+    if (r.ok) setMsg(msg, 'trip_priority_ok', 'ok');
+    else { msg.textContent = errText(r.error); msg.className = 'fmsg err'; }
+    await loadTrips();
   }
 
   function initTrips() {
@@ -363,6 +383,8 @@
       if (b) applyTrip(b.dataset.apply, b);
       const pb = e.target.closest('[data-pay]');
       if (pb) payTrip(pb.dataset.pay, pb);
+      const pr = e.target.closest('[data-priority]');
+      if (pr) priorityTrip(pr.dataset.priority, pr);
       const ab = e.target.closest('[data-ai]');
       if (ab) loadAiMatch(ab.dataset.ai, ab);
       const ib = e.target.closest('[data-ice]');
@@ -702,6 +724,142 @@
     });
   }
 
+  /* ---------------- 서버 기능 호출(/api/gamify) ---------------- */
+  async function gamify(action, params) {
+    const { data } = await authClient.auth.getSession();
+    const token = data && data.session && data.session.access_token;
+    if (!token) return { ok: false, error: 'unauthorized' };
+    try {
+      const r = await fetch('/api/gamify', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify(Object.assign({ action }, params || {})) });
+      const j = await r.json().catch(() => ({}));
+      return r.ok ? { ok: true, data: j } : { ok: false, error: r.status === 503 || r.status === 404 && !j.error ? 'unavailable' : (j.error || 'generic') };
+    } catch (e) { return { ok: false, error: 'unavailable' }; }
+  }
+  const errText = (code) => T('q_err_' + code) || T('q_err_generic');
+  // DB에 JSON 문자열(언어별)로 저장된 이름을 현재 언어로 고른다
+  const L10n = (v) => {
+    let o = v;
+    if (typeof v === 'string') { try { o = JSON.parse(v); } catch (e) { return v; } }
+    return o && typeof o === 'object' ? (o[currentLang] || o.ko || o.en || '') : String(o || '');
+  };
+  const interestName = (k) => { const i = (window.AI_OPTIONS || {}).interests || {}; return i[k] ? (i[k][currentLang] || i[k].ko) : k; };
+
+  /* ---------------- 퀘스트 페이지 ---------------- */
+  const quest = { ov: null, result: null, ranking: null, loaded: false, msg: '' };
+
+  async function loadQuest() {
+    if (!authUser) { quest.ov = null; return renderQuest(); }
+    const r = await gamify('overview');
+    quest.loaded = true;
+    if (!r.ok) { quest.ov = null; quest.msg = errText(r.error); } else { quest.ov = r.data; quest.msg = ''; }
+    if (quest.ov && quest.ov.season) { const k = await gamify('crew.ranking'); quest.ranking = k.ok ? k.data.ranking : []; }
+    renderQuest();
+  }
+
+  function renderQuest() {
+    const body = $('#q-body');
+    if (!body) return;
+    $('#q-need').hidden = !!authUser;
+    const msg = $('#q-msg'); msg.textContent = quest.msg || ''; msg.className = 'fmsg' + (quest.msg ? ' err' : '');
+    const o = quest.ov;
+    body.hidden = !o;
+    if (!o) return;
+    const span = Math.max(1, o.next_level_xp - o.level_start_xp);
+    const pct = Math.min(100, Math.round(((o.xp - o.level_start_xp) / span) * 100));
+    const rules = (o.rules || []).map((r) => `<li><span>${esc(T('q_rule_' + r.kind) || r.label)}</span><strong>+${r.xp} XP</strong></li>`).join('');
+    const level = `<div class="card">
+      <div class="q-lv">${esc(T('q_level', { n: o.level }))}</div>
+      <div class="q-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div>
+      <p>${esc(T('q_xp', { xp: o.xp, left: Math.max(0, o.next_level_xp - o.xp) }))}</p>
+      <details><summary>${esc(T('q_rules_t'))}</summary><ul class="q-list">${rules}</ul></details></div>`;
+
+    let check = '';
+    const q = o.question;
+    if (q) {
+      const res = quest.result;
+      const aTxt = L10n(q.a), bTxt = L10n(q.b);
+      const inner = o.checked_in_today
+        ? `<p>${esc(T('q_checked'))}</p>${res ? `<p><strong>A</strong> ${esc(aTxt)} — ${esc(res.a)} / <strong>B</strong> ${esc(bTxt)} — ${esc(res.b)}</p>` : `<p>${esc(o.today_choice === 'a' ? aTxt : bTxt)} ✔</p>`}`
+        : `<div class="q-choices"><button class="btn" type="button" data-q-choice="a">${esc(aTxt)}</button><button class="btn ghost" type="button" data-q-choice="b">${esc(bTxt)}</button></div>`;
+      check = `<div class="card"><h3>${esc(T('q_checkin_t'))}</h3><p><strong>${esc(L10n(q.question))}</strong></p>${inner}<p class="note">${esc(T('q_streak', { n: o.streak }))}</p></div>`;
+    }
+
+    const titles = `<div class="card"><h3>${esc(T('q_titles_t'))}</h3>${o.titles.length
+      ? `<div class="q-chips">${o.titles.map((t) => `<span class="q-chip">${esc(T('q_title_name', { interest: interestName(t) }))}</span>`).join('')}</div>`
+      : `<p class="note">${esc(T('q_titles_empty'))}</p>`}</div>`;
+
+    const boards = `<div class="card"><h3>${esc(T('q_boards_t'))}</h3>${o.boards.map((b) => {
+      const name = b.kind === 'region' ? (c) => c : interestName;
+      return `<div><strong>${esc(L10n(b.title))}</strong> <span class="note">${b.progress}/${b.goal}</span>
+        <div class="q-bar"><i style="width:${Math.round((b.progress / b.goal) * 100)}%"></i></div>
+        <div class="q-chips">${b.collected.map((c) => `<span class="q-chip">${esc(b.kind === 'region' ? regionName(c) : name(c))}</span>`).join('')}</div>
+        ${b.done ? `<p class="note">${esc(T('q_board_done'))}</p>` : ''}</div>`;
+    }).join('')}</div>`;
+
+    const couponRows = o.coupons.map((c) => {
+      const t = c.template || {};
+      const stat = c.status === 'used' ? T('q_coupon_used') : c.status === 'expired' ? T('q_coupon_expired') : T('q_coupon_exp', { date: fmtDate(c.expires_at) });
+      return `<li><span>${esc(L10n(t.name))}</span><span class="note">${esc(stat)}</span></li>`;
+    }).join('');
+    const coupons = `<div class="card"><h3>${esc(T('q_coupons_t'))}</h3>${couponRows ? `<ul class="q-list">${couponRows}</ul>` : `<p class="note">${esc(T('q_coupons_empty'))}</p>`}</div>`;
+
+    let season = '';
+    if (o.season) {
+      const s = o.season, c = o.crew;
+      let crewHtml;
+      if (!c) {
+        crewHtml = `<p>${esc(T('q_crew_none'))}</p>
+          <form class="q-row" data-q-form="create"><input type="text" name="name" maxlength="20" required placeholder="${esc(T('q_crew_name_ph'))}" aria-label="${esc(T('q_crew_name_ph'))}"><button class="btn" type="submit">${esc(T('q_crew_create'))}</button></form>
+          <form class="q-row" data-q-form="join"><input type="text" name="code" maxlength="6" required placeholder="${esc(T('q_crew_code_ph'))}" aria-label="${esc(T('q_crew_code_ph'))}"><button class="btn ghost" type="submit">${esc(T('q_crew_join'))}</button></form>`;
+      } else {
+        crewHtml = `<p><strong>${esc(c.name)}</strong> · ${esc(T('q_crew_members', { n: c.members.length }))}</p>
+          <p class="note">${esc(T('q_crew_code', { code: c.code }))}</p>
+          <p class="note">${c.members.map((m) => esc(m.name || '—') + (m.owner ? ' ★' : '')).join(', ')}</p>
+          <button class="link-btn" type="button" data-q-leave>${esc(T('q_crew_leave'))}</button>`;
+      }
+      const missions = s.missions.map((m) => `<li><span>${esc(L10n(m.title))} <span class="note">${esc(T('q_mission_prog', { n: m.progress, goal: m.goal }))}</span></span>
+        ${m.claimed ? `<span class="note">${esc(T('q_claimed'))}</span>` : m.done && m.reward ? `<button class="btn small" type="button" data-q-claim="${esc(m.id)}">${esc(T('q_claim'))}</button>` : ''}</li>`).join('');
+      const rank = (quest.ranking || []).map((r) => `<li class="${r.mine ? 'q-rank-me' : ''}">${esc(T('q_rank_row', { rank: r.rank, name: r.name, xp: r.xp, members: r.members }))}</li>`).join('');
+      season = `<div class="card q-wide"><h3>${esc(T('q_season_t'))} · ${esc(L10n(s.name))}</h3>${crewHtml}
+        ${c && missions ? `<h4>${esc(T('q_missions_t'))}</h4><ul class="q-list">${missions}</ul>` : ''}
+        <h4>${esc(T('q_rank_t'))}</h4>${rank ? `<ol class="q-list">${rank}</ol>` : `<p class="note">${esc(T('q_rank_empty'))}</p>`}</div>`;
+    }
+    body.innerHTML = level + check + titles + boards + coupons + season;
+  }
+
+  const regionName = (r) => ({ asia: { ko: '아시아', en: 'Asia', zh: '亚洲', ja: 'アジア', es: 'Asia' }, europe: { ko: '유럽', en: 'Europe', zh: '欧洲', ja: 'ヨーロッパ', es: 'Europa' }, americas: { ko: '아메리카', en: 'Americas', zh: '美洲', ja: 'アメリカ', es: 'América' }, oceania: { ko: '오세아니아', en: 'Oceania', zh: '大洋洲', ja: 'オセアニア', es: 'Oceanía' }, africa: { ko: '아프리카', en: 'Africa', zh: '非洲', ja: 'アフリカ', es: 'África' }, domestic: { ko: '국내', en: 'Korea', zh: '韩国', ja: '韓国', es: 'Corea' } }[r] || { ko: r })[currentLang] || r;
+
+  async function questAct(action, params) {
+    quest.msg = '';
+    const r = await gamify(action, params);
+    if (!r.ok) { quest.msg = errText(r.error); renderQuest(); return null; }
+    quest.ov = r.data;
+    if (r.data.result) quest.result = r.data.result;
+    if (quest.ov.season) { const k = await gamify('crew.ranking'); quest.ranking = k.ok ? k.data.ranking : []; }
+    renderQuest();
+    if (typeof loadNotifs === 'function') loadNotifs();
+    return r.data;
+  }
+
+  function initQuest() {
+    if (!$('#q-body')) return;
+    document.addEventListener('click', (e) => {
+      const c = e.target.closest('[data-q-choice]');
+      if (c) { c.disabled = true; questAct('checkin', { choice: c.dataset.qChoice }); }
+      const cl = e.target.closest('[data-q-claim]');
+      if (cl) { cl.disabled = true; questAct('crew.claim', { mission_id: cl.dataset.qClaim }); }
+      if (e.target.closest('[data-q-leave]') && confirm(T('q_crew_leave_confirm'))) questAct('crew.leave');
+    });
+    document.addEventListener('submit', (e) => {
+      const f = e.target.closest('[data-q-form]');
+      if (!f) return;
+      e.preventDefault();
+      const fd = new FormData(f);
+      if (f.dataset.qForm === 'create') questAct('crew.create', { name: String(fd.get('name') || '') });
+      else questAct('crew.join', { code: String(fd.get('code') || '') });
+    });
+  }
+
   /* ---------------- 개인정보 처리방침: 한국어가 정본, 그 외 언어는 영어 참고 번역 + 안내 ---------------- */
   function renderPrivacy() {
     const ko = document.querySelector('[data-policy="ko"]'), en = document.querySelector('[data-policy="en"]');
@@ -713,14 +871,17 @@
   }
 
   /* ---------------- 시작 ---------------- */
-  let lastUid;
+  let lastUid, questUid;
   window.pageHooks = window.pageHooks || [];
-  window.pageHooks.push(() => {
+  const pageHook = () => {
     const uid = authUser ? authUser.id : null;
     const changed = lastUid !== undefined && uid !== lastUid;
     lastUid = uid;
     if (changed) { if (tripState.loaded) loadTrips(); if (rv.loaded) loadReviews(); }
-    renderTrips(); renderReviews(); renderSuggest(); renderPrivacy();
-  });
-  initTrips(); initReviews(); initSuggest(); initContact(); initReports();
+    if ($('#q-body') && questUid !== uid) { questUid = uid; loadQuest(); }
+    renderTrips(); renderReviews(); renderSuggest(); renderPrivacy(); renderQuest();
+  };
+  window.pageHooks.push(pageHook);
+  initTrips(); initReviews(); initSuggest(); initContact(); initReports(); initQuest();
+  if ($('#q-body')) pageHook(); // 로그인 확인이 이 파일보다 먼저 끝났을 수 있어 한 번 직접 실행한다
 })();

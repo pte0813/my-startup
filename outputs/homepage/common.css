@@ -349,3 +349,25 @@ dialog .consent small { display: block; opacity: .75; margin-top: 2px; }
 .re-main { flex-wrap: wrap; }
 .re-main strong { flex: 1 1 auto; word-break: keep-all; }
 .re-row { justify-items: start; } .re-row .re-main { justify-self: stretch; }
+
+/* 퀘스트(게이미피케이션) */
+.q-grid { display: grid; gap: 18px; margin-top: 12px; }
+@media (min-width: 820px) { .q-grid { grid-template-columns: 1fr 1fr; } .q-grid .q-wide { grid-column: 1 / -1; } }
+.q-grid .card { display: grid; gap: 10px; align-content: start; }
+.q-lv { font: 400 2rem "Jua", sans-serif; color: var(--primary); }
+.q-bar { height: 14px; border-radius: 999px; background: rgba(31,58,95,.12); overflow: hidden; }
+.q-bar > i { display: block; height: 100%; background: var(--primary); border-radius: 999px; }
+.q-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.q-list li { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: space-between; }
+.q-choices { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+.q-choices .btn { width: 100%; }
+.q-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.q-chip { border-radius: 999px; padding: 4px 14px; background: var(--secondary); color: #fff; font-size: .9rem; }
+.q-chip.off { background: rgba(31,58,95,.12); color: var(--secondary); }
+.q-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.q-row input { flex: 1 1 140px; min-width: 0; font: inherit; padding: 10px 12px; border-radius: 12px; border: 2px solid rgba(31,58,95,.15); }
+.q-row .btn { width: auto; padding: 10px 18px; }
+.q-card-btn { justify-self: start; }
+.q-rank-me { font-weight: 700; color: var(--primary); }
+.pay-coupon { display: flex; gap: 8px; align-items: center; font-size: .9rem; margin: 6px 0; }
+.pay-coupon select { flex: 1; min-width: 0; font: inherit; padding: 6px 8px; border-radius: 10px; border: 2px solid rgba(31,58,95,.15); }

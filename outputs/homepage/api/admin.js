@@ -16,9 +16,23 @@ const PERMS = {
   'trips.list': ['super_admin', 'operator'], 'trips.update': ['super_admin', 'operator'],
   'trips.applicants': ['super_admin', 'operator'], 'trips.attendance': ['super_admin', 'operator'],
   'reports.list': STAFF, 'reports.resolve': STAFF,
-  'logs.list': ['super_admin']
+  'logs.list': ['super_admin'],
+  'gamify.get': ['super_admin', 'operator'], 'gamify.xp.update': ['super_admin', 'operator'], 'gamify.coupon.save': ['super_admin', 'operator'],
+  'gamify.board.save': ['super_admin', 'operator'], 'gamify.season.save': ['super_admin', 'operator'], 'gamify.mission.save': ['super_admin', 'operator'],
+  'gamify.question.save': ['super_admin', 'operator'], 'gamify.levelreward.save': ['super_admin', 'operator'], 'gamify.coupon.grant': ['super_admin', 'operator']
 };
 const ROLES = ['super_admin', 'operator', 'cs', 'user'];
+const REGIONS = ['domestic', 'asia', 'europe', 'americas', 'oceania', 'africa', 'other'];
+const INTERESTS = ['cafe', 'food', 'photo', 'hiking', 'camping', 'sea', 'exhibition', 'music', 'reading', 'workout', 'movie', 'boardgame'];
+const LANGS = ['ko', 'en', 'zh', 'ja', 'es'];
+// 관리자는 한국어·영어만 입력하고, 나머지 언어는 영어로 채운다(나중에 번역해 바꿀 수 있다)
+const i18nText = (v, max) => {
+  const o = v && typeof v === 'object' ? v : {};
+  const ko = clip(o.ko, max), en = clip(o.en, max) || ko;
+  if (!ko) return null;
+  const out = {}; for (const l of LANGS) out[l] = clip(o[l], max) || (l === 'ko' ? ko : en);
+  return out;
+};
 const clip = (v, n) => String(v == null ? '' : v).trim().slice(0, n);
 const day = (d) => new Date(d).toISOString().slice(0, 10);
 const daysAgo = (n) => new Date(Date.now() - n * 86400000);
@@ -179,7 +193,7 @@ async function handler(req, res) {
 
     case 'trips.list': {
       const [trips, apps] = await Promise.all([
-        rows('trips?select=id,title,location,start_date,status,hidden,approval_status,capacity,price,created_at&order=sort_order.asc&limit=500'),
+        rows('trips?select=id,title,location,start_date,status,hidden,approval_status,capacity,price,region,tags,created_at&order=sort_order.asc&limit=500'),
         rows('trip_applications?select=trip_id,attendance&status=neq.cancelled&limit=20000')
       ]);
       const agg = {};
@@ -192,6 +206,8 @@ async function handler(req, res) {
       const patch = {};
       if (typeof body.hidden === 'boolean') patch.hidden = body.hidden;
       if (['pending', 'approved', 'rejected'].includes(body.approval_status)) patch.approval_status = body.approval_status;
+      if (REGIONS.includes(body.region)) patch.region = body.region;
+      if (Array.isArray(body.tags)) patch.tags = body.tags.filter((t) => INTERESTS.includes(t));
       if (!Object.keys(patch).length) return json(res, 400, { error: 'invalid_input' });
       const upd = await store.update(`trips?id=eq.${body.id}`, patch);
       if (!upd.ok || !(upd.data && upd.data.length)) return json(res, upd.ok ? 404 : 502, { error: upd.ok ? 'no_such_trip' : 'save_failed' });
@@ -259,6 +275,117 @@ async function handler(req, res) {
       const upd = await store.update(`reports?id=eq.${rp.id}&status=eq.pending`, { status: outcome, handled_by: user.id, handled_at: new Date().toISOString(), resolution });
       if (!upd.ok || !(upd.data && upd.data.length)) return json(res, 502, { error: 'save_failed' });
       await log('report.' + outcome, 'report', rp.id, { resolution, ...applied });
+      return json(res, 200, { ok: true });
+    }
+
+    case 'gamify.get': {
+      const [xp, coupons, boards, seasons, missions, questions, levels, today] = await Promise.all([
+        rows('xp_rules?select=kind,xp,active,label&order=kind.asc'),
+        rows('coupon_templates?select=id,code,name,type,value,valid_days,active&order=created_at.asc'),
+        rows('stamp_boards?select=id,code,title,kind,goal,coupon_template_id,active&order=created_at.asc'),
+        rows('seasons?select=id,name,starts_on,ends_on,active&order=starts_on.desc'),
+        rows('season_missions?select=id,season_id,kind,goal,title,coupon_template_id,active&order=created_at.asc'),
+        rows('question_bank?select=id,question,a,b,active,last_used_on&order=created_at.asc&limit=500'),
+        rows('level_rewards?select=level,coupon_template_id&order=level.asc'),
+        rows('daily_questions?select=day,question&order=day.desc&limit=1')
+      ]);
+      return json(res, 200, { xp_rules: xp, coupons, boards, seasons, missions, questions, level_rewards: levels, today_question: today[0] || null });
+    }
+
+    case 'gamify.xp.update': {
+      if (!['attend', 'review', 'host', 'checkin', 'streak7'].includes(body.kind)) return json(res, 400, { error: 'invalid_input' });
+      const patch = {};
+      if (Number.isInteger(body.xp) && body.xp >= 0 && body.xp <= 1000) patch.xp = body.xp;
+      if (typeof body.active === 'boolean') patch.active = body.active;
+      if (!Object.keys(patch).length) return json(res, 400, { error: 'invalid_input' });
+      const upd = await store.update(`xp_rules?kind=eq.${body.kind}`, patch);
+      if (!upd.ok) return json(res, 502, { error: 'save_failed' });
+      await log('xp_rule.update', 'xp_rule', body.kind, patch);
+      return json(res, 200, { ok: true });
+    }
+
+    case 'gamify.coupon.save': {
+      const name = i18nText(body.name, 60);
+      const code = String(body.code || '').toUpperCase();
+      const type = ['percent', 'amount', 'priority'].includes(body.type) ? body.type : null;
+      const value = type === 'priority' ? 0 : Number(body.value);
+      const days = Number(body.valid_days);
+      if (!name || !/^[A-Z0-9_]{3,30}$/.test(code) || !type || !Number.isInteger(value) || (type === 'percent' && (value < 1 || value > 100)) || (type === 'amount' && value < 1) || !Number.isInteger(days) || days < 1 || days > 730) return json(res, 400, { error: 'invalid_input' });
+      const row = { code, name, type, value, valid_days: days, active: body.active !== false };
+      const r = needId(body.id) ? await store.update(`coupon_templates?id=eq.${body.id}`, row) : await store.insert('coupon_templates', row);
+      if (!r.ok) return json(res, r.status === 409 ? 409 : 502, { error: r.status === 409 ? 'duplicate_code' : 'save_failed' });
+      await log('coupon_template.save', 'coupon_template', code, row);
+      return json(res, 200, { ok: true });
+    }
+
+    case 'gamify.board.save': {
+      const title = i18nText(body.title, 80);
+      const code = String(body.code || '').toLowerCase();
+      const kind = ['region', 'tag'].includes(body.kind) ? body.kind : null;
+      const goal = Number(body.goal);
+      if (!title || !/^[a-z0-9_]{3,30}$/.test(code) || !kind || !Number.isInteger(goal) || goal < 1 || goal > 20) return json(res, 400, { error: 'invalid_input' });
+      const row = { code, title, kind, goal, coupon_template_id: needId(body.coupon_template_id) ? body.coupon_template_id : null, active: body.active !== false };
+      const r = needId(body.id) ? await store.update(`stamp_boards?id=eq.${body.id}`, row) : await store.insert('stamp_boards', row);
+      if (!r.ok) return json(res, r.status === 409 ? 409 : 502, { error: r.status === 409 ? 'duplicate_code' : 'save_failed' });
+      await log('stamp_board.save', 'stamp_board', code, row);
+      return json(res, 200, { ok: true });
+    }
+
+    case 'gamify.season.save': {
+      const name = clip(body.name, 60);
+      const ok = (d) => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
+      if (!name || !ok(body.starts_on) || !ok(body.ends_on) || body.ends_on < body.starts_on) return json(res, 400, { error: 'invalid_input' });
+      const row = { name, starts_on: body.starts_on, ends_on: body.ends_on, active: !!body.active };
+      // 활성 시즌은 하나뿐이므로, 새로 켜기 전에 다른 시즌을 끈다
+      if (row.active) await store.update(`seasons?active=eq.true${needId(body.id) ? `&id=neq.${body.id}` : ''}`, { active: false });
+      const r = needId(body.id) ? await store.update(`seasons?id=eq.${body.id}`, row) : await store.insert('seasons', row);
+      if (!r.ok) return json(res, 502, { error: 'save_failed' });
+      await log('season.save', 'season', body.id || name, row);
+      return json(res, 200, { ok: true });
+    }
+
+    case 'gamify.mission.save': {
+      const title = i18nText(body.title, 80);
+      const kind = ['attend', 'review', 'checkin'].includes(body.kind) ? body.kind : null;
+      const goal = Number(body.goal);
+      if (!needId(body.season_id) || !title || !kind || !Number.isInteger(goal) || goal < 1 || goal > 1000) return json(res, 400, { error: 'invalid_input' });
+      const row = { season_id: body.season_id, kind, goal, title, coupon_template_id: needId(body.coupon_template_id) ? body.coupon_template_id : null, active: body.active !== false };
+      const r = needId(body.id) ? await store.update(`season_missions?id=eq.${body.id}`, row) : await store.insert('season_missions', row);
+      if (!r.ok) return json(res, 502, { error: 'save_failed' });
+      await log('mission.save', 'mission', body.id || kind, row);
+      return json(res, 200, { ok: true });
+    }
+
+    case 'gamify.question.save': {
+      const question = i18nText(body.question, 80), a = i18nText(body.a, 40), b = i18nText(body.b, 40);
+      if (!question || !a || !b) return json(res, 400, { error: 'invalid_input' });
+      const row = { question, a, b, active: body.active !== false };
+      const r = needId(body.id) ? await store.update(`question_bank?id=eq.${body.id}`, row) : await store.insert('question_bank', row);
+      if (!r.ok) return json(res, 502, { error: 'save_failed' });
+      await log('question.save', 'question', body.id || question.ko, row);
+      return json(res, 200, { ok: true });
+    }
+
+    case 'gamify.levelreward.save': {
+      const level = Number(body.level);
+      if (!Number.isInteger(level) || level < 2 || level > 50) return json(res, 400, { error: 'invalid_input' });
+      // 쿠폰을 비우면 그 레벨의 보상을 없앤다
+      const r = needId(body.coupon_template_id)
+        ? await store.upsert('level_rewards', { level, coupon_template_id: body.coupon_template_id }, 'level')
+        : await store.remove(`level_rewards?level=eq.${level}`);
+      if (!r.ok) return json(res, 502, { error: 'save_failed' });
+      await log('level_reward.save', 'level_reward', String(level), { coupon_template_id: body.coupon_template_id || null });
+      return json(res, 200, { ok: true });
+    }
+
+    case 'gamify.coupon.grant': {
+      if (!needId(body.user_id) || !needId(body.template_id)) return json(res, 400, { error: 'invalid_input' });
+      const tpl = await one(`coupon_templates?select=id,valid_days&id=eq.${body.template_id}&active=eq.true`);
+      if (!tpl || !(await one(`profiles?select=id&id=eq.${body.user_id}`))) return json(res, 404, { error: 'not_found' });
+      const r = await store.insert('user_coupons', { user_id: body.user_id, template_id: tpl.id, source: 'manual', source_ref: clip(body.reason, 100), expires_at: new Date(Date.now() + tpl.valid_days * 86400000).toISOString() });
+      if (!r.ok) return json(res, 502, { error: 'save_failed' });
+      await store.insert('notifications', { user_id: body.user_id, kind: 'coupon', data: { template_id: tpl.id, source: 'manual' } });
+      await log('coupon.grant', 'user', body.user_id, { template_id: tpl.id, reason: clip(body.reason, 100) });
       return json(res, 200, { ok: true });
     }
 

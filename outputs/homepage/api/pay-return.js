@@ -28,7 +28,7 @@ async function handler(req, res) {
   const orderId = String(b.orderId || '');
   const store = db(e);
 
-  const found = await store.select(`payments?select=id,status,amount,application_id,order_id&order_id=eq.${encodeURIComponent(orderId)}&limit=1`);
+  const found = await store.select(`payments?select=id,status,amount,application_id,order_id,coupon_id&order_id=eq.${encodeURIComponent(orderId)}&limit=1`);
   const pay = found.ok && found.data && found.data[0];
   if (!pay) return back(res, false, 'unknown_order');
   if (pay.status === 'paid') return back(res, true); // 새로고침 등으로 다시 들어온 경우
@@ -79,6 +79,8 @@ async function handler(req, res) {
       : { fail_reason: 'record_failed_cancel_needed' }); // 취소도 실패하면 나이스페이 관리자에서 직접 취소해야 함
     return back(res, false, 'record_failed');
   }
+  // 사용한 쿠폰은 결제가 확정된 지금 사용 처리한다(실패·취소된 결제에는 쿠폰이 소모되지 않는다)
+  if (pay.coupon_id) await store.update(`user_coupons?id=eq.${pay.coupon_id}&status=eq.active`, { status: 'used', used_at: new Date().toISOString(), used_ref: orderId });
   return back(res, true);
 }
 
