@@ -179,6 +179,23 @@ async function redeemInvite() {
   } catch (e) { /* 네트워크 오류: 다음에 다시 시도 */ }
 }
 
+// 사전 신청(랜딩)한 이메일로 가입했으면 감사 쿠폰을 한 번 받는다(계정당 한 번만 확인해 불필요한 호출을 줄인다)
+async function claimPrelaunch() {
+  if (!authClient || !authUser) return;
+  var key = 'hk_prelaunch_' + authUser.id;
+  try { if (localStorage.getItem(key)) return; } catch (e) { /* 저장소를 못 쓰면 매번 확인한다 */ }
+  try {
+    var s = await authClient.auth.getSession();
+    var token = s.data && s.data.session && s.data.session.access_token;
+    if (!token) return;
+    var r = await fetch('/api/gamify', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ action: 'prelaunch.claim' }) });
+    if (r.status === 503 || r.status >= 500 || r.status === 401) return; // 서버가 준비되지 않았으면 다음에 다시
+    var d = await r.json().catch(function () { return {}; });
+    if (d.reason !== 'unconfirmed') { try { localStorage.setItem(key, '1'); } catch (e) { /* 무시 */ } }
+    if (d.granted) { loadNotifs(); alert(tr('prelaunch_granted')); }
+  } catch (e) { /* 네트워크 오류: 다음에 다시 */ }
+}
+
 function renderAuthNav() {
   const btn = document.getElementById('auth-nav');
   btn.dataset.i18n = authUser ? 'auth_account' : 'auth_login';
@@ -272,11 +289,11 @@ authForm.addEventListener('submit', async (e) => {
 });
 
 if (authClient) {
-  authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); redeemInvite(); }, 0); });
+  authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); redeemInvite(); claimPrelaunch(); }, 0); });
   authClient.auth.onAuthStateChange((_event, session) => {
     // 재설정 메일 링크로 들어오면 어느 페이지든 새 비밀번호 화면으로 보낸다
     if (_event === 'PASSWORD_RECOVERY' && !/reset\.html/.test(location.pathname)) { location.href = 'reset.html'; return; }
-    authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); redeemInvite(); }, 0); });
+    authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); redeemInvite(); claimPrelaunch(); }, 0); });
 }
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setOpen(false); setMega(false); } });
   

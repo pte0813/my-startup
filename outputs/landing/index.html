@@ -4,7 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>함께닿 | 혼자 떠나도, 마음은 닿는다</title>
-  <meta name="description" content="성향이 맞는 사람들과 안심하고 떠나는 2030 소셜링 투어, 함께닿. 사전 신청을 받고 있어요.">
+  <meta name="description" content="같은 여행을 신청한 사람들과 가볍게 어울리는 2030 소셜링 투어, 함께닿. 지금 모집 중인 여행을 보고, 사전 신청하면 첫 여행 쿠폰을 드려요.">
+  <meta property="og:site_name" content="함께닿">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:title" content="함께닿 | 혼자 떠나도, 마음은 닿는다">
+  <meta property="og:description" content="같은 여행을 신청한 사람들과 가볍게 어울리는 2030 소셜링 투어. 사전 신청하면 첫 여행 5천원 쿠폰!">
+  <meta property="og:url" content="https://hamkkedat-landing.vercel.app/">
+  <meta property="og:image" content="https://hamkkedat-homepage.vercel.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Jua&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
@@ -42,7 +53,7 @@
     .hero { padding: 40px 0 64px; text-align: center; }
     .hero h1 { font-size: 2.2rem; margin-bottom: 16px; }
     .hero h1 em { font-style: normal; color: var(--primary); }
-    .hero p { font-size: 1.1rem; margin-bottom: 24px; }
+    .hero p { font-size: 1.1rem; margin-bottom: 24px; word-break: keep-all; }
     .dots { display: flex; justify-content: center; margin-bottom: 24px; }
     .dots i { width: 44px; height: 44px; border-radius: 50%; display: block; }
     .dots i:first-child { background: var(--secondary); }
@@ -70,6 +81,22 @@
     .hp { position: absolute; left: -9999px; }
     #msg { min-height: 1.7em; font-weight: 500; margin: 0; }
     #msg.ok { color: #9fe3b4; } #msg.err { color: #ffd0c9; }
+    .btn.ghost { background: transparent; color: var(--secondary); border: 2px solid var(--secondary); }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .coupon-note { display: inline-block; background: #fff; border-radius: 999px; padding: 4px 14px; font-size: .95rem; margin-top: 14px; }
+    .trips .grid { display: grid; gap: 16px; }
+    .trip { background: #fff; border-radius: 20px; overflow: hidden; display: block; text-decoration: none; color: inherit; }
+    .trip .cov { position: relative; }
+    .trip img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+    .trip .tag { position: absolute; left: 12px; top: 12px; background: var(--primary); color: #fff; border: 2px solid #fff; border-radius: 999px; padding: 2px 12px; font: 400 .85rem "Jua", sans-serif; }
+    .trip .tag.s { left: auto; right: 12px; background: var(--secondary); }
+    .trip .body { padding: 14px 18px 18px; }
+    .trip h3 { font-size: 1.2rem; margin-bottom: 4px; }
+    .trip .meta { opacity: .8; margin: 0 0 6px; font-size: .95rem; }
+    .trip .price { margin: 0; font-weight: 700; }
+    .trip .low { color: var(--primary); }
+    .trips .more { margin-top: 20px; text-align: center; }
+    @media (min-width: 640px) { .trips .grid { grid-template-columns: repeat(3, 1fr); } .trips .wrap, .wrap.wide { max-width: 980px; } }
     footer { padding: 24px 0; text-align: center; font-size: .85rem; opacity: .8; }
     @media (min-width: 640px) { .hero h1 { font-size: 2.8rem; } }
   </style>
@@ -78,7 +105,7 @@
   <header>
     <div class="wrap">
       <a class="logo" href="#" aria-label="함께닿"><span class="dots-mini" aria-hidden="true"><i></i><i></i></span><span class="logo-name">함께닿</span></a>
-      <a class="btn small" href="#signup">사전 신청</a>
+      <a class="btn small" href="#trips">여행 보기</a>
     </div>
   </header>
 
@@ -87,8 +114,18 @@
       <div class="wrap">
         <div class="dots" aria-hidden="true"><i></i><i></i></div>
         <h1>혼자 떠나도,<br><em>마음은 닿는다</em></h1>
-        <p>성향이 맞는 사람들과 안심하고 떠나는<br>2030 소셜링 투어, 함께닿</p>
-        <a class="btn" href="#signup">출시 소식 먼저 받기</a>
+        <p>같은 여행을 신청한 사람들과 가볍게 어울리는<br>2030 소셜링 투어, 함께닿</p>
+        <div class="cta-row"><a class="btn" href="#trips">지금 모집 중인 여행 보기</a><a class="btn ghost" href="#signup">사전 신청하고 쿠폰 받기</a></div>
+        <p><span class="coupon-note">🎁 사전 신청하고 같은 이메일로 가입하면 첫 여행 5천원 쿠폰</span></p>
+      </div>
+    </section>
+
+    <section class="trips" id="trips">
+      <div class="wrap">
+        <p class="eyebrow">여행</p>
+        <h2 id="trips-title">지금 모집 중인 여행</h2>
+        <div class="grid" id="trip-grid" aria-live="polite"><p class="note">불러오는 중…</p></div>
+        <p class="more"><a class="btn ghost" id="trips-more" href="https://hamkkedat-homepage.vercel.app/trips.html">여행 전체 보기</a></p>
       </div>
     </section>
 
@@ -107,17 +144,17 @@
       <div class="wrap">
         <p class="eyebrow">해결</p>
         <h2>성향이 맞는 사람들과<br>느슨하게 함께 떠나요</h2>
-        <p>여행 스타일과 성향을 바탕으로 잘 맞는 사람들끼리 팩을 짜 드려요. 일정은 자유롭게, 어색함은 적게. 같이 있어도 편하고, 혼자 있고 싶을 땐 그것도 괜찮아요.</p>
+        <p>같은 여행을 신청한 사람들 중 성향이 잘 맞는 분을 추천해 드려요. 일정은 느슨하게, 어색함은 적게. 같이 있어도 편하고, 혼자 있고 싶을 땐 그것도 괜찮아요.</p>
       </div>
     </section>
 
     <section class="benefits">
       <div class="wrap">
         <p class="eyebrow">혜택</p>
-        <h2>안심하고 떠나도록<br>세 가지를 챙겼어요</h2>
+        <h2>편하게 떠나도록<br>세 가지를 챙겼어요</h2>
         <ul>
-          <li class="card"><h3>신원·후기 인증</h3><p>본인 인증과 여행 후기로 믿을 수 있는 사람들만 함께해요.</p></li>
-          <li class="card"><h3>안심 귀가 체크</h3><p>하루 일정이 끝나면 모두 무사히 숙소에 돌아왔는지 확인해 드려요.</p></li>
+          <li class="card"><h3>후기로 쌓는 신뢰</h3><p>여행 후기와 매너 배지, 신뢰 점수로 믿고 함께할 수 있게 도와요.</p></li>
+          <li class="card"><h3>어색하지 않게</h3><p>공통 관심사를 바탕으로 대화 주제를 AI가 추천해 드려요.</p></li>
           <li class="card"><h3>재만남 매칭</h3><p>여행이 끝나도 서로 원하면 다시 만날 수 있도록 이어 드려요.</p></li>
         </ul>
       </div>
@@ -127,7 +164,7 @@
       <div class="wrap">
         <p class="eyebrow">신청</p>
         <h2>출시되면 가장 먼저<br>알려 드릴게요</h2>
-        <p>이름과 이메일만 남겨 주세요.</p>
+        <p>이름과 이메일만 남겨 주세요. <strong>같은 이메일로 함께닿에 가입하면 첫 여행 5천원 쿠폰</strong>을 드려요.</p>
         <form id="form" novalidate>
           <label class="field">이름
             <input type="text" name="name" autocomplete="name" maxlength="100" required>
@@ -175,7 +212,7 @@
         });
         if (res.ok) {
           form.reset();
-          show('신청이 완료됐어요! 출시 소식을 가장 먼저 보내 드릴게요 🎉', 'ok');
+          show('신청이 완료됐어요! 같은 이메일로 함께닿에 가입하면 첫 여행 5천원 쿠폰을 드려요 🎉', 'ok');
         } else if (res.status === 409) {
           show('이미 신청된 이메일이에요. 소식을 기다려 주세요!', 'ok');
         } else {
@@ -187,6 +224,27 @@
         btn.disabled = false;
       }
     });
+
+    // 지금 모집 중인 여행 카드(없으면 곧 열리는 여행, 둘 다 없으면 섹션을 숨긴다)
+    (async () => {
+      const sec = document.getElementById('trips'), grid = document.getElementById('trip-grid');
+      const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+      const day = (d) => (d ? new Date(d + 'T00:00:00').toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) : '');
+      try {
+        const r = await fetch('/api/trips');
+        const d = r.ok ? await r.json() : null;
+        if (!d || !d.trips || !d.trips.length) { sec.hidden = true; return; }
+        document.getElementById('trips-title').textContent = d.kind === 'open' ? '지금 모집 중인 여행' : '곧 열리는 여행';
+        document.getElementById('trips-more').href = d.main + '/trips.html';
+        grid.innerHTML = d.trips.map((t) => {
+          const dates = t.start ? (t.end && t.end !== t.start ? day(t.start) + ' – ' + day(t.end) : day(t.start)) : '';
+          const img = /^https:\/\//.test(t.image) ? t.image : '';
+          return `<a class="trip" href="${esc(t.url)}"><div class="cov"><img src="${esc(img)}" alt="" loading="lazy"><span class="tag">${d.kind === 'open' ? '모집 중' : '오픈 예정'}</span>${t.sample ? '<span class="tag s">예시 상품</span>' : ''}</div>
+            <div class="body"><h3>${esc(t.title)}</h3><p class="meta">${esc([t.location, dates].filter(Boolean).join(' · '))}</p>
+            <p class="price">${t.price > 0 ? esc(Number(t.price).toLocaleString('ko-KR') + '원') : ''}${t.left ? ` <span class="low">· 마감 임박 ${t.left}석 남음</span>` : ''}</p></div></a>`;
+        }).join('');
+      } catch (e) { sec.hidden = true; }
+    })();
   </script>
 </body>
 </html>

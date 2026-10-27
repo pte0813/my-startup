@@ -29,7 +29,7 @@ async function sendConfirmation({ name, email }) {
   const from = process.env.RESEND_FROM || '함께닿 <onboarding@resend.dev>';
   const html = `<div style="font-family:'Noto Sans KR',Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#FFF1D6;color:#1F3A5F">
   <h2 style="margin:0 0 12px">${escapeHtml(name)}님, 신청이 완료됐어요 🎉</h2>
-  <p>함께닿 사전 신청해 주셔서 고마워요.<br>출시되면 가장 먼저 소식을 보내 드릴게요.</p>
+  <p>함께닿 사전 신청해 주셔서 고마워요.<br>같은 이메일로 <a href="https://hamkkedat-homepage.vercel.app" style="color:#FF6B5B">함께닿에 가입</a>하시면 <b>첫 여행 5천원 쿠폰</b>을 드려요. 새 여행 소식도 가장 먼저 보내 드릴게요.</p>
   <p style="color:#FF6B5B;font-weight:bold">혼자 떠나도, 마음은 닿는다</p>
   <p style="font-size:12px;opacity:.7">본인이 신청하지 않았다면 이 메일에 회신해 알려 주세요. 바로 삭제해 드려요.</p>
 </div>`;
