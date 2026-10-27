@@ -103,7 +103,7 @@ async function handler(req, res) {
   if (action === 'suggest') {
     const target = others.find((a) => a.id === appId);
     if (!target || !matchedSet.has(target.user_id)) return json(res, 403, { error: 'not_matched' });
-    const open = await store.select('trips?select=id,title,location&status=eq.open&order=sort_order.asc&limit=8');
+    const open = await store.select('trips?select=id,title,location,title_i18n,location_i18n&status=eq.open&order=sort_order.asc&limit=8');
     const trips = open.ok && open.data ? open.data : [];
     let text = null, chosen = trips.slice(0, 3);
     const cfg = aiEnv();
@@ -131,7 +131,7 @@ async function handler(req, res) {
         await recordUse(store, user.id, FEATURE);
       }
     }
-    return json(res, 200, { text, trips: chosen.map((x) => ({ id: x.id, title: x.title, location: x.location })), ai: !!text });
+    return json(res, 200, { text, trips: chosen.map((x) => ({ id: x.id, title: x.title, location: x.location, title_i18n: x.title_i18n, location_i18n: x.location_i18n })), ai: !!text });
   }
 
   const nameRes = others.length ? await store.select(`profiles?select=id,name&id=in.(${others.map((a) => a.user_id).join(',')})`) : { ok: true, data: [] };

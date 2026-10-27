@@ -219,11 +219,11 @@
         const pending = a.status === 'applied' && t.price > 0;
         const label = pending ? 'app_pending' : { applied: 'trip_applied', paid: 'app_paid', cancelled: 'app_cancelled' }[a.status] || 'trip_applied';
         const payBtn = pending ? '<button class="btn small" type="button" data-pay="' + esc(a.trip_id) + '">' + esc(tr('trip_pay')) + '</button>' : '';
-        return '<li><span>' + esc(t.title || '') + (when ? '<small>' + esc(when) + '</small>' : '') + '</span><span class="right"><span class="pill">' + esc(tr(label)) + '</span>' + payBtn + '</span></li>';
+        return '<li><span>' + esc((t.title_i18n && t.title_i18n[lang]) || t.title || '') + (when ? '<small>' + esc(when) + '</small>' : '') + '</span><span class="right"><span class="pill">' + esc(tr(label)) + '</span>' + payBtn + '</span></li>';
       }).join('');
     }
     async function loadApps() {
-      const { data, error } = await client.from('trip_applications').select('status,created_at,trip_id,trips(title,start_date,end_date,price)').order('created_at', { ascending: false });
+      const { data, error } = await client.from('trip_applications').select('status,created_at,trip_id,trips(title,title_i18n,start_date,end_date,price)').order('created_at', { ascending: false });
       appsData = error ? [] : (data || []);
       renderApps();
     }
@@ -327,7 +327,7 @@
         if (n.kind === 'manner_badge') return tr('notif_manner_badge').replace('{badge}', (((AIO2.badges || {})[d.badge]) || {})[lang] || d.badge || '');
         if (n.kind === 'level_up') return tr('notif_level_up').replace('{level}', d.level || '');
         if (n.kind === 'coupon') return tr('notif_coupon');
-        if (n.kind === 'seats_low') return tr('notif_seats_low').replace('{title}', d.title || '').replace('{left}', d.left || '');
+        if (n.kind === 'seats_low') return tr('notif_seats_low').replace('{title}', (d.title_i18n && d.title_i18n[lang]) || d.title || '').replace('{left}', d.left || '');
         if (n.kind === 'title') return tr('notif_title_earned').replace('{title}', tr('q_title_name').replace('{interest}', (((AIO2.interests || {})[d.interest]) || {})[lang] || d.interest || ''));
         return n.kind === 'trust_down' ? tr('notif_trust_down') : '';
       };

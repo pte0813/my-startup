@@ -27,10 +27,11 @@ async function handler(req, res) {
   if (!r) return json(res, 404, { error: 'no_review' });
   let trip = null;
   if (r.trip_id && UUID.test(r.trip_id)) {
-    const t = await store.select(`trips?select=title,location&id=eq.${r.trip_id}&limit=1`);
+    const t = await store.select(`trips?select=title,location,title_i18n,location_i18n&id=eq.${r.trip_id}&limit=1`);
     trip = t.ok && t.data && t.data[0];
   }
-  const title = clip(trip && trip.title, 80), place = clip(trip && trip.location, 40);
+  const pickT = (f) => trip && ((trip[f + '_i18n'] || {})[lang] || trip[f]); // 요청 언어의 번역이 있으면 그것을 쓴다
+  const title = clip(pickT('title'), 80), place = clip(pickT('location'), 40);
   const fallback = (limited) => json(res, 200, {
     headline: title || clip(r.body, 20), caption: clip(r.body, 80),
     hashtags: ['함께닿', place.split(' ').pop()].filter(Boolean), rating: r.rating, trip_title: title, ai: false, limited

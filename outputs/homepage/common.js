@@ -106,7 +106,7 @@ function notifText(n) {
   if (n.kind === 'trust_down') return tr('notif_trust_down');
   if (n.kind === 'level_up') return tr('notif_level_up').replace('{level}', d.level || '');
   if (n.kind === 'coupon') return tr('notif_coupon');
-  if (n.kind === 'seats_low') return tr('notif_seats_low').replace('{title}', d.title || '').replace('{left}', d.left || '');
+  if (n.kind === 'seats_low') return tr('notif_seats_low').replace('{title}', (d.title_i18n && d.title_i18n[currentLang]) || d.title || '').replace('{left}', d.left || '');
   if (n.kind === 'title') { var it = (opts.interests || {})[d.interest]; return tr('notif_title_earned').replace('{title}', tr('q_title_name').replace('{interest}', it ? (it[currentLang] || it.ko) : (d.interest || ''))); }
   return '';
 }
