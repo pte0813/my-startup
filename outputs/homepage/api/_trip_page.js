@@ -138,7 +138,9 @@ async function handler(req, res) {
   };
 
   let trip = null;
-  const store = e.supabaseUrl && e.serviceKey ? db(e) : null;
+  // 서버 키가 있으면 service_role로, 없으면(프리뷰 배포) 공개 키로 읽는다. 공개 키로는 신청자·프로필을 못 읽으므로 인원은 공개 뷰(trip_counts)를 쓰고 참가자 분위기는 건너뛴다.
+  const full = !!(e.supabaseUrl && e.serviceKey);
+  const store = full ? db(e) : e.supabaseUrl && e.anonKey ? db({ ...e, serviceKey: e.anonKey }) : null;
   if (UUID.test(id) && store) {
     const r = await store.select(`trips?select=*&id=eq.${id}&hidden=eq.false&approval_status=eq.approved&limit=1`);
     trip = r.ok && r.data && r.data[0];
@@ -148,10 +150,10 @@ async function handler(req, res) {
   }
 
   // 신청 현황과 참가자 분위기(동의한 신청자 3명 이상일 때만 관심사 개수) + 이 여행의 승인된 후기
-  const apps = (await store.select(`trip_applications?select=user_id&trip_id=eq.${id}&status=neq.cancelled&limit=500`)).data || [];
-  const n = apps.length;
+  const apps = full ? (await store.select(`trip_applications?select=user_id&trip_id=eq.${id}&status=neq.cancelled&limit=500`)).data || [] : [];
+  const n = full ? apps.length : ((await store.select(`trip_counts?select=n&trip_id=eq.${id}&limit=1`)).data || [{}])[0].n || 0;
   let mates = [];
-  if (n >= 3) {
+  if (full && n >= 3) {
     const ids = apps.map((a) => a.user_id).filter((x) => UUID.test(x));
     const ps = (await store.select(`profiles?select=interests&ai_consent=eq.true&id=in.(${ids.join(',')})&limit=500`)).data || [];
     if (ps.length >= 3) {
