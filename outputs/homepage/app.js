@@ -981,6 +981,55 @@
     });
   }
 
+  /* ---------------- 홈 팝업: 접속하면 지금 모집 중인(없으면 곧 열리는) 여행을 보여 준다 ---------------- */
+  const POP_KEY = 'hk_popup_hide_until';
+  const popToday = () => new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10); // KST 날짜
+  let popTrips = null;
+  async function initPopup() {
+    if (document.body.dataset.page !== 'index' || !authClient) return;
+    try { if (localStorage.getItem(POP_KEY) === popToday()) return; } catch (e) { /* 저장소를 못 써도 팝업은 보여 준다 */ }
+    let kind = 'open', list = [], counts = {};
+    try {
+      const t = await authClient.from('trips').select('id,title,location,start_date,end_date,price,capacity,status,cover_url,sort_order').in('status', ['open', 'upcoming']).order('sort_order').order('start_date').limit(12);
+      if (t.error) return;
+      const rows = t.data || [];
+      list = rows.filter((x) => x.status === 'open');
+      if (!list.length) { list = rows.filter((x) => x.status === 'upcoming'); kind = 'soon'; }
+      if (!list.length) return; // 보여 줄 여행이 없으면 팝업도 없다
+      list = list.slice(0, 3);
+      const c = await authClient.from('trip_counts').select('trip_id,n');
+      (c.data || []).forEach((r) => { counts[r.trip_id] = r.n; });
+    } catch (e) { return; }
+    popTrips = { kind, list, counts };
+    const dlg = document.createElement('dialog');
+    dlg.id = 'home-popup'; dlg.className = 'popup'; dlg.setAttribute('aria-labelledby', 'popup-title');
+    document.body.appendChild(dlg);
+    renderPopup();
+    setTimeout(() => { try { dlg.showModal(); } catch (e) { /* 이미 열림 */ } }, 500);
+    dlg.addEventListener('click', (e) => {
+      if (e.target === dlg) dlg.close(); // 바깥(배경) 클릭
+      if (e.target.closest('[data-pop-hide]')) { try { localStorage.setItem(POP_KEY, popToday()); } catch (err) { /* 무시 */ } dlg.close(); }
+      if (e.target.closest('[data-pop-close]')) dlg.close();
+    });
+  }
+  function renderPopup() {
+    const dlg = $('#home-popup');
+    if (!dlg || !popTrips) return;
+    const { kind, list, counts } = popTrips;
+    const items = list.map((t) => {
+      const n = counts[t.id] || 0, left = t.capacity ? t.capacity - n : null;
+      const dates = t.start_date ? (t.end_date && t.end_date !== t.start_date ? fmtDay(t.start_date) + ' – ' + fmtDay(t.end_date) : fmtDay(t.start_date)) : '';
+      const meta = [t.location, dates].filter(Boolean).map(esc).join(' · ');
+      const cover = safeUrl(t.cover_url) ? `<img src="${esc(t.cover_url)}" alt="" loading="lazy">` : `<img class="art" src="art/cover-${coverKind(t)}.svg" alt="" loading="lazy">`;
+      const low = kind === 'open' && left != null && left > 0 && left <= 2;
+      return `<a class="pop-item" href="trips.html#trip-${kind === 'open' ? 'open' : 'soon'}"><span class="pop-cover">${cover}</span><span class="pop-text"><strong>${esc(t.title)}</strong>${meta ? `<small>${meta}</small>` : ''}<small>${t.price > 0 ? esc(money(t.price)) : ''}${low ? ` <b class="pop-low">${esc(T('pop_low', { n: left }))}</b>` : ''}</small></span></a>`;
+    }).join('');
+    dlg.innerHTML = `<div class="dlg-head"><h2 id="popup-title">${esc(T(kind === 'open' ? 'pop_title_open' : 'pop_title_soon'))}</h2><button class="x" type="button" data-pop-close aria-label="${esc(T('pop_close'))}">×</button></div>
+      <div class="pop-list">${items}</div>
+      <a class="btn block" href="trips.html">${esc(T('pop_cta'))}</a>
+      <div class="pop-foot"><button class="link-btn" type="button" data-pop-hide>${esc(T('pop_hide'))}</button><button class="link-btn" type="button" data-pop-close>${esc(T('pop_close'))}</button></div>`;
+  }
+
   /* ---------------- 개인정보 처리방침: 한국어가 정본, 그 외 언어는 영어 참고 번역 + 안내 ---------------- */
   function renderPrivacy() {
     const ko = document.querySelector('[data-policy="ko"]'), en = document.querySelector('[data-policy="en"]');
@@ -1000,9 +1049,9 @@
     lastUid = uid;
     if (changed) { if (tripState.loaded) loadTrips(); if (rv.loaded) loadReviews(); }
     if ($('#q-body') && questUid !== uid) { questUid = uid; loadQuest(); }
-    renderTrips(); renderReviews(); renderSuggest(); renderPrivacy(); renderQuest();
+    renderTrips(); renderReviews(); renderSuggest(); renderPrivacy(); renderQuest(); renderPopup();
   };
   window.pageHooks.push(pageHook);
-  initTrips(); initReviews(); initSuggest(); initContact(); initReports(); initQuest(); initReset();
+  initTrips(); initReviews(); initSuggest(); initContact(); initReports(); initQuest(); initReset(); initPopup();
   if ($('#q-body')) pageHook(); // 로그인 확인이 이 파일보다 먼저 끝났을 수 있어 한 번 직접 실행한다
 })();
