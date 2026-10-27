@@ -27,6 +27,7 @@
 - AI·재만남: `ai_usage`, `ai_icebreakers`, `reunion_picks`(서로 고르면 성사), `manner_tags`(매너 칭찬, 서버만 접근)
 - 신뢰: `trust_score = 80 + 3×출석 − 20×노쇼 − 5×경고`(0~100)를 DB 함수 `recompute_trust`가 트리거(`on_attendance_changed`, `on_warning_changed`)로 매번 다시 계산한다. 배지는 `user_badges`(회원은 자기 것만 조회, 부여는 트리거 `award_badges`), 알림은 `notifications`(회원은 자기 것 조회·읽음 표시만, 생성은 서버/트리거)
 - 운영: `admin_logs`(최고 관리자만 조회), `reports`(회원은 신고 등록·내 신고 조회, 운영진은 전체), `daily_active`(DAU 집계, 회원은 오늘 자기 행만 insert), `trips.hidden/approval_status`(숨김·승인, 방문자는 공개된 모임만 조회), `trip_applications.attendance`(출석/노쇼)
+- 게이미피케이션: `profiles.xp`(회원이 못 바꿈), `xp_rules`(관리자가 조정), `xp_events`(user_id+kind+ref 유일 → 중복 적립 방지, 트리거가 출석·후기·호스팅·체크인에 적립), 레벨 공식 필요 XP = 50·L·(L−1)(`level_of`), `user_titles`(관심사 태그 모임 3회 출석 → 칭호), `coupon_templates`/`user_coupons`/`level_rewards`(할인 정률·정액, 우선 참여권), `stamp_boards`/`user_board_rewards`(지역·관심사 도장판 → 쿠폰), `question_bank`/`daily_questions`/`daily_checkins`(pg_cron `rotate-daily-question`이 매일 질문 교체, 연속 출석), `seasons`/`season_missions`/`crews`(최대 6명)/`crew_members`/`crew_mission_claims`. 회원은 자기 행·공개 설정만 조회하고 모든 쓰기는 서버(`api/gamify.js`)·트리거. 퀘스트 화면은 `quest.html`, 결제 쿠폰은 `pay-prepare`(서버가 금액 계산, 최소 100원)·`pay-return`(결제 확정 시 사용 처리).
 - 모든 표 RLS 켜짐. 서버만 다루는 표(`payments`, `ai_*`, `reunion_picks` 등)는 정책이 없고 브라우저 접근 권한도 없다.
 
 ## 개발 원칙

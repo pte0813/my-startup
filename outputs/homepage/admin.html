@@ -73,6 +73,7 @@
       <button role="tab" data-tab="dash" aria-selected="true">대시보드</button>
       <button role="tab" data-tab="users" aria-selected="false">회원</button>
       <button role="tab" data-tab="trips" aria-selected="false">모임</button>
+      <button role="tab" data-tab="gamify" aria-selected="false" id="tab-gamify">게이미피케이션</button>
       <button role="tab" data-tab="reports" aria-selected="false">신고 센터 <span class="pill bad" id="rp-count" hidden></span></button>
       <button role="tab" data-tab="logs" aria-selected="false" id="tab-logs" hidden>작업 로그</button>
     </nav>
@@ -116,9 +117,14 @@
     </section>
 
     <section id="p-trips" class="panel" hidden>
-      <div class="tw"><table><thead><tr><th>모임</th><th>진행 상태</th><th>공개</th><th>승인</th><th>신청</th><th>출석</th><th>노쇼</th><th>관리</th></tr></thead><tbody id="t-body"></tbody></table></div>
+      <div class="tw"><table><thead><tr><th>모임</th><th>진행 상태</th><th>공개</th><th>승인</th><th>신청</th><th>출석</th><th>노쇼</th><th>지역·태그</th><th>관리</th></tr></thead><tbody id="t-body"></tbody></table></div>
       <div class="card" id="t-detail" hidden></div>
       <p class="msg" id="t-msg" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="p-gamify" class="panel" hidden>
+      <p class="msg" id="g-msg" role="status" aria-live="polite"></p>
+      <div id="g-body"></div>
     </section>
 
     <section id="p-reports" class="panel" hidden>
@@ -154,6 +160,8 @@
     const STATUS = { active: ['정상', 'ok'], warned: ['경고', 'warn'], suspended: ['정지', 'bad'] };
     const APPROVAL = { approved: ['승인', 'ok'], pending: ['대기', 'warn'], rejected: ['반려', 'bad'] };
     const REASON = { spam: '스팸·광고', abuse: '욕설·괴롭힘', inappropriate: '부적절한 내용', noshow: '노쇼', other: '기타' };
+    const REGION = { domestic: '국내', asia: '아시아', europe: '유럽', americas: '미주', oceania: '오세아니아', africa: '아프리카', other: '기타' };
+    const INTERESTS = ['cafe', 'food', 'photo', 'hiking', 'camping', 'sea', 'exhibition', 'music', 'reading', 'workout', 'movie', 'boardgame'];
     const TTYPE = { user: '회원', trip: '모임', review: '후기' };
     const ATT = { pending: '대기', attended: '출석', no_show: '노쇼' };
     const fmt = (d) => (d ? new Date(d).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' }) : '-');
@@ -262,6 +270,7 @@
           ${canSuspend ? (u.status === 'suspended' ? `<button class="btn small" data-act="unsuspend" data-id="${esc(u.id)}">정지 해제</button>` : `<button class="btn danger small" data-act="suspend" data-id="${esc(u.id)}">정지</button>`) : ''}
           ${canRole ? `<select data-role-for="${esc(u.id)}" aria-label="역할 변경">${Object.entries(ROLE).map(([k, n]) => `<option value="${k}"${k === u.role ? ' selected' : ''}>${n}</option>`).join('')}</select>` : ''}
         </div>`}
+        ${me.permissions.includes('gamify.coupon.grant') && !self ? `<div class="row" style="margin:6px 0"><select id="grant-tpl" aria-label="쿠폰"></select><input id="grant-reason" placeholder="지급 사유" size="18"><button class="btn ghost small" data-grant="${esc(u.id)}">쿠폰 지급</button></div>` : ''}
         <p class="msg" id="u-msg" role="status" aria-live="polite"></p>
         <h3 style="font-size:1rem;margin-top:10px">신청 내역</h3>
         <div class="tw"><table><thead><tr><th>모임</th><th>상태</th><th>출석</th><th>신청일</th></tr></thead><tbody>${applications.map((a) => `<tr><td>${esc((a.trips || {}).title || '')}</td><td>${esc(a.status)}</td><td>${esc(ATT[a.attendance] || a.attendance)}</td><td>${fmtD(a.created_at)}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">없음</td></tr>'}</tbody></table></div>
@@ -270,6 +279,8 @@
         <h3 style="font-size:1rem;margin-top:10px">조치 이력</h3>
         <div class="tw"><table><thead><tr><th>일시</th><th>작업</th><th>내용</th></tr></thead><tbody>${history.map((h) => `<tr><td>${fmt(h.created_at)}</td><td>${esc(h.action)} (${esc(ROLE[h.actor_role] || h.actor_role)})</td><td>${esc(JSON.stringify(h.detail))}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">없음</td></tr>'}</tbody></table></div>`;
       if (note) flash($('u-msg'), note, 'ok');
+      const gs = $('grant-tpl');
+      if (gs) { if (!G) { const gr = await api('gamify.get'); if (gr.status === 200) G = gr.body; } if (G) gs.innerHTML = G.coupons.filter((c) => c.active).map((c) => `<option value="${esc(c.id)}">${esc(c.code)} · ${esc(gname(c.name))}</option>`).join(''); }
       box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
     async function userAct(act, id) {
@@ -288,11 +299,12 @@
     /* ---- 모임 ---- */
     async function loadTrips() {
       const r = await api('trips.list');
-      if (r.status !== 200) { $('t-body').innerHTML = `<tr><td colspan="8" class="msg err">${esc(r.status === 403 ? '모임 관리는 최고 관리자와 운영자만 할 수 있어요.' : errText(r))}</td></tr>`; return; }
+      if (r.status !== 200) { $('t-body').innerHTML = `<tr><td colspan="9" class="msg err">${esc(r.status === 403 ? '모임 관리는 최고 관리자와 운영자만 할 수 있어요.' : errText(r))}</td></tr>`; return; }
       const stN = { open: '모집 중', upcoming: '오픈 예정', past: '지난 모임' };
       $('t-body').innerHTML = r.body.trips.map((t) => {
         const ap = APPROVAL[t.approval_status] || [t.approval_status, ''];
         return `<tr><td><b>${esc(t.title)}</b><br><span class="muted">${esc(t.location || '')}</span></td><td>${esc(stN[t.status] || t.status)}</td><td><span class="pill ${t.hidden ? 'bad' : 'ok'}">${t.hidden ? '숨김' : '공개'}</span></td><td><span class="pill ${ap[1]}">${ap[0]}</span></td><td>${t.applicants}${t.capacity ? ' / ' + t.capacity : ''}</td><td>${t.attended}</td><td>${t.no_show ? `<span class="pill bad">${t.no_show}</span>` : 0}</td>
+          <td><div class="row"><select data-region-for="${esc(t.id)}" aria-label="지역">${Object.entries(REGION).map(([k, n]) => `<option value="${k}"${k === t.region ? ' selected' : ''}>${n}</option>`).join('')}</select><input data-tags-for="${esc(t.id)}" value="${esc((t.tags || []).join(','))}" placeholder="cafe,photo" aria-label="관심사 태그" size="14"><button class="btn ghost small" data-trip-meta="${esc(t.id)}">저장</button></div></td>
           <td><div class="row"><button class="btn ghost small" data-trip-hide="${esc(t.id)}" data-hidden="${t.hidden ? 0 : 1}">${t.hidden ? '공개하기' : '숨기기'}</button>
           ${t.approval_status !== 'approved' ? `<button class="btn small" data-trip-approve="${esc(t.id)}" data-v="approved">승인</button>` : ''}${t.approval_status !== 'rejected' ? `<button class="btn ghost small" data-trip-approve="${esc(t.id)}" data-v="rejected">반려</button>` : ''}
           <button class="btn ghost small" data-trip-people="${esc(t.id)}" data-title="${esc(t.title)}">참가자·출석</button></div></td></tr>`;
@@ -338,8 +350,86 @@
       $('l-body').innerHTML = r.status !== 200 ? `<tr><td colspan="5" class="msg err">${esc(errText(r))}</td></tr>` : r.body.logs.map((l) => `<tr><td>${fmt(l.created_at)}</td><td>${esc(l.actor || '')} <span class="muted">${esc(ROLE[l.actor_role] || l.actor_role)}</span></td><td>${esc(l.action)}</td><td>${esc(l.target_type || '')} ${esc((l.target_id || '').slice(0, 8))}</td><td>${esc(JSON.stringify(l.detail))}</td></tr>`).join('') || '<tr><td colspan="5" class="muted">기록이 없어요.</td></tr>';
     }
 
+    /* ---- 게이미피케이션 설정 ---- */
+    let G = null;
+    const gname = (o) => (o && (o.ko || o.en)) || '';
+    const tplOpts = (sel, blank) => (blank ? '<option value="">없음</option>' : '') + G.coupons.map((c) => `<option value="${esc(c.id)}"${c.id === sel ? ' selected' : ''}>${esc(c.code)} · ${esc(gname(c.name))}</option>`).join('');
+    const TYPEN = { percent: '% 할인', amount: '원 할인', priority: '우선 참여권' };
+    const val = (root, n) => { const el = root.querySelector(`[name="${n}"]`); return el ? (el.type === 'checkbox' ? el.checked : el.value) : ''; };
+    async function loadGamify() {
+      const r = await api('gamify.get');
+      if (r.status !== 200) { $('g-body').innerHTML = `<p class="msg err">${esc(r.status === 403 ? '게이미피케이션 설정은 최고 관리자와 운영자만 할 수 있어요.' : errText(r))}</p>`; return; }
+      G = r.body;
+      const active = G.seasons.find((x) => x.active);
+      const missions = G.missions.filter((m) => active && m.season_id === active.id);
+      $('g-body').innerHTML = `
+      <div class="card"><h3>XP 규칙</h3><p class="muted">활동별로 얻는 XP예요. 레벨은 누적 XP 100×L×(L−1)/2에서 올라가요(Lv2=100, Lv3=300, Lv4=600, Lv5=1000).</p>
+        <div class="tw"><table><thead><tr><th>활동</th><th>XP</th><th>사용</th><th></th></tr></thead><tbody>${G.xp_rules.map((x) => `<tr data-xp="${esc(x.kind)}"><td>${esc(x.label)}</td><td><input type="number" name="xp" min="0" max="1000" value="${x.xp}" style="width:90px"></td><td><input type="checkbox" name="active"${x.active ? ' checked' : ''}></td><td><button class="btn ghost small" data-g="xp">저장</button></td></tr>`).join('')}</tbody></table></div></div>
+
+      <div class="card"><h3>쿠폰 템플릿</h3><p class="muted">할인 쿠폰은 결제할 때 자동으로 금액에 반영되고, 우선 참여권은 "오픈 예정" 모임에 먼저 신청할 수 있게 해요.</p>
+        <div class="tw"><table><thead><tr><th>코드</th><th>이름</th><th>종류</th><th>값</th><th>유효(일)</th><th>사용</th><th></th></tr></thead><tbody>${G.coupons.map((c) => `<tr data-coupon="${esc(c.id)}"><td>${esc(c.code)}</td><td>${esc(gname(c.name))}</td><td>${esc(TYPEN[c.type])}</td><td>${c.value}</td><td>${c.valid_days}</td><td>${c.active ? '✓' : '—'}</td><td><button class="btn ghost small" data-g="coupon-edit">편집</button></td></tr>`).join('')}</tbody></table></div>
+        <form class="row" data-gf="coupon" style="margin-top:10px"><input type="hidden" name="id"><input name="code" placeholder="코드(대문자)" size="12" required><input name="name_ko" placeholder="이름(한국어)" size="14" required><input name="name_en" placeholder="Name (English)" size="14"><select name="type"><option value="percent">% 할인</option><option value="amount">원 할인</option><option value="priority">우선 참여권</option></select><input name="value" type="number" placeholder="값" style="width:80px"><input name="valid_days" type="number" value="90" style="width:80px" title="유효 일수"><label><input type="checkbox" name="active" checked> 사용</label><button class="btn small" type="submit">저장</button></form></div>
+
+      <div class="card"><h3>레벨 보상</h3><p class="muted">해당 레벨에 처음 도달하면 쿠폰을 자동으로 줘요.</p>
+        <div class="row">${G.level_rewards.map((l) => `<span class="pill ok">Lv${l.level} → ${esc(gname((G.coupons.find((c) => c.id === l.coupon_template_id) || {}).name))}</span>`).join(' ') || '<span class="muted">설정된 보상이 없어요.</span>'}</div>
+        <form class="row" data-gf="level" style="margin-top:10px"><input name="level" type="number" min="2" max="50" placeholder="레벨" style="width:80px" required><select name="coupon_template_id">${tplOpts('', true)}</select><button class="btn small" type="submit">저장(쿠폰 '없음'이면 보상 삭제)</button></form></div>
+
+      <div class="card"><h3>도장판</h3><p class="muted">출석한 모임의 지역(또는 관심사 태그) 종류가 목표 개수에 닿으면 쿠폰을 한 번 줘요. 모임의 지역·태그는 '모임' 탭에서 입력해요.</p>
+        <div class="tw"><table><thead><tr><th>코드</th><th>이름</th><th>기준</th><th>목표</th><th>보상</th><th>사용</th><th></th></tr></thead><tbody>${G.boards.map((b) => `<tr data-board="${esc(b.id)}"><td>${esc(b.code)}</td><td>${esc(gname(b.title))}</td><td>${b.kind === 'region' ? '지역' : '관심사 태그'}</td><td>${b.goal}</td><td>${esc(gname((G.coupons.find((c) => c.id === b.coupon_template_id) || {}).name) || '-')}</td><td>${b.active ? '✓' : '—'}</td><td><button class="btn ghost small" data-g="board-edit">편집</button></td></tr>`).join('')}</tbody></table></div>
+        <form class="row" data-gf="board" style="margin-top:10px"><input type="hidden" name="id"><input name="code" placeholder="코드(소문자)" size="12" required><input name="title_ko" placeholder="이름(한국어)" size="18" required><input name="title_en" placeholder="Name (English)" size="18"><select name="kind"><option value="region">지역 종류</option><option value="tag">관심사 태그 종류</option></select><input name="goal" type="number" min="1" max="20" value="3" style="width:70px"><select name="coupon_template_id">${tplOpts('', true)}</select><label><input type="checkbox" name="active" checked> 사용</label><button class="btn small" type="submit">저장</button></form></div>
+
+      <div class="card"><h3>시즌 · 크루 미션</h3><p class="muted">활성 시즌은 하나예요. 크루가 시즌 동안 함께 쌓은 활동이 목표에 닿으면 크루원 모두 보상을 받을 수 있어요.</p>
+        <div class="tw"><table><thead><tr><th>시즌</th><th>기간</th><th>상태</th><th></th></tr></thead><tbody>${G.seasons.map((x) => `<tr data-season="${esc(x.id)}" data-name="${esc(x.name)}" data-s="${esc(x.starts_on)}" data-e="${esc(x.ends_on)}" data-active="${x.active ? 1 : 0}"><td>${esc(x.name)}</td><td>${esc(x.starts_on)} ~ ${esc(x.ends_on)}</td><td>${x.active ? '<span class="pill ok">진행 중</span>' : '<span class="pill">종료/예정</span>'}</td><td><button class="btn ghost small" data-g="season-edit">편집</button></td></tr>`).join('')}</tbody></table></div>
+        <form class="row" data-gf="season" style="margin-top:10px"><input type="hidden" name="id"><input name="name" placeholder="시즌 이름" size="18" required><input name="starts_on" type="date" required><input name="ends_on" type="date" required><label><input type="checkbox" name="active"> 진행 중으로 설정</label><button class="btn small" type="submit">저장</button></form>
+        <h3 style="margin-top:14px;font-size:1rem">미션 ${active ? `(${esc(active.name)})` : ''}</h3>
+        <div class="tw"><table><thead><tr><th>미션</th><th>종류</th><th>목표</th><th>보상</th><th>사용</th><th></th></tr></thead><tbody>${missions.map((m) => `<tr data-mission="${esc(m.id)}"><td>${esc(gname(m.title))}</td><td>${esc({ attend: '출석', review: '후기', checkin: '체크인' }[m.kind])}</td><td>${m.goal}</td><td>${esc(gname((G.coupons.find((c) => c.id === m.coupon_template_id) || {}).name) || '-')}</td><td>${m.active ? '✓' : '—'}</td><td><button class="btn ghost small" data-g="mission-edit">편집</button></td></tr>`).join('') || '<tr><td colspan="6" class="muted">활성 시즌에 미션이 없어요.</td></tr>'}</tbody></table></div>
+        ${active ? `<form class="row" data-gf="mission" style="margin-top:10px"><input type="hidden" name="id"><input type="hidden" name="season_id" value="${esc(active.id)}"><input name="title_ko" placeholder="미션(한국어)" size="20" required><input name="title_en" placeholder="Mission (English)" size="20"><select name="kind"><option value="attend">크루 출석</option><option value="review">크루 후기</option><option value="checkin">크루 체크인</option></select><input name="goal" type="number" min="1" value="5" style="width:80px"><select name="coupon_template_id">${tplOpts('', true)}</select><label><input type="checkbox" name="active" checked> 사용</label><button class="btn small" type="submit">저장</button></form>` : ''}</div>
+
+      <div class="card"><h3>데일리 질문 은행</h3><p class="muted">매일 자정(한국 시간)에 가장 오래 안 쓴 질문 하나가 자동으로 오늘의 질문이 돼요(Supabase Cron). 오늘의 질문: <b>${esc(G.today_question ? gname(G.today_question.question) : '(아직 없음)')}</b></p>
+        <div class="tw"><table><thead><tr><th>질문</th><th>A</th><th>B</th><th>마지막 사용</th><th>사용</th><th></th></tr></thead><tbody>${G.questions.map((q) => `<tr data-question="${esc(q.id)}"><td>${esc(gname(q.question))}</td><td>${esc(gname(q.a))}</td><td>${esc(gname(q.b))}</td><td>${esc(q.last_used_on || '-')}</td><td>${q.active ? '✓' : '—'}</td><td><button class="btn ghost small" data-g="question-toggle">${q.active ? '끄기' : '켜기'}</button></td></tr>`).join('')}</tbody></table></div>
+        <form class="row" data-gf="question" style="margin-top:10px"><input name="question_ko" placeholder="질문(한국어)" size="18" required><input name="question_en" placeholder="Question (English)" size="18"><input name="a_ko" placeholder="선택지 A(한국어)" size="14" required><input name="a_en" placeholder="Option A" size="12"><input name="b_ko" placeholder="선택지 B(한국어)" size="14" required><input name="b_en" placeholder="Option B" size="12"><button class="btn small" type="submit">질문 추가</button></form></div>`;
+    }
+    async function gSave(action, params, okText) {
+      const r = await api(action, params);
+      flash($('g-msg'), r.status === 200 ? (okText || '저장했어요.') : (r.body && r.body.error === 'duplicate_code' ? '이미 있는 코드예요.' : errText(r)), r.status === 200 ? 'ok' : 'err');
+      if (r.status === 200) loadGamify();
+      return r.status === 200;
+    }
+    document.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-g]'); if (!b) return;
+      const g = b.dataset.g, tr = b.closest('tr');
+      if (g === 'xp') return gSave('gamify.xp.update', { kind: tr.dataset.xp, xp: Number(tr.querySelector('[name=xp]').value), active: tr.querySelector('[name=active]').checked });
+      const fillForm = (name, vals) => { const f = $('g-body').querySelector(`[data-gf="${name}"]`); Object.entries(vals).forEach(([k, v]) => { const el = f.querySelector(`[name="${k}"]`); if (!el) return; if (el.type === 'checkbox') el.checked = !!v; else el.value = v == null ? '' : v; }); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+      if (g === 'coupon-edit') { const c = G.coupons.find((x) => x.id === tr.dataset.coupon); fillForm('coupon', { id: c.id, code: c.code, name_ko: c.name.ko, name_en: c.name.en, type: c.type, value: c.value, valid_days: c.valid_days, active: c.active }); }
+      if (g === 'board-edit') { const x = G.boards.find((y) => y.id === tr.dataset.board); fillForm('board', { id: x.id, code: x.code, title_ko: x.title.ko, title_en: x.title.en, kind: x.kind, goal: x.goal, coupon_template_id: x.coupon_template_id, active: x.active }); }
+      if (g === 'season-edit') fillForm('season', { id: tr.dataset.season, name: tr.dataset.name, starts_on: tr.dataset.s, ends_on: tr.dataset.e, active: tr.dataset.active === '1' });
+      if (g === 'mission-edit') { const m = G.missions.find((y) => y.id === tr.dataset.mission); fillForm('mission', { id: m.id, title_ko: m.title.ko, title_en: m.title.en, kind: m.kind, goal: m.goal, coupon_template_id: m.coupon_template_id, active: m.active }); }
+      if (g === 'question-toggle') { const q = G.questions.find((y) => y.id === tr.dataset.question); await gSave('gamify.question.save', { id: q.id, question: q.question, a: q.a, b: q.b, active: !q.active }, q.active ? '껐어요.' : '켰어요.'); }
+    });
+    document.addEventListener('submit', async (e) => {
+      const f = e.target.closest('[data-gf]'); if (!f) return;
+      e.preventDefault();
+      const k = f.dataset.gf, v = (n) => val(f, n);
+      let ok = false;
+      if (k === 'coupon') ok = await gSave('gamify.coupon.save', { id: v('id') || undefined, code: v('code'), name: { ko: v('name_ko'), en: v('name_en') }, type: v('type'), value: Number(v('value')), valid_days: Number(v('valid_days')), active: v('active') });
+      if (k === 'level') ok = await gSave('gamify.levelreward.save', { level: Number(v('level')), coupon_template_id: v('coupon_template_id') || null });
+      if (k === 'board') ok = await gSave('gamify.board.save', { id: v('id') || undefined, code: v('code'), title: { ko: v('title_ko'), en: v('title_en') }, kind: v('kind'), goal: Number(v('goal')), coupon_template_id: v('coupon_template_id') || null, active: v('active') });
+      if (k === 'season') ok = await gSave('gamify.season.save', { id: v('id') || undefined, name: v('name'), starts_on: v('starts_on'), ends_on: v('ends_on'), active: v('active') });
+      if (k === 'mission') ok = await gSave('gamify.mission.save', { id: v('id') || undefined, season_id: v('season_id'), title: { ko: v('title_ko'), en: v('title_en') }, kind: v('kind'), goal: Number(v('goal')), coupon_template_id: v('coupon_template_id') || null, active: v('active') });
+      if (k === 'question') ok = await gSave('gamify.question.save', { question: { ko: v('question_ko'), en: v('question_en') }, a: { ko: v('a_ko'), en: v('a_en') }, b: { ko: v('b_ko'), en: v('b_en') } }, '질문을 추가했어요.');
+      if (ok && k !== 'question') f.reset();
+    });
+    document.addEventListener('click', async (e) => {
+      const m = e.target.closest('[data-trip-meta]'); if (!m) return;
+      const id = m.dataset.tripMeta;
+      const region = document.querySelector(`[data-region-for="${id}"]`).value;
+      const tags = document.querySelector(`[data-tags-for="${id}"]`).value.split(',').map((x) => x.trim().toLowerCase()).filter((x) => INTERESTS.includes(x));
+      const r = await api('trips.update', { id, region, tags });
+      flash($('t-msg'), r.status === 200 ? '지역·태그를 저장했어요.' : errText(r), r.status === 200 ? 'ok' : 'err'); loadTrips();
+    });
+
     /* ---- 탭·시작 ---- */
-    const LOADERS = { dash: loadDash, users: loadUsers, trips: loadTrips, reports: loadReports, logs: loadLogs };
+    const LOADERS = { dash: loadDash, users: loadUsers, trips: loadTrips, gamify: loadGamify, reports: loadReports, logs: loadLogs };
     function openTab(name) {
       document.querySelectorAll('#tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
       for (const k of Object.keys(LOADERS)) $('p-' + k).hidden = k !== name;
@@ -360,6 +450,7 @@
       $('tab-logs').hidden = !me.permissions.includes('logs.list');
       document.querySelector('[data-tab=dash]').hidden = !me.permissions.includes('stats');
       document.querySelector('[data-tab=trips]').hidden = !me.permissions.includes('trips.list');
+      document.querySelector('[data-tab=gamify]').hidden = !me.permissions.includes('gamify.get');
       openTab(me.permissions.includes('stats') ? 'dash' : 'users');
       if (me.permissions.includes('reports.list')) api('reports.list', { status: 'pending' }).then((x) => { if (x.status === 200 && x.body.reports.length) { $('rp-count').hidden = false; $('rp-count').textContent = x.body.reports.length; } });
     }
@@ -393,6 +484,8 @@
       const ppl = t.closest('[data-trip-people]'); if (ppl) return showApplicants(ppl.dataset.tripPeople, ppl.dataset.title);
       const att = t.closest('[data-att]');
       if (att) { const r = await api('trips.attendance', { application_id: att.dataset.att, attendance: att.dataset.v }); if (r.status !== 200) alert(errText(r)); showApplicants(att.dataset.trip, att.dataset.title); return loadTrips(); }
+      const gr = t.closest('[data-grant]');
+      if (gr) { const r = await api('gamify.coupon.grant', { user_id: gr.dataset.grant, template_id: $('grant-tpl').value, reason: $('grant-reason').value }); return flash($('u-msg'), r.status === 200 ? '쿠폰을 지급했어요.' : errText(r), r.status === 200 ? 'ok' : 'err'); }
       const all = t.closest('[data-att-all]');
       if (all) {
         const r = await api('trips.applicants', { id: all.dataset.attAll });

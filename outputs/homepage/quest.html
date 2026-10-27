@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>퀘스트 | 함께닿</title>
+  <meta name="description" content="레벨·데일리 체크인·도장판·시즌 크루로 여행을 더 즐겁게 만나 보세요.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:site_name" content="함께닿">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:title" content="퀘스트 | 함께닿">
+  <meta property="og:description" content="레벨·데일리 체크인·도장판·시즌 크루로 여행을 더 즐겁게 만나 보세요.">
+  <meta property="og:url" content="https://hamkkedat-homepage.vercel.app/quest.html">
+  <meta property="og:image" content="https://hamkkedat-homepage.vercel.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="퀘스트 | 함께닿">
+  <meta name="twitter:description" content="레벨·데일리 체크인·도장판·시즌 크루로 여행을 더 즐겁게 만나 보세요.">
+  <meta name="twitter:image" content="https://hamkkedat-homepage.vercel.app/og-image.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Jua&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="brand.css">
+  <link rel="stylesheet" href="common.css">
+</head>
+<body data-page="quest">
+  <header>
+    <div class="mega-bg" aria-hidden="true"></div>
+    <div class="wrap bar">
+      <a class="logo" href="index.html" aria-label="함께닿"><span class="dots-mini" aria-hidden="true"><i></i><i></i></span><span class="logo-name">함께닿</span></a>
+      <nav id="menu" aria-label="주 메뉴" data-i18n-attr="aria-label:menu_label">
+        <ul>
+          <li class="group"><a class="top" href="index.html" data-i18n="g_about">함께닿이란?</a>
+            <ul class="sub">
+              <li><a href="index.html#intro" data-i18n="s_company">회사 소개</a></li>
+              <li><a href="index.html#service" data-i18n="s_service">서비스 소개</a></li>
+              <li><a href="index.html#team" data-i18n="s_team">팀 소개</a></li>
+            </ul></li>
+          <li class="group"><a class="top" href="trips.html" data-i18n="g_trips">여행 신청</a>
+            <ul class="sub">
+              <li><a href="trips.html#trip-open" data-i18n="s_open">진행 중인 여행</a></li>
+              <li><a href="trips.html#trip-soon" data-i18n="s_soon">오픈 예정 여행</a></li>
+              <li><a href="trips.html#trip-past" data-i18n="s_past">진행했던 여행</a></li>
+            </ul></li>
+          <li class="group"><a class="top" href="reviews.html" data-i18n="g_reviews">여행 후기</a>
+            <ul class="sub">
+              <li><a href="reviews.html" data-i18n="s_reviews">여행 후기 모음</a></li>
+            </ul></li>
+          <li class="group"><a class="top" href="community.html" data-i18n="g_community">커뮤니티</a>
+            <ul class="sub">
+              <li><a href="community.html#events" data-i18n="s_events">이벤트</a></li>
+              <li><a href="community.html#faq" data-i18n="s_faq">자주 묻는 질문</a></li>
+              <li><a href="community.html#suggest" data-i18n="s_suggest">상품 제안하기</a></li>
+            </ul></li>
+          <li class="group current"><a class="top" href="quest.html" data-i18n="g_quest">퀘스트</a></li>
+          <li class="group"><a class="top" href="contact.html" data-i18n="g_contact">연락하기</a>
+            <ul class="sub">
+              <li><a href="contact.html#contact-form" data-i18n="s_contact">문의하기</a></li>
+              <li><a href="contact.html#jobs" data-i18n="s_jobs">채용공고</a></li>
+            </ul></li>
+          <li class="auth"><button type="button" class="navbtn" id="auth-nav" data-i18n="auth_login">로그인</button></li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <div class="notif" id="notif-wrap" hidden>
+          <button type="button" class="notif-btn" id="notif-btn" aria-expanded="false" aria-controls="notif-panel" data-i18n-attr="aria-label:notif_btn" aria-label="알림 보기"><span aria-hidden="true">🔔</span><span class="notif-dot" id="notif-dot" hidden></span></button>
+          <div class="notif-panel" id="notif-panel" hidden role="region" aria-live="polite"></div>
+        </div>
+        <label class="lang"><span class="sr" data-i18n="lang_label">언어</span>
+          <select id="lang">
+            <option value="ko">한국어</option>
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+            <option value="ja">日本語</option>
+            <option value="es">Español</option>
+          </select>
+          <span class="lang-ico" id="lang-ico" aria-hidden="true"></span>
+        </label>
+        <a class="btn" href="https://hamkkedat-landing.vercel.app" target="_blank" rel="noopener" data-i18n="apply">사전 신청</a>
+        <button class="burger" id="burger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu"><span></span></button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="page-head">
+      <div class="wrap hero">
+        <div class="hero-text">
+        <p class="eyebrow" data-i18n="g_quest">퀘스트</p>
+        <h1 data-i18n="g_quest">퀘스트</h1>
+        <p class="lead" data-i18n="d_quest">레벨·데일리 체크인·도장판·시즌 크루로 여행을 더 즐겁게 만나 보세요.</p>
+        </div>
+        <img class="hero-art" src="art/hero-reviews.svg" alt="" width="480" height="360" loading="eager">
+      </div>
+    </section>
+
+    <section id="quest">
+      <div class="wrap">
+        <div class="form-card" id="q-need" hidden>
+          <p data-i18n="q_need_login">로그인하면 내 레벨과 퀘스트를 볼 수 있어요.</p>
+          <button class="btn" type="button" data-open-login data-i18n="auth_login">로그인</button>
+        </div>
+        <p class="fmsg" id="q-msg" role="status" aria-live="polite"></p>
+        <div id="q-body" class="q-grid" hidden></div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap"><p data-i18n="footer">© 함께닿 · 혼자 떠나도, 마음은 닿는다</p><p><a href="privacy.html" data-i18n="privacy_link">개인정보 처리방침</a></p></div></footer>
+
+  <button id="to-top" type="button" aria-label="맨 위로" data-i18n-attr="aria-label:to_top">↑</button>
+
+  <dialog id="auth-dialog" aria-labelledby="auth-title">
+    <div class="dlg-head"><h2 id="auth-title" data-i18n="auth_login">로그인</h2><button class="x" type="button" data-close data-i18n-attr="aria-label:auth_close" aria-label="닫기">×</button></div>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" id="tab-login" aria-selected="true" data-i18n="auth_login">로그인</button>
+      <button type="button" role="tab" id="tab-signup" aria-selected="false" data-i18n="auth_signup">회원가입</button>
+    </div>
+    <form id="auth-form" novalidate>
+      <label id="name-row" hidden><span data-i18n="auth_name">이름</span><input type="text" name="name" autocomplete="name" maxlength="100"></label>
+      <label><span data-i18n="auth_email">이메일</span><input type="email" name="email" autocomplete="email" maxlength="254"></label>
+      <label><span data-i18n="auth_password">비밀번호</span><input type="password" name="password" autocomplete="current-password" maxlength="72"><small id="pw-hint" data-i18n="auth_pw_hint" hidden>8자 이상</small></label>
+      <label class="consent" id="consent-row" hidden><input type="checkbox" name="consent"><span><span data-i18n="signup_consent">개인정보 수집·이용에 동의하고 만 14세 이상입니다. (필수)</span> <a href="privacy.html" target="_blank" rel="noopener" data-i18n="privacy_link">개인정보 처리방침</a><small data-i18n="signup_consent_d">수집 항목: 이메일, 비밀번호, 이름 · 목적: 회원 식별과 서비스 제공 · 보유: 탈퇴 시까지 (결제 기록은 법령에 따라 5년)</small></span></label>
+      <button class="btn block" id="auth-submit" type="submit" data-i18n="auth_login">로그인</button>
+      <p class="dmsg" id="auth-msg" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+  <dialog id="report-dialog" aria-labelledby="report-title">
+    <div class="dlg-head"><h2 id="report-title" data-i18n="report_title">신고하기</h2><button class="x" type="button" data-close data-i18n-attr="aria-label:auth_close" aria-label="닫기">×</button></div>
+    <form id="report-form" novalidate>
+      <p class="note" id="report-target"></p>
+      <label><span data-i18n="report_reason">신고 사유</span>
+        <select name="reason">
+          <option value="spam" data-i18n="reason_spam">스팸·광고</option>
+          <option value="abuse" data-i18n="reason_abuse">욕설·괴롭힘</option>
+          <option value="inappropriate" data-i18n="reason_inappropriate">부적절한 내용</option>
+          <option value="noshow" data-i18n="reason_noshow">노쇼</option>
+          <option value="other" data-i18n="reason_other">기타</option>
+        </select></label>
+      <label><span data-i18n="report_detail">자세한 내용 (선택)</span><textarea name="detail" rows="4" maxlength="1000"></textarea></label>
+      <button class="btn block" id="report-submit" type="submit" data-i18n="report_submit">신고 보내기</button>
+      <p class="dmsg" id="report-msg" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+  <script src="config.js"></script>
+  <script src="monitor.js"></script>
+  <script src="ai-options.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="i18n.js"></script>
+  <script src="common.js"></script>
+  <script src="pay.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

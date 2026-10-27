@@ -104,6 +104,9 @@ function notifText(n) {
   if (n.kind === 'reunion_match') return tr('notif_reunion_match').replace('{name}', d.name || '').replace('{trip}', d.trip_title || '');
   if (n.kind === 'manner_badge') { var b = (opts.badges || {})[d.badge]; return tr('notif_manner_badge').replace('{badge}', b ? (b[currentLang] || b.ko) : (d.badge || '')); }
   if (n.kind === 'trust_down') return tr('notif_trust_down');
+  if (n.kind === 'level_up') return tr('notif_level_up').replace('{level}', d.level || '');
+  if (n.kind === 'coupon') return tr('notif_coupon');
+  if (n.kind === 'title') { var it = (opts.interests || {})[d.interest]; return tr('notif_title_earned').replace('{title}', tr('q_title_name').replace('{interest}', it ? (it[currentLang] || it.ko) : (d.interest || ''))); }
   return '';
 }
 function renderNotifs() {

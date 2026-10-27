@@ -64,3 +64,8 @@
   - `manner { tags }`: 같은 지난 여행 참가자에게 매너 칭찬(punctual/warm/mood_maker/considerate)을 남긴다. 노쇼 기록이 있는 사람과는 주고받을 수 없고, 누가 남겼는지는 저장은 되지만 받는 사람에게 보이지 않는다.
 - 배지: 첫 여행(출석 1), 믿음직한 참가자(출석 3·노쇼 0, 노쇼가 생기면 회수), 매너 4종(서로 다른 2명 이상에게 같은 칭찬을 받으면).
 - 알림은 헤더의 🔔(로그인 시)과 내 정보 페이지에서 본다. 이메일 알림은 아직 없다.
+
+### api/gamify.js (3단계 게이미피케이션)
+- `POST /api/gamify { action, ... }` — `overview`(XP·레벨·스트릭·오늘의 질문·칭호·쿠폰·도장판·시즌/크루), `checkin{choice:a|b}`, `crew.create{name}`, `crew.join{code}`, `crew.leave`, `crew.ranking`, `crew.claim{mission_id}`, `priority.apply{trip_id}`(오픈 예정 모임에 우선 참여권으로 먼저 신청). XP·쿠폰·크루는 서버와 DB 트리거만 바꾼다. 정지 회원은 체크인·크루·우선 참여를 쓸 수 없다.
+- `POST /api/pay-prepare`는 `coupon_id`(선택)를 받아 서버가 할인 금액을 계산한다(정률·정액, 본인 쿠폰·사용 가능·미만료만, 결제 금액 최소 100원). 쿠폰은 `pay-return`에서 결제가 확정될 때 사용 처리한다.
+- 관리자 `api/admin.js`에 `gamify.*` 작업 추가(XP 규칙·쿠폰·레벨 보상·도장판·시즌·미션·질문 은행·쿠폰 수동 지급).
