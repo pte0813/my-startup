@@ -1,6 +1,6 @@
 // POST /api/gamify  { action, ...params }   (Authorization: Bearer <로그인 회원의 access token>)
 // 게이미피케이션: 레벨·XP, 데일리 체크인, 칭호, 도장판, 쿠폰, 시즌 크루·미션. XP·쿠폰·크루는 모두 서버(service_role)와 DB 트리거만 바꾼다.
-//  overview · checkin{choice} · crew.create{name} · crew.join{code} · crew.leave · crew.ranking · crew.claim{mission_id} · priority.apply{trip_id}
+//  overview · invite.overview · invite.redeem{code} · checkin{choice} · crew.create{name} · crew.join{code} · crew.leave · crew.ranking · crew.claim{mission_id} · priority.apply{trip_id}
 const crypto = require('crypto');
 const { env, json, readBody, db, verifyUser, withErrors } = require('./_lib');
 
@@ -10,6 +10,10 @@ const levelOf = (xp) => Math.floor((1 + Math.sqrt(1 + (8 * xp) / 100)) / 2);
 const kstToday = () => new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
 const addDays = (d, n) => new Date(Date.parse(d + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);
 const CREW_MAX = 6;
+// ---- 4단계 친구 초대(원래 api/growth.js였으나 Hobby 플랜의 함수 12개 제한 때문에 이 함수에 합쳤다) ----
+const NEW_ACCOUNT_DAYS = 14; // 가입한 지 이 기간 안에서만 초대 코드를 쓸 수 있다
+const MONTHLY_CAP = 10;      // 한 사람이 한 달에 보상받는 초대 수(어뷰징 방지)
+
 
 async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return json(res, 405, { error: 'method_not_allowed' }); }
@@ -211,6 +215,43 @@ async function handler(req, res) {
     const ins = await store.insert('trip_applications', { trip_id: trip.id, user_id: user.id, name: String(profile.name || '').slice(0, 100) || 'member' });
     if (!ins.ok) { await store.update(`user_coupons?id=eq.${pass.id}`, { status: 'active', used_at: null, used_ref: null }); return json(res, 502, { error: 'apply_failed' }); }
     return json(res, 200, { ok: true });
+  }
+
+  // ---- 친구 초대 ----
+  //  invite.overview → { invite_code, invited, rewarded_this_month, monthly_cap }
+  //  invite.redeem{code} → 초대한 사람과 나 모두에게 쿠폰(INVITE5000). 자기 코드·이미 사용·가입 14일 초과·초대자 월 한도는 거절
+  if (action.startsWith('invite.')) {
+    const monthAgo = () => encodeURIComponent(new Date(Date.now() - 30 * 86400000).toISOString());
+    const me = await one(`profiles?select=id,invite_code,status&id=eq.${user.id}`);
+    if (!me) return json(res, 404, { error: 'no_profile' });
+    if (action === 'invite.overview') {
+      const invited = await store.count(`invites?select=id&inviter_id=eq.${user.id}`);
+      const month = await store.count(`invites?select=id&inviter_id=eq.${user.id}&created_at=gte.${monthAgo()}`);
+      return json(res, 200, { invite_code: me.invite_code, invited, rewarded_this_month: Math.min(month, MONTHLY_CAP), monthly_cap: MONTHLY_CAP });
+    }
+
+    if (action === 'invite.redeem') {
+      if (me.status === 'suspended') return json(res, 403, { error: 'suspended' });
+      const code = String(body.code || '').trim().toUpperCase();
+      if (!/^[A-Z0-9]{8}$/.test(code)) return json(res, 400, { error: 'invalid_code' });
+      const created = Date.parse(user.created_at || '');
+      if (!created || Date.now() - created > NEW_ACCOUNT_DAYS * 86400000) return json(res, 409, { error: 'not_new_account' });
+      const inviter = await one(`profiles?select=id,status&invite_code=eq.${code}`);
+      if (!inviter) return json(res, 404, { error: 'no_such_code' });
+      if (inviter.id === user.id) return json(res, 400, { error: 'own_code' });
+      if (inviter.status === 'suspended') return json(res, 404, { error: 'no_such_code' });
+      if (await one(`invites?select=id&invitee_id=eq.${user.id}`)) return json(res, 409, { error: 'already_redeemed' });
+      if ((await store.count(`invites?select=id&inviter_id=eq.${inviter.id}&created_at=gte.${monthAgo()}`)) >= MONTHLY_CAP) return json(res, 409, { error: 'inviter_cap' });
+      const tpl = await one('coupon_templates?select=id&code=eq.INVITE5000&active=eq.true');
+      const ins = await store.insert('invites', { inviter_id: inviter.id, invitee_id: user.id });
+      if (!ins.ok || !(ins.data && ins.data[0])) return json(res, ins.status === 409 ? 409 : 502, { error: ins.status === 409 ? 'already_redeemed' : 'save_failed' });
+      const inviteId = ins.data[0].id;
+      if (tpl) {
+        await rpc('issue_coupon', { uid: inviter.id, tpl: tpl.id, src: 'invite', ref: inviteId });
+        await rpc('issue_coupon', { uid: user.id, tpl: tpl.id, src: 'invite', ref: inviteId });
+      }
+      return json(res, 200, { ok: true, rewarded: !!tpl });
+    }
   }
 
   return json(res, 400, { error: 'invalid_action' });

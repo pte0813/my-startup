@@ -32,7 +32,7 @@
   }
 
   /* ---------------- 여행 목록·신청 ---------------- */
-  const tripState = { trips: [], counts: {}, mine: {}, coupons: [], loaded: false, failed: false };
+  const tripState = { trips: [], counts: {}, mine: {}, coupons: [], watch: {}, loaded: false, failed: false };
   const GRIDS = { open: 'grid-open', upcoming: 'grid-upcoming', past: 'grid-past' };
 
   async function loadTrips() {
@@ -53,7 +53,10 @@
         const cp = await authClient.from('user_coupons').select('id,expires_at,coupon_templates(name,type,value)').eq('status', 'active').gt('expires_at', new Date().toISOString()).order('expires_at');
         tripState.coupons = (cp.data || []).filter((c) => c.coupon_templates && (c.coupon_templates.type === 'percent' || c.coupon_templates.type === 'amount'));
         tripState.passes = (cp.data || []).filter((c) => c.coupon_templates && c.coupon_templates.type === 'priority').length;
-      } else { tripState.coupons = []; tripState.passes = 0; }
+        const w = await authClient.from('trip_watch').select('trip_id');
+        tripState.watch = {};
+        (w.data || []).forEach((r) => { tripState.watch[r.trip_id] = true; });
+      } else { tripState.coupons = []; tripState.passes = 0; tripState.watch = {}; }
       tripState.failed = false;
     } catch (e) { tripState.failed = true; }
     tripState.loaded = true;
@@ -319,6 +322,8 @@
         ${t.summary ? `<p class="trip-sum">${esc(t.summary)}</p>` : ''}
         <p class="trip-foot"><strong>${t.price > 0 ? esc(money(t.price)) : ''}</strong><span>${esc(seats)}</span></p>
         ${btn}
+        ${t.status === 'open' && authUser && !mine ? `<button class="link-btn" type="button" data-watch="${esc(t.id)}">${esc(T(tripState.watch[t.id] ? 'trip_watching' : 'trip_watch'))}</button>` : ''}
+        ${`<button class="link-btn" type="button" data-share-trip="${esc(t.id)}" data-title="${esc(t.title)}">${esc(T('trip_share'))}</button>`}
         ${t.status === 'open' && authUser && !(t.capacity && n >= t.capacity) ? aiBlock(t.id) : ''}
         ${t.status === 'open' && authUser && mine && mine !== 'cancelled' ? iceBlock(t.id) : ''}
         ${t.status === 'past' && authUser && mine && mine !== 'cancelled' ? reBlock(t.id) : ''}
@@ -366,6 +371,29 @@
     btn.disabled = false;
   }
 
+  async function toggleWatch(id, btn) {
+    const msg = $('#trip-msg');
+    btn.disabled = true;
+    const on = !!tripState.watch[id];
+    const r = on ? await authClient.from('trip_watch').delete().eq('trip_id', id).eq('user_id', authUser.id) : await authClient.from('trip_watch').insert({ trip_id: id, user_id: authUser.id });
+    if (r.error && r.error.code !== '23505') setMsg(msg, 'q_err_generic', 'err');
+    else { tripState.watch[id] = !on; setMsg(msg, on ? 'trip_watch_off' : 'trip_watch_ok', 'ok'); }
+    renderTrips();
+  }
+
+  // 모임 링크 공유: 로그인 상태면 내 초대 코드를 붙여 친구가 가입하면 둘 다 쿠폰을 받는다
+  let myInviteCode = null;
+  async function shareTrip(id, title) {
+    const msg = $('#trip-msg');
+    if (authUser && !myInviteCode) { const r = await growth('overview'); if (r.ok) myInviteCode = r.data.invite_code; }
+    const url = `${location.origin}/trip/${id}${myInviteCode ? '?ref=' + myInviteCode : ''}`;
+    try {
+      if (navigator.share) { await navigator.share({ title, text: title, url }); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(url); setMsg(msg, 'trip_share_copied', 'ok'); }
+    catch (e) { window.prompt(T('trip_share'), url); }
+  }
+
   async function priorityTrip(id, btn) {
     const msg = $('#trip-msg');
     btn.disabled = true;
@@ -385,6 +413,10 @@
       if (pb) payTrip(pb.dataset.pay, pb);
       const pr = e.target.closest('[data-priority]');
       if (pr) priorityTrip(pr.dataset.priority, pr);
+      const wb = e.target.closest('[data-watch]');
+      if (wb) toggleWatch(wb.dataset.watch, wb);
+      const sb = e.target.closest('[data-share-trip]');
+      if (sb) shareTrip(sb.dataset.shareTrip, sb.dataset.title);
       const ab = e.target.closest('[data-ai]');
       if (ab) loadAiMatch(ab.dataset.ai, ab);
       const ib = e.target.closest('[data-ice]');
@@ -725,16 +757,18 @@
   }
 
   /* ---------------- 서버 기능 호출(/api/gamify) ---------------- */
-  async function gamify(action, params) {
+  async function callApi(path, action, params) {
     const { data } = await authClient.auth.getSession();
     const token = data && data.session && data.session.access_token;
     if (!token) return { ok: false, error: 'unauthorized' };
     try {
-      const r = await fetch('/api/gamify', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify(Object.assign({ action }, params || {})) });
+      const r = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify(Object.assign({ action }, params || {})) });
       const j = await r.json().catch(() => ({}));
       return r.ok ? { ok: true, data: j } : { ok: false, error: r.status === 503 || r.status === 404 && !j.error ? 'unavailable' : (j.error || 'generic') };
     } catch (e) { return { ok: false, error: 'unavailable' }; }
   }
+  const gamify = (action, params) => callApi('/api/gamify', action, params);
+  const growth = (action, params) => callApi('/api/gamify', 'invite.' + action, params); // 'overview' | 'redeem'
   const errText = (code) => T('q_err_' + code) || T('q_err_generic');
   // DB에 JSON 문자열(언어별)로 저장된 이름을 현재 언어로 고른다
   const L10n = (v) => {
@@ -745,7 +779,7 @@
   const interestName = (k) => { const i = (window.AI_OPTIONS || {}).interests || {}; return i[k] ? (i[k][currentLang] || i[k].ko) : k; };
 
   /* ---------------- 퀘스트 페이지 ---------------- */
-  const quest = { ov: null, result: null, ranking: null, loaded: false, msg: '' };
+  const quest = { ov: null, result: null, ranking: null, inv: null, cardMsg: '', loaded: false, msg: '' };
 
   async function loadQuest() {
     if (!authUser) { quest.ov = null; return renderQuest(); }
@@ -753,6 +787,8 @@
     quest.loaded = true;
     if (!r.ok) { quest.ov = null; quest.msg = errText(r.error); } else { quest.ov = r.data; quest.msg = ''; }
     if (quest.ov && quest.ov.season) { const k = await gamify('crew.ranking'); quest.ranking = k.ok ? k.data.ranking : []; }
+    const iv = await growth('overview'); quest.inv = iv.ok ? iv.data : null;
+    if (quest.inv) myInviteCode = quest.inv.invite_code;
     renderQuest();
   }
 
@@ -824,7 +860,18 @@
         ${c && missions ? `<h4>${esc(T('q_missions_t'))}</h4><ul class="q-list">${missions}</ul>` : ''}
         <h4>${esc(T('q_rank_t'))}</h4>${rank ? `<ol class="q-list">${rank}</ol>` : `<p class="note">${esc(T('q_rank_empty'))}</p>`}</div>`;
     }
-    body.innerHTML = level + check + titles + boards + coupons + season;
+    let invite = '';
+    if (quest.inv) {
+      const v = quest.inv;
+      invite = `<div class="card"><h3>${esc(T('inv_t'))}</h3><p>${esc(T('inv_desc', { cap: v.monthly_cap }))}</p>
+        <p><strong>${esc(T('inv_code', { code: v.invite_code }))}</strong></p>
+        <button class="btn small q-card-btn" type="button" data-inv-copy>${esc(T('inv_copy'))}</button>
+        <p class="note">${esc(T('inv_count', { n: v.invited }))}</p></div>`;
+    }
+    const cards = `<div class="card"><h3>${esc(T('sc_t'))}</h3><p>${esc(T('sc_desc'))}</p>
+      <div class="q-row">${[['me-title', 'story', 'sc_title_story'], ['me-title', 'og', 'sc_title_feed'], ['me-report', 'story', 'sc_report_story'], ['me-report', 'og', 'sc_report_feed']].map((c) => `<button class="btn ghost small" type="button" data-share-card="${c[0]}" data-size="${c[1]}">${esc(T(c[2]))}</button>`).join('')}</div>
+      <p class="note" id="sc-msg" role="status" aria-live="polite">${esc(quest.cardMsg)}</p><p class="note">${esc(T('sc_report_hint'))}</p></div>`;
+    body.innerHTML = level + check + titles + boards + coupons + invite + cards + season;
   }
 
   const regionName = (r) => ({ asia: { ko: '아시아', en: 'Asia', zh: '亚洲', ja: 'アジア', es: 'Asia' }, europe: { ko: '유럽', en: 'Europe', zh: '欧洲', ja: 'ヨーロッパ', es: 'Europa' }, americas: { ko: '아메리카', en: 'Americas', zh: '美洲', ja: 'アメリカ', es: 'América' }, oceania: { ko: '오세아니아', en: 'Oceania', zh: '大洋洲', ja: 'オセアニア', es: 'Oceanía' }, africa: { ko: '아프리카', en: 'Africa', zh: '非洲', ja: 'アフリカ', es: 'África' }, domestic: { ko: '국내', en: 'Korea', zh: '韩国', ja: '韓国', es: 'Corea' } }[r] || { ko: r })[currentLang] || r;
@@ -841,6 +888,33 @@
     return r.data;
   }
 
+  async function copyInvite() {
+    const url = `${location.origin}/?ref=${quest.inv.invite_code}`;
+    try {
+      if (navigator.share) { await navigator.share({ title: '함께닿', text: T('inv_share_text'), url }); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(url); quest.cardMsg = T('inv_copied'); }
+    catch (e) { window.prompt(T('inv_copy'), url); return; }
+    renderQuest();
+  }
+
+  // 내 칭호·성향 카드: 로그인 토큰으로 /api/og에서 PNG를 받아 파일로 저장한다(스토리 1080x1920, 피드 1200x630)
+  async function downloadCard(type, size, btn) {
+    btn.disabled = true; quest.cardMsg = T('sc_working'); const note = $('#sc-msg'); if (note) note.textContent = quest.cardMsg;
+    try {
+      const { data } = await authClient.auth.getSession();
+      const token = data && data.session && data.session.access_token;
+      const r = await fetch(`/api/og?type=${type}&size=${size}&lang=${currentLang === 'ko' ? 'ko' : 'en'}`, { headers: { Authorization: 'Bearer ' + token } });
+      if (!r.ok) throw new Error('og ' + r.status);
+      const url = URL.createObjectURL(await r.blob());
+      const a = document.createElement('a'); a.href = url; a.download = `hamkkedat-${type}-${size}.png`;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+      quest.cardMsg = '';
+    } catch (e) { quest.cardMsg = T('sc_fail'); }
+    const n2 = $('#sc-msg'); if (n2) n2.textContent = quest.cardMsg;
+    btn.disabled = false;
+  }
+
   function initQuest() {
     if (!$('#q-body')) return;
     document.addEventListener('click', (e) => {
@@ -849,6 +923,9 @@
       const cl = e.target.closest('[data-q-claim]');
       if (cl) { cl.disabled = true; questAct('crew.claim', { mission_id: cl.dataset.qClaim }); }
       if (e.target.closest('[data-q-leave]') && confirm(T('q_crew_leave_confirm'))) questAct('crew.leave');
+      if (e.target.closest('[data-inv-copy]') && quest.inv) copyInvite();
+      const sc = e.target.closest('[data-share-card]');
+      if (sc) downloadCard(sc.dataset.shareCard, sc.dataset.size, sc);
     });
     document.addEventListener('submit', (e) => {
       const f = e.target.closest('[data-q-form]');

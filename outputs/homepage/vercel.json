@@ -55,6 +55,16 @@
     {
       "source": "/admin",
       "destination": "/admin.html"
+    },
+    {
+      "source": "/trip/:id",
+      "destination": "/api/og?type=page&id=:id"
     }
-  ]
+  ],
+  "functions": {
+    "api/og.js": {
+      "includeFiles": "{fonts/**,ai-options.json}",
+      "memory": 1024
+    }
+  }
 }
