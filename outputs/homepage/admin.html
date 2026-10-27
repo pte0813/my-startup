@@ -26,6 +26,8 @@
     nav.tabs button { border: 0; background: transparent; padding: 10px 14px; font: 500 .95rem "Noto Sans KR", sans-serif; color: var(--secondary); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
     nav.tabs button[aria-selected="true"] { border-bottom-color: var(--primary); color: var(--primary); }
     main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+    .ph { display: inline-grid; gap: 4px; justify-items: center; }
+    .ph img { object-fit: cover; border-radius: 8px; }
     .tr-set { border: 1px solid #e2e6ee; border-radius: 12px; margin: 8px 0; padding: 8px 12px; display: grid; gap: 6px; }
     .tr-set label { display: grid; gap: 2px; font-size: .9rem; }
     .tr-set input, .tr-set textarea { width: 100%; font: inherit; padding: 6px 8px; border-radius: 8px; border: 1px solid #cdd3df; }
@@ -299,6 +301,17 @@
       loadUsers(); showUser(id, '처리했어요.');
     }
 
+    document.addEventListener('change', async (ev) => {
+      const inp = ev.target.closest && ev.target.closest('[data-photo-add]'); if (!inp || !inp.files.length) return;
+      const id = inp.dataset.photoAdd; let ok = 0;
+      for (const f of inp.files) {
+        flash($('t-msg'), `사진 올리는 중… (${ok + 1}/${inp.files.length})`);
+        try { const data = await shrink(f); const r = await api('trips.photo.add', { id, type: 'image/jpeg', data }); if (r.status !== 200) { flash($('t-msg'), r.body && r.body.error === 'too_many_photos' ? '사진은 최대 8장까지예요.' : errText(r), 'err'); break; } ok++; }
+        catch (e) { flash($('t-msg'), '이미지를 읽지 못했어요.', 'err'); break; }
+      }
+      inp.value = ''; if (ok) { flash($('t-msg'), `${ok}장을 올렸어요.`, 'ok'); await loadTrips(); showTranslate(id); }
+    });
+
     /* ---- 모임 ---- */
     let TRIPS = {};
     async function loadTrips() {
@@ -313,22 +326,59 @@
           <td><div class="row"><button class="btn ghost small" data-trip-hide="${esc(t.id)}" data-hidden="${t.hidden ? 0 : 1}">${t.hidden ? '공개하기' : '숨기기'}</button>
           ${t.approval_status !== 'approved' ? `<button class="btn small" data-trip-approve="${esc(t.id)}" data-v="approved">승인</button>` : ''}${t.approval_status !== 'rejected' ? `<button class="btn ghost small" data-trip-approve="${esc(t.id)}" data-v="rejected">반려</button>` : ''}
           <button class="btn ghost small" data-trip-people="${esc(t.id)}" data-title="${esc(t.title)}">참가자·출석</button>
-          <button class="btn ghost small" data-trip-tr="${esc(t.id)}">번역</button></div></td></tr>`;
+          <button class="btn ghost small" data-trip-tr="${esc(t.id)}">상세·번역</button></div></td></tr>`;
       }).join('') || '<tr><td colspan="8" class="muted">모임이 없어요.</td></tr>';
     }
-    /* ---- 여행 정보 번역(이름·장소·설명): 한국어가 원문, 나머지 4개 언어는 여기서 입력하거나 AI로 채운다 ---- */
-    const TR_L = [['en', '영어'], ['zh', '중국어'], ['ja', '일본어'], ['es', '스페인어']];
-    const TR_F = [['title', '이름'], ['location', '장소'], ['summary', '설명']];
+    /* ---- 여행 상세·번역: 한국어가 원문, 나머지 4개 언어는 직접 입력하거나 "AI로 채우기" ---- */
+    const D_LANGS = [['ko', '한국어(원문)'], ['en', '영어'], ['zh', '중국어'], ['ja', '일본어'], ['es', '스페인어']];
+    const TR_BASE = [['title', '이름'], ['location', '장소'], ['summary', '설명']];   // 한국어는 기존 컬럼, 나머지 언어는 *_i18n
+    const toLines = (a) => (a || []).join('\n');
+    const toItin = (a) => (a || []).map((x) => x.title + (x.desc ? ' :: ' + x.desc : '')).join('\n');
+    const fromLines = (v) => String(v || '').split('\n').map((x) => x.trim()).filter(Boolean);
+    const fromItin = (v) => fromLines(v).map((x) => { const i = x.indexOf('::'); return i < 0 ? { title: x, desc: '' } : { title: x.slice(0, i).trim(), desc: x.slice(i + 2).trim() }; });
+    function detailFieldset(t, l, name, data) {
+      const g = (f) => (data && data[f] && data[f][l]) || (t[f] && t[f][l]) || '';
+      const base = l === 'ko' ? '' : TR_BASE.map(([f, fn]) => `<label>${fn}<${f === 'summary' ? 'textarea rows="2"' : 'input type="text"'} data-tr="${f}_i18n:${l}" maxlength="${f === 'summary' ? 400 : 100}"${f === 'summary' ? '>' + esc(g(f + '_i18n')) + '</textarea>' : ` value="${esc(g(f + '_i18n'))}">`}</label>`).join('');
+      return `<fieldset class="tr-set"><legend>${name}</legend>${base}
+        <label>집합 장소·시간<input type="text" data-tr="meeting_i18n:${l}" maxlength="300" value="${esc(g('meeting_i18n'))}"></label>
+        <label>호스트 소개<textarea rows="2" data-tr="host_bio_i18n:${l}" maxlength="400">${esc(g('host_bio_i18n'))}</textarea></label>
+        <label>일정 (한 줄에 하나: 제목 :: 설명)<textarea rows="5" data-tr="itinerary_i18n:${l}">${esc(toItin(data && data.itinerary_i18n && data.itinerary_i18n[l] || t.itinerary_i18n && t.itinerary_i18n[l]))}</textarea></label>
+        <label>포함 내역 (한 줄에 하나)<textarea rows="3" data-tr="includes_i18n:${l}">${esc(toLines(data && data.includes_i18n && data.includes_i18n[l] || t.includes_i18n && t.includes_i18n[l]))}</textarea></label>
+        <label>불포함 내역 (한 줄에 하나)<textarea rows="3" data-tr="excludes_i18n:${l}">${esc(toLines(data && data.excludes_i18n && data.excludes_i18n[l] || t.excludes_i18n && t.excludes_i18n[l]))}</textarea></label></fieldset>`;
+    }
     function showTranslate(id, filled) {
       const t = TRIPS[id]; if (!t) return;
       const box = $('t-detail'); box.hidden = false;
-      const val = (f, l) => esc(((filled && filled[f + '_i18n']) || t[f + '_i18n'] || {})[l] || '');
-      box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>${esc(t.title)} · 번역</h3><div class="row"><button class="btn ghost small" data-tr-ai="${esc(id)}">AI로 채우기</button><button class="btn small" data-tr-save="${esc(id)}">저장</button><button class="btn ghost small" data-close-detail>닫기</button></div></div>
-        <p class="muted">한국어 원문: ${esc(t.location || '')} / ${esc(t.summary || '')}<br>번역이 비어 있으면 그 언어 화면에는 한국어가 보여요. "AI로 채우기"는 입력칸만 채우며, 내용을 확인하고 "저장"을 눌러야 반영돼요.</p>
-        ${TR_L.map(([l, n]) => `<fieldset class="tr-set"><legend>${n}</legend>${TR_F.map(([f, fn]) => `<label>${fn}<${f === 'summary' ? 'textarea rows="2"' : 'input type="text"'} data-tr="${f}:${l}" maxlength="${f === 'summary' ? 400 : 100}"${f === 'summary' ? '>' + val(f, l) + '</textarea>' : ` value="${val(f, l)}">`}</label>`).join('')}</fieldset>`).join('')}`;
+      const photos = (t.photos || []).map((u) => `<span class="ph"><img src="${esc(u)}" alt="" width="72" height="72"><button class="btn ghost small" data-photo-rm="${esc(id)}" data-url="${esc(u)}">삭제</button></span>`).join('');
+      box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>${esc(t.title)} · 상세·번역</h3><div class="row"><button class="btn ghost small" data-tr-ai="${esc(id)}">AI로 번역 채우기</button><button class="btn small" data-tr-save="${esc(id)}">저장</button><button class="btn ghost small" data-close-detail>닫기</button></div></div>
+        <p class="muted">여행 상세 페이지(/trip/…)에 보이는 내용이에요. 한국어를 입력하고 "AI로 번역 채우기"를 누르면 다른 언어 입력칸이 채워지고, 확인한 뒤 "저장"을 눌러야 반영돼요. 비워 둔 항목은 화면에서 숨기거나 한국어로 보여요.</p>
+        <fieldset class="tr-set"><legend>기본 정보</legend>
+          <label><input type="checkbox" data-d="is_sample"${t.is_sample ? ' checked' : ''}> 예시(시험용) 상품으로 표시</label>
+          <label>최소 출발 인원<input type="number" min="1" max="99" data-d="min_participants" value="${esc(t.min_participants || '')}"></label>
+          <label>호스트 이름<input type="text" maxlength="50" data-d="host_name" value="${esc(t.host_name || '')}"></label></fieldset>
+        <fieldset class="tr-set"><legend>사진 (첫 장이 대표 사진, 최대 8장·장당 3MB 이하는 자동으로 줄여 올려요)</legend>
+          <div class="row">${photos || '<span class="muted">사진이 없으면 일러스트가 보여요.</span>'}</div>
+          <input type="file" accept="image/jpeg,image/png,image/webp" multiple data-photo-add="${esc(id)}"></fieldset>
+        ${D_LANGS.map(([l, n]) => detailFieldset(t, l, n, filled)).join('')}`;
       box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-    const readTranslate = () => { const o = { title_i18n: {}, location_i18n: {}, summary_i18n: {} }; document.querySelectorAll('#t-detail [data-tr]').forEach((el) => { const [f, l] = el.dataset.tr.split(':'); if (el.value.trim()) o[f + '_i18n'][l] = el.value.trim(); }); return o; };
+    // 입력칸 → 서버로 보낼 값
+    function readDetail() {
+      const o = { title_i18n: {}, location_i18n: {}, summary_i18n: {}, meeting_i18n: {}, host_bio_i18n: {}, itinerary_i18n: {}, includes_i18n: {}, excludes_i18n: {} };
+      document.querySelectorAll('#t-detail [data-tr]').forEach((el) => {
+        const [f, l] = el.dataset.tr.split(':'); const v = el.value.trim(); if (!v) return;
+        o[f][l] = f === 'itinerary_i18n' ? fromItin(v) : (f === 'includes_i18n' || f === 'excludes_i18n') ? fromLines(v) : v;
+      });
+      const q = (k) => document.querySelector('#t-detail [data-d="' + k + '"]');
+      return { ...o, is_sample: q('is_sample').checked, min_participants: q('min_participants').value, host_name: q('host_name').value };
+    }
+    // 사진 한 장을 긴 변 1600px JPEG로 줄여 base64로 만든다
+    const shrink = (file) => new Promise((resolve, reject) => {
+      const img = new Image(), url = URL.createObjectURL(file);
+      img.onload = () => { const k = Math.min(1, 1600 / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg', 0.85).split(',')[1]); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')); };
+      img.src = url;
+    });
 
     async function showApplicants(id, title) {
       const box = $('t-detail'); box.hidden = false; box.innerHTML = '<p class="muted">불러오는 중…</p>';
@@ -503,9 +553,21 @@
       if (ap) { const r = await api('trips.update', { id: ap.dataset.tripApprove, approval_status: ap.dataset.v }); flash($('t-msg'), r.status === 200 ? '바꿨어요.' : errText(r), r.status === 200 ? 'ok' : 'err'); return loadTrips(); }
       const trb = t.closest('[data-trip-tr]'); if (trb) return showTranslate(trb.dataset.tripTr);
       const trAi = t.closest('[data-tr-ai]');
-      if (trAi) { trAi.disabled = true; flash($('t-msg'), '번역하는 중…'); const r = await api('trips.translate', { id: trAi.dataset.trAi }); trAi.disabled = false; if (r.status !== 200) return flash($('t-msg'), r.body && r.body.error === 'ai_not_configured' ? 'AI 키가 설정되지 않았어요(운영에서만 동작해요).' : errText(r), 'err'); showTranslate(trAi.dataset.trAi, r.body); return flash($('t-msg'), 'AI가 채웠어요. 확인하고 저장을 눌러 주세요.', 'ok'); }
+      if (trAi) {
+        trAi.disabled = true; flash($('t-msg'), '번역하는 중… (최대 1분)');
+        const cur = readDetail(), ko = { meeting: (cur.meeting_i18n.ko || ''), host_bio: (cur.host_bio_i18n.ko || ''), itinerary: cur.itinerary_i18n.ko || [], includes: cur.includes_i18n.ko || [], excludes: cur.excludes_i18n.ko || [] };
+        const r = await api('trips.translate', { id: trAi.dataset.trAi, ko });
+        trAi.disabled = false;
+        if (r.status !== 200) return flash($('t-msg'), r.body && r.body.error === 'ai_not_configured' ? 'AI 키가 설정되지 않았어요(운영에서만 동작해요).' : errText(r), 'err');
+        // 번역 결과로 영·중·일·스페인어 칸을 채운다. 한국어 칸은 지금 입력한 값을 그대로 유지한다
+        const merged = { ...r.body }; for (const f of ['meeting_i18n', 'host_bio_i18n', 'itinerary_i18n', 'includes_i18n', 'excludes_i18n']) merged[f] = { ...(r.body[f] || {}), ...(cur[f].ko ? { ko: cur[f].ko } : {}) };
+        TRIPS[trAi.dataset.trAi] = { ...TRIPS[trAi.dataset.trAi], is_sample: cur.is_sample, min_participants: cur.min_participants, host_name: cur.host_name };
+        showTranslate(trAi.dataset.trAi, merged); return flash($('t-msg'), 'AI가 채웠어요. 확인하고 저장을 눌러 주세요.', 'ok');
+      }
       const trSave = t.closest('[data-tr-save]');
-      if (trSave) { const r = await api('trips.update', { id: trSave.dataset.trSave, ...readTranslate() }); flash($('t-msg'), r.status === 200 ? '번역을 저장했어요.' : errText(r), r.status === 200 ? 'ok' : 'err'); if (r.status === 200) await loadTrips(); return; }
+      if (trSave) { const r = await api('trips.update', { id: trSave.dataset.trSave, ...readDetail() }); flash($('t-msg'), r.status === 200 ? '저장했어요.' : errText(r), r.status === 200 ? 'ok' : 'err'); if (r.status === 200) { await loadTrips(); showTranslate(trSave.dataset.trSave); } return; }
+      const phRm = t.closest('[data-photo-rm]');
+      if (phRm) { const r = await api('trips.photo.remove', { id: phRm.dataset.photoRm, url: phRm.dataset.url }); flash($('t-msg'), r.status === 200 ? '사진을 지웠어요.' : errText(r), r.status === 200 ? 'ok' : 'err'); if (r.status === 200) { await loadTrips(); showTranslate(phRm.dataset.photoRm); } return; }
       const ppl = t.closest('[data-trip-people]'); if (ppl) return showApplicants(ppl.dataset.tripPeople, ppl.dataset.title);
       const att = t.closest('[data-att]');
       if (att) { const r = await api('trips.attendance', { application_id: att.dataset.att, attendance: att.dataset.v }); if (r.status !== 200) alert(errText(r)); showApplicants(att.dataset.trip, att.dataset.title); return loadTrips(); }
