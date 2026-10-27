@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
   const headers = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
   const get = async (path) => { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers }); return r.ok ? r.json() : []; };
   try {
-    const rows = await get('trips?select=id,title,location,start_date,end_date,price,capacity,status,photos,cover_url,is_sample&status=in.(open,upcoming)&order=sort_order.asc,start_date.asc&limit=12');
+    const rows = await get('trips?select=id,title,location,start_date,end_date,price,capacity,status,photos,art_key,cover_url,is_sample&status=in.(open,upcoming)&order=sort_order.asc,start_date.asc&limit=12');
     let list = rows.filter((t) => t.status === 'open'), kind = 'open';
     if (!list.length) { list = rows.filter((t) => t.status === 'upcoming'); kind = 'soon'; }
     list = list.slice(0, 3);
@@ -38,7 +38,7 @@ module.exports = async function handler(req, res) {
     const trips = list.map((t) => {
       const left = t.capacity ? t.capacity - (counts[t.id] || 0) : null;
       const photo = (t.photos || []).find(ours);
-      return { id: t.id, title: t.title, location: t.location, price: t.price, start: t.start_date, end: t.end_date, status: t.status, sample: !!t.is_sample, left: left != null && left > 0 && left <= 2 && t.status === 'open' ? left : null, image: photo || `${MAIN}/art/cover-${coverKind(t)}.svg`, url: `${MAIN}/trip/${t.id}` };
+      return { id: t.id, title: t.title, location: t.location, price: t.price, start: t.start_date, end: t.end_date, status: t.status, sample: !!t.is_sample, left: left != null && left > 0 && left <= 2 && t.status === 'open' ? left : null, image: photo || (/^[a-z0-9-]{2,30}$/.test(t.art_key || '') ? `${MAIN}/art/dest/${t.art_key}-1.svg` : `${MAIN}/art/cover-${coverKind(t)}.svg`), url: `${MAIN}/trip/${t.id}` };
     });
     return send(res, 200, { kind, trips, main: MAIN }, 'public, s-maxage=120, stale-while-revalidate=600');
   } catch {

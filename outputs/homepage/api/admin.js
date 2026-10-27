@@ -46,6 +46,7 @@ const cleanText = (v, max) => { const o = {}; if (v && typeof v === 'object') fo
 const cleanList = (v, [n, max]) => { const o = {}; if (v && typeof v === 'object') for (const l of LANGS) { const a = (Array.isArray(v[l]) ? v[l] : []).map((x) => clip(x, max)).filter(Boolean).slice(0, n); if (a.length) o[l] = a; } return o; };
 const cleanItinerary = (v) => { const o = {}; if (v && typeof v === 'object') for (const l of LANGS) { const a = (Array.isArray(v[l]) ? v[l] : []).map((x) => ({ title: clip(x && x.title, 100), desc: clip(x && x.desc, 400) })).filter((x) => x.title).slice(0, 20); if (a.length) o[l] = a; } return o; };
 const PHOTO_MAX = 8;
+const ART_KEYS = ['tokyo', 'danang', 'chiangmai', 'paris', 'alps', 'santorini', 'newyork', 'hawaii', 'rockies']; // art/dest/<키>-1~3.svg (art_dest.py가 만든다)
 const day = (d) => new Date(d).toISOString().slice(0, 10);
 const daysAgo = (n) => new Date(Date.now() - n * 86400000);
 const series = (rows, key, n) => {
@@ -205,7 +206,7 @@ async function handler(req, res) {
 
     case 'trips.list': {
       const [trips, apps] = await Promise.all([
-        rows('trips?select=id,title,location,summary,title_i18n,location_i18n,summary_i18n,photos,min_participants,is_sample,host_name,meeting_i18n,itinerary_i18n,includes_i18n,excludes_i18n,host_bio_i18n,start_date,status,hidden,approval_status,capacity,price,region,tags,created_at&order=sort_order.asc&limit=500'),
+        rows('trips?select=id,title,location,summary,title_i18n,location_i18n,summary_i18n,photos,art_key,min_participants,is_sample,host_name,meeting_i18n,itinerary_i18n,includes_i18n,excludes_i18n,host_bio_i18n,start_date,status,hidden,approval_status,capacity,price,region,tags,created_at&order=sort_order.asc&limit=500'),
         rows('trip_applications?select=trip_id,attendance&status=neq.cancelled&limit=20000')
       ]);
       const agg = {};
@@ -221,6 +222,7 @@ async function handler(req, res) {
       if (REGIONS.includes(body.region)) patch.region = body.region;
       if (Array.isArray(body.tags)) patch.tags = body.tags.filter((t) => INTERESTS.includes(t));
       if (typeof body.is_sample === 'boolean') patch.is_sample = body.is_sample;
+      if (body.art_key !== undefined) patch.art_key = ART_KEYS.includes(body.art_key) ? body.art_key : null;
       if (body.min_participants !== undefined) { const n = parseInt(body.min_participants, 10); patch.min_participants = n > 0 && n <= 99 ? n : null; }
       if (body.host_name !== undefined) patch.host_name = clip(body.host_name, 50) || null;
       for (const [f, max] of Object.entries(DETAIL_TEXT)) if (body[f] && typeof body[f] === 'object') patch[f] = cleanText(body[f], max);

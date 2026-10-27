@@ -176,7 +176,7 @@ async function handler(req, res) {
   const reviews = (await store.select(`reviews?select=rating,body,author_name&trip_id=eq.${id}&approved=eq.true&order=created_at.desc&limit=3`)).data || [];
 
   // 비슷한 여행: 같은 지역·같은 관심사 태그가 많은 순으로 최대 3개(없으면 모집 중인 다른 여행)
-  const others = (await store.select(`trips?select=id,title,title_i18n,location,location_i18n,price,status,region,tags,photos,cover_url,is_sample&hidden=eq.false&approval_status=eq.approved&status=in.(open,upcoming)&id=neq.${id}&limit=30`)).data || [];
+  const others = (await store.select(`trips?select=id,title,title_i18n,location,location_i18n,price,status,region,tags,photos,art_key,cover_url,is_sample&hidden=eq.false&approval_status=eq.approved&status=in.(open,upcoming)&id=neq.${id}&limit=30`)).data || [];
   const score = (o) => (o.region && o.region === trip.region && o.region !== 'other' ? 2 : 0) + (o.tags || []).filter((k) => (trip.tags || []).includes(k)).length + (o.status === 'open' ? 0.5 : 0);
   const similar = others.map((o) => ({ o, sc: score(o) })).sort((a, b) => b.sc - a.sc).slice(0, 3).map((x) => x.o);
   const title = pick(trip.title_i18n, lang) || trip.title;
@@ -189,7 +189,10 @@ async function handler(req, res) {
   const status = trip.status === 'open' ? t.open : trip.status === 'upcoming' ? t.upcoming : t.past;
   const desc = summary || [location, dates, priceTxt].filter(Boolean).join(' · ') || t.fallbackDesc;
   const supa = (u) => new RegExp(`^${e.supabaseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/storage/v1/object/public/trip-photos/`).test(u || '');
-  const photos = (trip.photos || []).filter(supa).slice(0, 8);
+  const real = (trip.photos || []).filter(supa).slice(0, 8);
+  // 실제 사진이 있으면 그것을, 없으면 여행지별 일러스트 3장(art_key)을 갤러리로 쓴다
+  const artSet = /^[a-z0-9-]{2,30}$/.test(trip.art_key || '') ? [1, 2, 3].map((i) => `/art/dest/${trip.art_key}-${i}.svg`) : [];
+  const photos = real.length ? real : artSet;
   const heroImg = photos[0] || (/^https:\/\//i.test(trip.cover_url || '') && /\.supabase\.co\//.test(trip.cover_url) ? trip.cover_url : `/art/cover-${coverKind(trip)}.svg`);
   const gallery = `<div class="gal"><img src="${esc(heroImg)}" alt="${esc(title)}"${photos.length ? ` data-lb="${esc(photos[0])}"` : ''}>${photos.length > 1 ? `<div class="thumbs">${photos.slice(1).map((u) => `<img src="${esc(u)}" alt="" loading="lazy" data-lb="${esc(u)}">`).join('')}</div>` : ''}</div>`;
   // 사진을 누르면 크게 보는 뷰어(좌우 이동·ESC)
@@ -226,7 +229,7 @@ ${mates.length ? `<h2>${esc(t.mateTitle)}</h2><p>${esc(t.mateDesc(n))}</p><p cla
 ${reviews.length ? `<h2>${esc(t.reviewTitle)}</h2>${reviews.map((r) => `<div class="rev"><b>${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</b><p style="margin:4px 0">${esc(String(r.body).slice(0, 200))}</p><small class="note">${esc(Array.from(String(r.author_name || ''))[0] || '')}**</small></div>`).join('')}` : ''}
 ${similar.length ? `<h2>${esc(t.similar)}</h2><div class="sim">${similar.map((o) => {
   const ph = (o.photos || []).find(supa);
-  const img = ph || `/art/cover-${coverKind(o)}.svg`;
+  const img = ph || (/^[a-z0-9-]{2,30}$/.test(o.art_key || '') ? `/art/dest/${o.art_key}-1.svg` : `/art/cover-${coverKind(o)}.svg`);
   return `<a href="/trip/${esc(o.id)}${lang === 'ko' ? '' : `?lang=${lang}`}"><img src="${esc(img)}" alt="" loading="lazy"><div><strong>${esc(pick(o.title_i18n, lang) || o.title)}</strong><small>${esc(pick(o.location_i18n, lang) || o.location || '')}${o.price > 0 ? ' · ' + esc(money(o.price, lang)) : ''}</small></div></a>`;
 }).join('')}</div>` : ''}
 <h2>${esc(t.safeTitle)}</h2>
