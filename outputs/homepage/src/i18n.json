@@ -220,7 +220,19 @@
   "report_ok": "신고가 접수됐어요. 운영팀이 확인할게요.",
   "report_dup": "이미 신고한 대상이에요. 처리 중이에요.",
   "report_fail": "신고하지 못했어요. 잠시 후 다시 시도해 주세요.",
-  "report_login": "로그인하면 신고할 수 있어요."
+  "report_login": "로그인하면 신고할 수 있어요.",
+  "notif_title": "알림",
+  "notif_btn": "알림 보기",
+  "notif_empty": "새 알림이 없어요.",
+  "notif_reunion_match": "{name}님과 서로 다시 만나고 싶다고 선택했어요! 🎉 ({trip})",
+  "notif_manner_badge": "새 배지를 받았어요: {badge}",
+  "notif_trust_down": "노쇼가 기록돼 신뢰 점수가 내려갔어요. 사정이 있었다면 문의하기로 알려 주세요.",
+  "mn_btn": "🤝 칭찬 남기기",
+  "mn_hint": "함께한 분께 칭찬을 남겨 보세요. 누가 남겼는지는 공개되지 않고, 서로 다른 2명 이상에게 받으면 배지가 생겨요.",
+  "mn_send": "칭찬 보내기",
+  "mn_sent": "칭찬을 보냈어요!",
+  "mn_pick": "칭찬 항목을 하나 이상 골라 주세요.",
+  "mn_noshow": "노쇼로 기록된 참가자와는 칭찬을 주고받을 수 없어요."
  },
  "en": {
   "menu_label": "Main menu",
@@ -443,7 +455,19 @@
   "report_ok": "Your report was received. Our team will review it.",
   "report_dup": "You have already reported this. It is being handled.",
   "report_fail": "Could not send the report. Please try again shortly.",
-  "report_login": "Log in to report."
+  "report_login": "Log in to report.",
+  "notif_title": "Notifications",
+  "notif_btn": "Notifications",
+  "notif_empty": "No notifications yet.",
+  "notif_reunion_match": "You and {name} both want to meet again! 🎉 ({trip})",
+  "notif_manner_badge": "You earned a new badge: {badge}",
+  "notif_trust_down": "A no-show was recorded and your trust score went down. If there was a reason, please contact us.",
+  "mn_btn": "🤝 Give a compliment",
+  "mn_hint": "Leave a compliment for someone you travelled with. Nobody sees who left it; two or more different people earn them a badge.",
+  "mn_send": "Send",
+  "mn_sent": "Sent!",
+  "mn_pick": "Pick at least one.",
+  "mn_noshow": "Compliments cannot be exchanged with a recorded no-show."
  },
  "zh": {
   "menu_label": "主菜单",
@@ -666,7 +690,19 @@
   "report_ok": "已收到举报，运营团队将会核实。",
   "report_dup": "您已举报过该对象，正在处理中。",
   "report_fail": "举报失败，请稍后重试。",
-  "report_login": "登录后才能举报。"
+  "report_login": "登录后才能举报。",
+  "notif_title": "通知",
+  "notif_btn": "查看通知",
+  "notif_empty": "暂无通知。",
+  "notif_reunion_match": "您和 {name} 互相选择了再次见面！🎉（{trip}）",
+  "notif_manner_badge": "获得了新徽章：{badge}",
+  "notif_trust_down": "已记录爽约，信任分下降。如有特殊情况请联系我们。",
+  "mn_btn": "🤝 留下称赞",
+  "mn_hint": "给同行者留下称赞吧。不会公开是谁留的，获得2位以上不同的人称赞即可获得徽章。",
+  "mn_send": "发送称赞",
+  "mn_sent": "已发送！",
+  "mn_pick": "请至少选择一项。",
+  "mn_noshow": "无法与已记录爽约的参加者互相称赞。"
  },
  "ja": {
   "menu_label": "メインメニュー",
@@ -889,7 +925,19 @@
   "report_ok": "通報を受け付けました。運営チームが確認します。",
   "report_dup": "すでに通報済みです。対応中です。",
   "report_fail": "通報できませんでした。しばらくしてからお試しください。",
-  "report_login": "ログインすると通報できます。"
+  "report_login": "ログインすると通報できます。",
+  "notif_title": "お知らせ",
+  "notif_btn": "お知らせを見る",
+  "notif_empty": "お知らせはありません。",
+  "notif_reunion_match": "{name}さんとお互いに「また会いたい」を選びました！🎉（{trip}）",
+  "notif_manner_badge": "新しいバッジを獲得しました：{badge}",
+  "notif_trust_down": "無断欠席が記録され、信頼スコアが下がりました。事情がある場合はお問い合わせください。",
+  "mn_btn": "🤝 ほめる",
+  "mn_hint": "一緒だった方をほめてみましょう。誰が送ったかは公開されず、2人以上から受け取るとバッジがもらえます。",
+  "mn_send": "送る",
+  "mn_sent": "送りました！",
+  "mn_pick": "1つ以上選んでください。",
+  "mn_noshow": "無断欠席が記録された参加者とはほめ合えません。"
  },
  "es": {
   "menu_label": "Menú principal",
@@ -1112,6 +1160,18 @@
   "report_ok": "Hemos recibido tu denuncia. Nuestro equipo la revisará.",
   "report_dup": "Ya lo has denunciado; se está gestionando.",
   "report_fail": "No se pudo enviar la denuncia. Inténtalo de nuevo en un momento.",
-  "report_login": "Inicia sesión para denunciar."
+  "report_login": "Inicia sesión para denunciar.",
+  "notif_title": "Notificaciones",
+  "notif_btn": "Ver notificaciones",
+  "notif_empty": "No hay notificaciones.",
+  "notif_reunion_match": "¡Tú y {name} queréis volver a veros! 🎉 ({trip})",
+  "notif_manner_badge": "Has conseguido una nueva insignia: {badge}",
+  "notif_trust_down": "Se registró una ausencia y bajó tu puntuación de confianza. Si hubo un motivo, escríbenos.",
+  "mn_btn": "🤝 Dar un elogio",
+  "mn_hint": "Deja un elogio a alguien con quien viajaste. Nadie ve quién lo dejó; con 2 o más personas distintas se gana una insignia.",
+  "mn_send": "Enviar",
+  "mn_sent": "¡Enviado!",
+  "mn_pick": "Elige al menos una.",
+  "mn_noshow": "No se pueden intercambiar elogios con una ausencia registrada."
  }
 }

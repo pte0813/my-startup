@@ -55,3 +55,12 @@
 - 권한: `stats`(super_admin·operator), 회원 조회/경고(모든 운영진)/정지·해제(super_admin·operator)/역할 변경(super_admin), 모임 관리(super_admin·operator), 신고 처리(모든 운영진), 작업 로그(super_admin). 자기 자신과 super_admin 계정은 super_admin만 건드릴 수 있다.
 - `POST /api/reunion`에 `action: 'report'` 추가: 같은 지난 여행 참가자를 신고(상대 계정 정보는 브라우저에 내려가지 않는다).
 - 처리되지 않은 오류는 `withErrors`가 Sentry(`SENTRY_DSN`)로 보내고 사용자에게는 `server_error`만 돌려준다.
+
+### 2단계: 신뢰 점수·매너 배지·알림 (api/reunion.js 확장, DB 트리거)
+- 신뢰 점수는 **DB 트리거**가 계산한다: `80 + 3×출석 − 20×노쇼 − 5×경고`(0~100). 관리자가 출석/노쇼를 바꾸거나 경고가 늘면 처음부터 다시 계산하므로 정정해도 중복 반영되지 않는다. 노쇼가 기록되면 알림(`trust_down`)이 간다.
+- `POST /api/reunion`:
+  - `pick`: 방금 서로 고른 것이 되면 **두 사람에게 알림**(`reunion_match`). 이미 성사된 것을 다시 눌러도 알림은 한 번만.
+  - `list`: 후보별 배지(`badges`)와 내가 이미 남긴 칭찬(`manner_given`), 노쇼 여부를 함께 돌려준다.
+  - `manner { tags }`: 같은 지난 여행 참가자에게 매너 칭찬(punctual/warm/mood_maker/considerate)을 남긴다. 노쇼 기록이 있는 사람과는 주고받을 수 없고, 누가 남겼는지는 저장은 되지만 받는 사람에게 보이지 않는다.
+- 배지: 첫 여행(출석 1), 믿음직한 참가자(출석 3·노쇼 0, 노쇼가 생기면 회수), 매너 4종(서로 다른 2명 이상에게 같은 칭찬을 받으면).
+- 알림은 헤더의 🔔(로그인 시)과 내 정보 페이지에서 본다. 이메일 알림은 아직 없다.

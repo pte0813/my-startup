@@ -176,5 +176,99 @@
    "ja": "週末の夜",
    "es": "Fin de semana, por la noche"
   }
- }
+ },
+ "badges": {
+  "first_trip": {
+   "ko": "첫 여행",
+   "en": "First trip",
+   "zh": "首次旅行",
+   "ja": "初めての旅行",
+   "es": "Primer viaje"
+  },
+  "reliable": {
+   "ko": "믿음직한 참가자",
+   "en": "Reliable traveler",
+   "zh": "可靠的参与者",
+   "ja": "頼れる参加者",
+   "es": "Viajero fiable"
+  },
+  "punctual": {
+   "ko": "시간 약속 요정",
+   "en": "Always on time",
+   "zh": "准时达人",
+   "ja": "時間厳守",
+   "es": "Siempre puntual"
+  },
+  "warm": {
+   "ko": "따뜻한 사람",
+   "en": "Warm-hearted",
+   "zh": "温暖的人",
+   "ja": "あたたかい人",
+   "es": "Persona cálida"
+  },
+  "mood_maker": {
+   "ko": "분위기 메이커",
+   "en": "Mood maker",
+   "zh": "气氛担当",
+   "ja": "ムードメーカー",
+   "es": "Alma del grupo"
+  },
+  "considerate": {
+   "ko": "배려왕",
+   "en": "Considerate",
+   "zh": "体贴达人",
+   "ja": "気配り上手",
+   "es": "Muy considerado/a"
+  }
+ },
+ "badge_desc": {
+  "first_trip": {
+   "ko": "출석한 첫 모임을 마쳤어요",
+   "en": "Completed a first trip",
+   "zh": "完成了第一次出行",
+   "ja": "初めての旅行に参加しました",
+   "es": "Completó su primer viaje"
+  },
+  "reliable": {
+   "ko": "3번 이상 출석하고 노쇼가 없어요",
+   "en": "3+ attendances, no no-shows",
+   "zh": "出席3次以上且无爽约",
+   "ja": "3回以上出席・無断欠席なし",
+   "es": "3+ asistencias y sin ausencias"
+  },
+  "punctual": {
+   "ko": "서로 다른 2명 이상이 \"시간 약속을 잘 지켜요\"라고 칭찬했어요",
+   "en": "Praised by 2+ people for being on time",
+   "zh": "有2人以上称赞其守时",
+   "ja": "2人以上から時間を守ると評価されました",
+   "es": "2+ personas elogiaron su puntualidad"
+  },
+  "warm": {
+   "ko": "서로 다른 2명 이상이 \"따뜻해요\"라고 칭찬했어요",
+   "en": "Praised by 2+ people as warm",
+   "zh": "有2人以上称赞其温暖",
+   "ja": "2人以上からあたたかいと評価されました",
+   "es": "2+ personas lo/la elogiaron como cálido/a"
+  },
+  "mood_maker": {
+   "ko": "서로 다른 2명 이상이 \"분위기를 띄워 줘요\"라고 칭찬했어요",
+   "en": "Praised by 2+ people as a mood maker",
+   "zh": "有2人以上称赞其活跃气氛",
+   "ja": "2人以上から場を盛り上げると評価されました",
+   "es": "2+ personas lo/la elogiaron como alma del grupo"
+  },
+  "considerate": {
+   "ko": "서로 다른 2명 이상이 \"배려심이 깊어요\"라고 칭찬했어요",
+   "en": "Praised by 2+ people as considerate",
+   "zh": "有2人以上称赞其体贴",
+   "ja": "2人以上から気配り上手と評価されました",
+   "es": "2+ personas lo/la elogiaron como considerado/a"
+  }
+ },
+ "manner_tags": [
+  "punctual",
+  "warm",
+  "mood_maker",
+  "considerate"
+ ]
 }

@@ -124,15 +124,17 @@ async function handler(req, res) {
       if (!needId(body.id)) return json(res, 400, { error: 'invalid_input' });
       const p = await one(`profiles?select=id,name,role,status,warning_count,trust_score,suspended_at,suspend_reason,created_at&id=eq.${body.id}`);
       if (!p) return json(res, 404, { error: 'no_such_user' });
-      const [emails, applications, against, filed, logs] = await Promise.all([
+      const [emails, applications, against, filed, logs, badges] = await Promise.all([
         authUsers(),
         rows(`trip_applications?select=id,status,attendance,created_at,trips(title,start_date)&user_id=eq.${p.id}&order=created_at.desc&limit=50`),
         rows(`reports?select=id,reason,detail,status,created_at,resolution&target_type=eq.user&target_id=eq.${p.id}&order=created_at.desc&limit=50`),
         store.count(`reports?select=id&reporter_id=eq.${p.id}`),
-        rows(`admin_logs?select=action,actor_role,detail,created_at&target_type=eq.user&target_id=eq.${p.id}&order=created_at.desc&limit=20`)
+        rows(`admin_logs?select=action,actor_role,detail,created_at&target_type=eq.user&target_id=eq.${p.id}&order=created_at.desc&limit=20`),
+        rows(`user_badges?select=badge&user_id=eq.${p.id}`)
       ]);
       const em = emails.get(p.id) || {};
-      return json(res, 200, { user: { ...p, email: em.email || '', last_sign_in_at: em.last_sign_in_at || null }, applications, reports_against: against, reports_filed: filed, history: logs });
+      const attended = applications.filter((x) => x.attendance === 'attended').length, noShow = applications.filter((x) => x.attendance === 'no_show').length;
+      return json(res, 200, { user: { ...p, email: em.email || '', last_sign_in_at: em.last_sign_in_at || null }, applications, attendance: { attended, no_show: noShow }, badges: badges.map((b) => b.badge), reports_against: against, reports_filed: filed, history: logs });
     }
 
     case 'users.warn': {

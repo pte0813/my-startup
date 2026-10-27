@@ -96,11 +96,69 @@ async function recordPrivacyConsent(user) {
   } catch (e) { /* 기록 실패는 로그인을 막지 않는다 */ }
 }
 
+/* ---- 알림(재만남 성사, 배지, 신뢰 점수): 로그인했을 때만 종 아이콘이 보인다 ---- */
+var notifState = { list: [], open: false };
+function notifText(n) {
+  var d = n.data || {};
+  var opts = window.AI_OPTIONS || { badges: {} };
+  if (n.kind === 'reunion_match') return tr('notif_reunion_match').replace('{name}', d.name || '').replace('{trip}', d.trip_title || '');
+  if (n.kind === 'manner_badge') { var b = (opts.badges || {})[d.badge]; return tr('notif_manner_badge').replace('{badge}', b ? (b[currentLang] || b.ko) : (d.badge || '')); }
+  if (n.kind === 'trust_down') return tr('notif_trust_down');
+  return '';
+}
+function renderNotifs() {
+  if (!notifState) return; // 언어 적용이 이 파일의 아래쪽 초기화보다 먼저 실행될 수 있다
+  var wrap = document.getElementById('notif-wrap');
+  if (!wrap) return;
+  wrap.hidden = !authUser;
+  var unread = notifState.list.filter(function (n) { return !n.read_at; }).length;
+  document.getElementById('notif-dot').hidden = !unread;
+  var panel = document.getElementById('notif-panel');
+  panel.hidden = !notifState.open;
+  var rows = notifState.list.map(function (n) {
+    var li = document.createElement('li');
+    li.textContent = notifText(n);
+    if (!n.read_at) li.className = 'unread';
+    var t = document.createElement('time');
+    t.textContent = new Date(n.created_at).toLocaleDateString(currentLang === 'zh' ? 'zh-CN' : currentLang);
+    li.appendChild(t);
+    return li;
+  });
+  panel.textContent = '';
+  var h = document.createElement('strong'); h.textContent = tr('notif_title'); panel.appendChild(h);
+  if (!rows.length) { var p = document.createElement('p'); p.className = 'note'; p.textContent = tr('notif_empty'); panel.appendChild(p); }
+  else { var ul = document.createElement('ul'); rows.forEach(function (li) { ul.appendChild(li); }); panel.appendChild(ul); }
+}
+async function loadNotifs() {
+  if (!authClient || !authUser) { notifState.list = []; notifState.open = false; return renderNotifs(); }
+  try {
+    var r = await authClient.from('notifications').select('id,kind,data,read_at,created_at').order('created_at', { ascending: false }).limit(20);
+    notifState.list = r.error ? [] : (r.data || []);
+  } catch (e) { notifState.list = []; }
+  renderNotifs();
+}
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest && e.target.closest('#notif-btn');
+  if (btn) {
+    notifState.open = !notifState.open;
+    btn.setAttribute('aria-expanded', String(notifState.open));
+    renderNotifs();
+    if (notifState.open && notifState.list.some(function (n) { return !n.read_at; })) {
+      authClient.from('notifications').update({ read_at: new Date().toISOString() }).is('read_at', null).then(function () {
+        setTimeout(function () { notifState.list.forEach(function (n) { n.read_at = n.read_at || 'now'; }); var d = document.getElementById('notif-dot'); if (d) d.hidden = true; }, 0);
+      });
+    }
+    return;
+  }
+  if (notifState.open && !(e.target.closest && e.target.closest('#notif-panel'))) { notifState.open = false; var b = document.getElementById('notif-btn'); if (b) b.setAttribute('aria-expanded', 'false'); renderNotifs(); }
+});
+
 function renderAuthNav() {
   const btn = document.getElementById('auth-nav');
   btn.dataset.i18n = authUser ? 'auth_account' : 'auth_login';
   btn.textContent = tr(btn.dataset.i18n);
   (window.pageHooks || []).forEach((f) => f());
+  renderNotifs();
 }
 function setAuthMode(mode) {
   authMode = mode;
@@ -166,8 +224,8 @@ authForm.addEventListener('submit', async (e) => {
 });
 
 if (authClient) {
-  authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); }, 0); });
-  authClient.auth.onAuthStateChange((_event, session) => { authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); }, 0); });
+  authClient.auth.getSession().then(({ data }) => { authUser = data.session ? data.session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); }, 0); });
+  authClient.auth.onAuthStateChange((_event, session) => { authUser = session ? session.user : null; renderAuthNav(); if (authUser) setTimeout(() => { recordPrivacyConsent(authUser); pingActive(authUser); loadNotifs(); }, 0); });
 }
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setOpen(false); setMega(false); } });
   

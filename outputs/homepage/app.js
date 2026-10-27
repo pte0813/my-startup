@@ -220,7 +220,14 @@
             : `<p class="note">${esc(T('re_suggest_none'))}</p>`;
         } else if (sg) extra += `<p class="note">${esc(T('re_err'))}</p>`;
       }
-      return `<li class="re-row${c.matched ? ' matched' : ''}"><div class="re-main"><strong>${esc(c.name)}</strong><button class="link-btn" type="button" data-report="user" data-trip="${esc(id)}" data-app="${esc(c.application_id)}" data-label="${esc(c.name)}">${esc(T('report_btn'))}</button><button class="btn small${c.picked ? '' : ' ghost'}" type="button" data-re-toggle="${esc(id)}" data-app="${esc(c.application_id)}" data-picked="${c.picked ? 1 : 0}" aria-pressed="${c.picked}">${esc(T(c.picked ? 're_picked' : 're_pick'))}</button></div>${extra ? `<div class="re-extra">${extra}</div>` : ''}</li>`;
+      const optsB = AIO();
+      const chips = (c.badges || []).map((b) => `<span class="badge-chip" title="${esc(((optsB.badge_desc || {})[b] || {})[currentLang] || '')}">${esc((((optsB.badges || {})[b]) || {})[currentLang] || b)}</span>`).join('');
+      const mOpen = ((st.manner || {})[c.application_id] || {}).open;
+      const mTags = optsB.manner_tags || [];
+      const mBox = c.no_show ? '' : (mOpen
+        ? `<div class="manner-box"><p class="note">${esc(T('mn_hint'))}</p><div class="chips">${mTags.map((tg) => `<label><input type="checkbox" value="${esc(tg)}" data-manner-tag${(c.manner_given || []).includes(tg) ? ' checked disabled' : ''}><span>${esc((((optsB.badges || {})[tg]) || {})[currentLang] || tg)}</span></label>`).join('')}</div><button class="btn small" type="button" data-manner-send="${esc(id)}" data-app="${esc(c.application_id)}">${esc(T('mn_send'))}</button></div>`
+        : `<button class="btn ghost small" type="button" data-manner-open="${esc(id)}" data-app="${esc(c.application_id)}">${esc(T('mn_btn'))}</button>`);
+      return `<li class="re-row${c.matched ? ' matched' : ''}"><div class="re-main"><strong>${esc(c.name)}</strong><button class="link-btn" type="button" data-report="user" data-trip="${esc(id)}" data-app="${esc(c.application_id)}" data-label="${esc(c.name)}">${esc(T('report_btn'))}</button><button class="btn small${c.picked ? '' : ' ghost'}" type="button" data-re-toggle="${esc(id)}" data-app="${esc(c.application_id)}" data-picked="${c.picked ? 1 : 0}" aria-pressed="${c.picked}">${esc(T(c.picked ? 're_picked' : 're_pick'))}</button></div>${chips ? `<div class="badge-chips">${chips}</div>` : ''}${mBox}${extra ? `<div class="re-extra">${extra}</div>` : ''}</li>`;
     }).join('');
     return intro + `<ul class="re-list">${rows}</ul>`;
   }
@@ -252,6 +259,29 @@
     const r = await reCall({ action: 'suggest', trip_id: id, application_id: appId });
     st.suggest[appId] = r.status === 200 && r.body ? { status: 'done', data: r.body } : { status: 'error' };
     paintRe(id);
+  }
+
+  function openManner(id, appId) {
+    const st = reState[id]; if (!st) return;
+    st.manner = st.manner || {}; st.manner[appId] = { open: true };
+    paintRe(id);
+  }
+  async function sendManner(id, appId, btn) {
+    const panel = document.querySelector(`[data-re-panel="${id}"]`);
+    const tags = [...btn.closest('.manner-box').querySelectorAll('[data-manner-tag]:checked:not(:disabled)')].map((i) => i.value);
+    const m = $('#trip-msg');
+    if (!tags.length) { m.textContent = T('mn_pick'); m.className = 'fmsg err'; return; }
+    btn.disabled = true;
+    const r = await reCall({ action: 'manner', trip_id: id, application_id: appId, tags });
+    if (r.status === 200 && r.body && r.body.candidates) {
+      reState[id] = { ...(reState[id] || {}), status: 'done', data: r.body };
+      reState[id].manner = { ...(reState[id].manner || {}), [appId]: { open: false } };
+      m.textContent = T('mn_sent'); m.className = 'fmsg ok';
+    } else {
+      m.textContent = T(r.status === 403 && r.body && r.body.error === 'no_show' ? 'mn_noshow' : 're_err'); m.className = 'fmsg err';
+    }
+    paintRe(id);
+    if (panel) btn.disabled = false;
   }
 
   function tripCard(t) {
@@ -343,6 +373,10 @@
       if (rt) toggleRe(rt.dataset.reToggle, rt.dataset.app, rt.dataset.picked === '1', rt);
       const rs = e.target.closest('[data-re-suggest]');
       if (rs) suggestRe(rs.dataset.reSuggest, rs.dataset.app, rs);
+      const mo = e.target.closest('[data-manner-open]');
+      if (mo) openManner(mo.dataset.mannerOpen, mo.dataset.app);
+      const ms = e.target.closest('[data-manner-send]');
+      if (ms) sendManner(ms.dataset.mannerSend, ms.dataset.app, ms);
       const cb = e.target.closest('[data-ice-copy]');
       if (cb) copyIce(cb.dataset.iceCopy);
     });
