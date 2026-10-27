@@ -323,7 +323,8 @@
   "trip_watching": "🔔 알림 받는 중 (해제)",
   "trip_watch_ok": "남은 자리가 2석 이하가 되면 알려 드릴게요.",
   "trip_watch_off": "알림을 껐어요.",
-  "notif_seats_low": "‘{title}’ 남은 자리가 {left}석이에요! 서두르세요."
+  "notif_seats_low": "‘{title}’ 남은 자리가 {left}석이에요! 서두르세요.",
+  "pay_price": "결제 예정 금액: {amount}"
  },
  "en": {
   "menu_label": "Main menu",
@@ -649,7 +650,8 @@
   "trip_watching": "🔔 Notifying (turn off)",
   "trip_watch_ok": "We will notify you when 2 or fewer seats are left.",
   "trip_watch_off": "Notifications turned off.",
-  "notif_seats_low": "Only {left} seat(s) left for \"{title}\"! Hurry."
+  "notif_seats_low": "Only {left} seat(s) left for \"{title}\"! Hurry.",
+  "pay_price": "Amount to pay: {amount}"
  },
  "zh": {
   "menu_label": "主菜单",
@@ -975,7 +977,8 @@
   "trip_watching": "🔔 通知已开启（关闭）",
   "trip_watch_ok": "剩余名额不超过2个时会通知你。",
   "trip_watch_off": "已关闭通知。",
-  "notif_seats_low": "“{title}”仅剩 {left} 个名额！抓紧哦。"
+  "notif_seats_low": "“{title}”仅剩 {left} 个名额！抓紧哦。",
+  "pay_price": "应付金额：{amount}"
  },
  "ja": {
   "menu_label": "メインメニュー",
@@ -1301,7 +1304,8 @@
   "trip_watching": "🔔 通知中（解除）",
   "trip_watch_ok": "残り2席以下になったらお知らせします。",
   "trip_watch_off": "通知をオフにしました。",
-  "notif_seats_low": "「{title}」残り{left}席です！お急ぎください。"
+  "notif_seats_low": "「{title}」残り{left}席です！お急ぎください。",
+  "pay_price": "お支払い予定額：{amount}"
  },
  "es": {
   "menu_label": "Menú principal",
@@ -1627,6 +1631,7 @@
   "trip_watching": "🔔 Avisos activados (quitar)",
   "trip_watch_ok": "Te avisaremos cuando queden 2 plazas o menos.",
   "trip_watch_off": "Avisos desactivados.",
-  "notif_seats_low": "¡Solo quedan {left} plaza(s) en «{title}»! Date prisa."
+  "notif_seats_low": "¡Solo quedan {left} plaza(s) en «{title}»! Date prisa.",
+  "pay_price": "Importe a pagar: {amount}"
  }
 }

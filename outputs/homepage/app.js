@@ -291,10 +291,24 @@
     if (panel) btn.disabled = false;
   }
 
-  function couponPicker(tripId) {
+  // 쿠폰을 고르면 결제 예정 금액을 미리 보여 준다(실제 금액은 결제 직전에 서버가 다시 계산한다, 최소 100원)
+  const discounted = (price, c) => {
+    if (!c) return price;
+    const t = c.coupon_templates;
+    return Math.max(100, price - (t.type === 'percent' ? Math.floor((price * t.value) / 100) : t.value));
+  };
+  function updatePayPreview(tripId) {
+    const el = document.querySelector('[data-preview-for="' + tripId + '"]');
+    const sel = document.querySelector('[data-coupon-for="' + tripId + '"]');
+    if (!el || !sel) return;
+    const c = tripState.coupons.find((x) => x.id === sel.value);
+    el.textContent = T('pay_price', { amount: money(discounted(Number(el.dataset.price), c)) });
+  }
+
+  function couponPicker(tripId, price) {
     if (!tripState.coupons.length) return '';
     const opts = tripState.coupons.map((c) => `<option value="${esc(c.id)}">${esc(L10n(c.coupon_templates.name))}</option>`).join('');
-    return `<label class="pay-coupon">${esc(T('pay_coupon_label'))}<select data-coupon-for="${esc(tripId)}"><option value="">${esc(T('pay_coupon_none'))}</option>${opts}</select></label>`;
+    return `<label class="pay-coupon">${esc(T('pay_coupon_label'))}<select data-coupon-for="${esc(tripId)}"><option value="">${esc(T('pay_coupon_none'))}</option>${opts}</select></label><p class="pay-coupon" data-preview-for="${esc(tripId)}" data-price="${Number(price) || 0}">${esc(T('pay_price', { amount: money(price) }))}</p>`;
   }
 
   function tripCard(t) {
@@ -307,7 +321,7 @@
     let btn = '';
     if (t.status === 'open') {
       if (mine === 'paid') btn = `<button class="btn ghost" type="button" disabled>${esc(T('trip_paid'))}</button>`;
-      else if (mine === 'applied' && t.price > 0) btn = couponPicker(t.id) + `<button class="btn" type="button" data-pay="${esc(t.id)}">${esc(T('trip_pay'))}</button>`;
+      else if (mine === 'applied' && t.price > 0) btn = couponPicker(t.id, t.price) + `<button class="btn" type="button" data-pay="${esc(t.id)}">${esc(T('trip_pay'))}</button>`;
       else if (mine && mine !== 'cancelled') btn = `<button class="btn ghost" type="button" disabled>${esc(T('trip_applied'))}</button>`;
       else if (t.capacity && n >= t.capacity) btn = `<button class="btn ghost" type="button" disabled>${esc(T('trip_full'))}</button>`;
       else btn = `<button class="btn" type="button" data-apply="${esc(t.id)}">${esc(T(authUser ? 'trip_apply' : 'trip_apply_login'))}</button>`;
@@ -368,6 +382,7 @@
     if (key === 'need_login') { setMsg(msg, ''); openLogin(); }
     else if (key === 'ok') setMsg(msg, '');
     else setMsg(msg, key, 'err');
+    if (key !== 'ok' && key !== 'need_login' && msg && msg.scrollIntoView) msg.scrollIntoView({ block: 'center', behavior: 'smooth' }); // 메시지가 화면 위쪽에 있어 놓치기 쉽다
     btn.disabled = false;
   }
 
@@ -406,6 +421,7 @@
   function initTrips() {
     const wrap = $('#trip-open');
     if (!wrap) return;
+    document.addEventListener('change', (e) => { const sel = e.target.closest && e.target.closest('[data-coupon-for]'); if (sel) updatePayPreview(sel.dataset.couponFor); });
     document.addEventListener('click', (e) => {
       const b = e.target.closest('[data-apply]');
       if (b) applyTrip(b.dataset.apply, b);
