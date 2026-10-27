@@ -246,13 +246,16 @@
       const box = $('u-detail'); box.hidden = false; box.innerHTML = '<p class="muted">불러오는 중…</p>';
       const r = await api('users.get', { id });
       if (r.status !== 200) { box.innerHTML = `<p class="msg err">${esc(errText(r))}</p>`; return; }
-      const { user: u, applications, reports_against: rep, reports_filed: filed, history } = r.body;
+      const { user: u, applications, reports_against: rep, reports_filed: filed, history, attendance: att0, badges: badges0 } = r.body;
+      const att = att0 || { attended: 0, no_show: 0 }, badges = badges0 || [];
+      const BADGE = { first_trip: '첫 여행', reliable: '믿음직한 참가자', punctual: '시간 약속 요정', warm: '따뜻한 사람', mood_maker: '분위기 메이커', considerate: '배려왕' };
       const st = STATUS[u.status] || [u.status, ''];
       const canSuspend = me.permissions.includes('users.suspend'), canRole = me.permissions.includes('users.setRole');
       const self = u.id === me.id;
       box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>${esc(u.name || '(이름 없음)')} <span class="pill ${st[1]}">${st[0]}</span></h3><button class="btn ghost small" data-close-detail>닫기</button></div>
         <p class="muted">${esc(u.email)} · ${esc(ROLE[u.role] || u.role)} · 가입 ${fmtD(u.created_at)} · 최근 로그인 ${fmt(u.last_sign_in_at)}</p>
-        <p>신뢰 점수 <b>${u.trust_score}</b> · 경고 <b>${u.warning_count}</b>회 · 신고 받음 <b>${rep.length}</b>건 · 신고함 <b>${filed}</b>건</p>
+        <p>신뢰 점수 <b>${u.trust_score}</b> <span class="muted">(80 + 3×출석 − 20×노쇼 − 5×경고)</span> · 출석 <b>${att.attended}</b> · 노쇼 <b>${att.no_show}</b> · 경고 <b>${u.warning_count}</b>회 · 신고 받음 <b>${rep.length}</b>건 · 신고함 <b>${filed}</b>건</p>
+        <p>${badges.length ? badges.map((b) => `<span class="pill ok">${esc(BADGE[b] || b)}</span>`).join(' ') : '<span class="muted">배지 없음</span>'}</p>
         ${u.status === 'suspended' ? `<p class="msg err">정지 사유: ${esc(u.suspend_reason || '-')} (${fmt(u.suspended_at)})</p>` : ''}
         ${self ? '<p class="muted">내 계정은 여기서 바꿀 수 없어요.</p>' : `<div class="row" style="margin:8px 0">
           <button class="btn ghost small" data-act="warn" data-id="${esc(u.id)}">경고</button>
@@ -299,7 +302,8 @@
       const box = $('t-detail'); box.hidden = false; box.innerHTML = '<p class="muted">불러오는 중…</p>';
       const r = await api('trips.applicants', { id });
       if (r.status !== 200) { box.innerHTML = `<p class="msg err">${esc(errText(r))}</p>`; return; }
-      box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>${esc(title)} · 참가자 ${r.body.applicants.length}명</h3><button class="btn ghost small" data-close-detail>닫기</button></div>
+      box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>${esc(title)} · 참가자 ${r.body.applicants.length}명</h3><div class="row"><button class="btn small" data-att-all="${esc(id)}" data-title="${esc(title)}">대기 중인 참가자 전원 출석 처리</button><button class="btn ghost small" data-close-detail>닫기</button></div></div>
+        <p class="muted">출석은 +3점, 노쇼는 −20점으로 신뢰 점수에 바로 반영돼요. 노쇼로 기록된 참가자에게는 알림이 가요.</p>
         <div class="tw"><table><thead><tr><th>이름</th><th>이메일</th><th>신청 상태</th><th>출석</th></tr></thead><tbody>${r.body.applicants.map((a) => `<tr><td>${esc(a.name)}</td><td>${esc(a.email)}</td><td>${esc(a.status)}</td><td><div class="row">${['attended', 'no_show', 'pending'].map((v) => `<button class="btn ${a.attendance === v ? '' : 'ghost'} small" data-att="${esc(a.id)}" data-v="${v}" data-trip="${esc(id)}" data-title="${esc(title)}">${ATT[v]}</button>`).join('')}</div></td></tr>`).join('') || '<tr><td colspan="4" class="muted">참가자가 없어요.</td></tr>'}</tbody></table></div>`;
     }
 
@@ -389,6 +393,15 @@
       const ppl = t.closest('[data-trip-people]'); if (ppl) return showApplicants(ppl.dataset.tripPeople, ppl.dataset.title);
       const att = t.closest('[data-att]');
       if (att) { const r = await api('trips.attendance', { application_id: att.dataset.att, attendance: att.dataset.v }); if (r.status !== 200) alert(errText(r)); showApplicants(att.dataset.trip, att.dataset.title); return loadTrips(); }
+      const all = t.closest('[data-att-all]');
+      if (all) {
+        const r = await api('trips.applicants', { id: all.dataset.attAll });
+        const pending = (r.body && r.body.applicants || []).filter((a) => a.attendance === 'pending' && a.status !== 'cancelled');
+        if (!pending.length) return alert('대기 중인 참가자가 없어요.');
+        if (!confirm(`대기 중인 ${pending.length}명을 모두 출석 처리할까요?`)) return;
+        for (const a of pending) await api('trips.attendance', { application_id: a.id, attendance: 'attended' });
+        showApplicants(all.dataset.attAll, all.dataset.title); return loadTrips();
+      }
       const rp = t.closest('[data-rp]'); if (rp) return handleReport(rp.dataset.rp, rp.dataset.id, rp.dataset.type);
     });
     start();

@@ -1,4 +1,4 @@
-// POST /api/reunion  { action: 'list' | 'pick' | 'unpick' | 'suggest' | 'report', trip_id, application_id?, lang?, reason?, detail? }
+// POST /api/reunion  { action: 'list' | 'pick' | 'unpick' | 'suggest' | 'report' | 'manner', trip_id, application_id?, lang?, reason?, detail?, tags? }
 // 지난 여행에서 "다시 만나고 싶은 사람"을 고르고, 서로 골랐을 때만 성사로 알려 준다.
 // - 내가 누구를 골랐는지는 상대에게 절대 보이지 않는다(상대가 나를 골랐는지는 내가 그 사람을 골랐을 때만 "성사"로 알 수 있다).
 // - 같은 여행의 참가자(신청 취소 제외)만 서로 보이고, 이름은 프로필 이름만 쓴다. 연락처는 어디에도 나오지 않는다.
@@ -8,6 +8,7 @@ const { aiEnv, pickLang, LANGS, cleanProfile, usedToday, recordUse, askClaude, o
 
 const UUID = /^[0-9a-f-]{36}$/i;
 const MAX_PICKS = 5;
+const MANNER_TAGS = ['punctual', 'warm', 'mood_maker', 'considerate'];
 const FEATURE = 'reunion';
 
 async function handler(req, res) {
@@ -21,7 +22,7 @@ async function handler(req, res) {
   const action = String(body.action || '');
   const tripId = String(body.trip_id || '');
   const appId = body.application_id == null ? '' : String(body.application_id);
-  if (!['list', 'pick', 'unpick', 'suggest', 'report'].includes(action) || !UUID.test(tripId) || (action !== 'list' && !UUID.test(appId))) return json(res, 400, { error: 'invalid_input' });
+  if (!['list', 'pick', 'unpick', 'suggest', 'report', 'manner'].includes(action) || !UUID.test(tripId) || (action !== 'list' && !UUID.test(appId))) return json(res, 400, { error: 'invalid_input' });
   const lang = pickLang(body.lang);
   const store = db(e);
 
@@ -29,7 +30,7 @@ async function handler(req, res) {
   const t = trip.ok && trip.data && trip.data[0];
   if (!t || t.status !== 'past') return json(res, 404, { error: 'trip_not_past' });
 
-  const apps = await store.select(`trip_applications?select=id,user_id,name&trip_id=eq.${tripId}&status=neq.cancelled&limit=200`);
+  const apps = await store.select(`trip_applications?select=id,user_id,name,attendance&trip_id=eq.${tripId}&status=neq.cancelled&limit=200`);
   const all = (apps.ok && apps.data ? apps.data : []).filter((a) => UUID.test(a.user_id));
   if (!all.some((a) => a.user_id === user.id)) return json(res, 403, { error: 'not_attendee' });
   const others = all.filter((a) => a.user_id !== user.id);
@@ -51,6 +52,18 @@ async function handler(req, res) {
     return json(res, 200, { ok: true });
   }
 
+  if (action === 'manner') {
+    // 같은 지난 여행 참가자에게 매너 칭찬을 남긴다. 누가 남겼는지는 받는 사람에게 보이지 않고(이 표는 서버만 읽는다),
+    // 서로 다른 2명 이상에게 같은 칭찬을 받으면 DB 트리거가 배지를 준다. 노쇼로 기록된 사람은 주고받을 수 없다.
+    const target = others.find((a) => a.id === appId);
+    const meApp = all.find((a) => a.user_id === user.id);
+    const tags = [...new Set(Array.isArray(body.tags) ? body.tags : [])].filter((t) => MANNER_TAGS.includes(t));
+    if (!target || !tags.length) return json(res, 400, { error: 'invalid_input' });
+    if (target.attendance === 'no_show' || meApp.attendance === 'no_show') return json(res, 403, { error: 'no_show' });
+    const ins = await store.insertIgnore('manner_tags', tags.map((tag) => ({ trip_id: tripId, from_user: user.id, to_user: target.user_id, tag })), 'trip_id,from_user,to_user,tag');
+    if (!ins.ok) return json(res, 502, { error: 'save_failed' });
+  }
+
   if (action === 'pick') {
     const target = others.find((a) => a.id === appId);
     if (!target) return json(res, 404, { error: 'no_such_attendee' });
@@ -59,6 +72,17 @@ async function handler(req, res) {
       if (mine.length >= MAX_PICKS) return json(res, 409, { error: 'too_many_picks', max: MAX_PICKS });
       const ins = await store.insertIgnore('reunion_picks', { trip_id: tripId, from_user: user.id, to_user: target.user_id }, 'trip_id,from_user,to_user');
       if (!ins.ok) return json(res, 502, { error: 'save_failed' });
+      // 상대가 이미 나를 골랐다면 방금 성사된 것이다 → 두 사람에게 알림 (먼저 고른 사람은 그동안 몰랐으므로 이 알림이 핵심)
+      const theirs = await picksOf('from_user', target.user_id);
+      if (theirs.some((p) => p.to_user === user.id)) {
+        const nm = await store.select(`profiles?select=id,name&id=in.(${user.id},${target.user_id})`);
+        const nameOf = (id) => String(((nm.ok && nm.data ? nm.data : []).find((p) => p.id === id) || {}).name || '').slice(0, 100);
+        const base = { trip_id: tripId, trip_title: String(t.title).slice(0, 100) };
+        await store.insert('notifications', [
+          { user_id: user.id, kind: 'reunion_match', data: { ...base, name: nameOf(target.user_id) } },
+          { user_id: target.user_id, kind: 'reunion_match', data: { ...base, name: nameOf(user.id) } }
+        ]);
+      }
     }
   } else if (action === 'unpick') {
     const target = others.find((a) => a.id === appId);
@@ -112,11 +136,21 @@ async function handler(req, res) {
 
   const nameRes = others.length ? await store.select(`profiles?select=id,name&id=in.(${others.map((a) => a.user_id).join(',')})`) : { ok: true, data: [] };
   const names = new Map((nameRes.ok && nameRes.data ? nameRes.data : []).map((p) => [p.id, p.name]));
+  const idList = others.map((a) => a.user_id);
+  const badgeRes = idList.length ? await store.select(`user_badges?select=user_id,badge&user_id=in.(${idList.join(',')})`) : { ok: true, data: [] };
+  const badges = {};
+  for (const b of badgeRes.ok && badgeRes.data ? badgeRes.data : []) (badges[b.user_id] = badges[b.user_id] || []).push(b.badge);
+  const givenRes = await store.select(`manner_tags?select=to_user,tag&trip_id=eq.${tripId}&from_user=eq.${user.id}&limit=500`);
+  const given = {};
+  for (const g of givenRes.ok && givenRes.data ? givenRes.data : []) (given[g.to_user] = given[g.to_user] || []).push(g.tag);
   const candidates = others.map((a) => ({
     application_id: a.id,
     name: String(names.get(a.user_id) || a.name || '').slice(0, 100),
     picked: pickedSet.has(a.user_id),
-    matched: matchedSet.has(a.user_id)
+    matched: matchedSet.has(a.user_id),
+    badges: badges[a.user_id] || [],
+    manner_given: given[a.user_id] || [],
+    no_show: a.attendance === 'no_show'
   }));
   return json(res, 200, { candidates, max_picks: MAX_PICKS, picks_left: Math.max(0, MAX_PICKS - myPicks.length) });
 }

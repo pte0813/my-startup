@@ -323,3 +323,29 @@ dialog .consent small { display: block; opacity: .75; margin-top: 2px; }
 #report-form { display: grid; gap: 12px; }
 #report-form label { display: grid; gap: 4px; font-weight: 500; font-size: .95rem; }
 #report-form select, #report-form textarea { font: inherit; padding: 10px 12px; border-radius: 12px; border: 2px solid rgba(31,58,95,.15); background: #fff; color: var(--secondary); }
+
+/* 알림 종 */
+.notif { position: relative; }
+.notif-btn { position: relative; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(31,58,95,.2); background: #fff; cursor: pointer; font-size: 1.1rem; line-height: 1; padding: 0; }
+.notif-dot { position: absolute; top: 4px; right: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid #fff; }
+.notif-panel { position: absolute; right: 0; top: 48px; width: min(340px, calc(100vw - 32px)); background: #fff; border-radius: 16px; box-shadow: 0 12px 32px rgba(31,58,95,.2); padding: 14px 16px; z-index: 30; display: grid; gap: 8px; }
+.notif-panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; max-height: 320px; overflow-y: auto; }
+.notif-panel li { font-size: .9rem; padding: 8px 10px; border-radius: 10px; background: rgba(31,58,95,.05); display: grid; gap: 2px; }
+.notif-panel li.unread { background: rgba(255,107,91,.12); }
+.notif-panel time { font-size: .75rem; opacity: .6; }
+/* 배지·칭찬 */
+.badge-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.badge-chip { font-size: .72rem; padding: 1px 8px; border-radius: 999px; background: #FFE9B8; color: #7a4a00; white-space: nowrap; }
+.manner-box { display: grid; gap: 8px; justify-items: start; }
+.manner-box .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.manner-box .chips label { display: inline-flex; font-weight: 400; }
+.manner-box .chips input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.manner-box .chips span { padding: 5px 12px; border-radius: 999px; border: 2px solid rgba(31,58,95,.2); background: #fff; cursor: pointer; font-size: .85rem; }
+.manner-box .chips input:checked + span { background: var(--primary); border-color: var(--primary); color: #fff; }
+.manner-box .chips input:disabled + span { opacity: .55; cursor: default; background: rgba(31,58,95,.08); }
+.manner-box .chips input:focus-visible + span { outline: 3px solid var(--secondary); outline-offset: 2px; }
+/* 카드 안 패널의 작은 버튼은 가로를 꽉 채우지 않는다 */
+.trip-body .ai-panel .btn.small, .trip-body .re-row .btn.small { width: auto; margin-top: 0; }
+.re-main { flex-wrap: wrap; }
+.re-main strong { flex: 1 1 auto; word-break: keep-all; }
+.re-row { justify-items: start; } .re-row .re-main { justify-self: stretch; }

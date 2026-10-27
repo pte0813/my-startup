@@ -63,6 +63,10 @@
         </ul>
       </nav>
       <div class="actions">
+        <div class="notif" id="notif-wrap" hidden>
+          <button type="button" class="notif-btn" id="notif-btn" aria-expanded="false" aria-controls="notif-panel" data-i18n-attr="aria-label:notif_btn" aria-label="알림 보기"><span aria-hidden="true">🔔</span><span class="notif-dot" id="notif-dot" hidden></span></button>
+          <div class="notif-panel" id="notif-panel" hidden role="region" aria-live="polite"></div>
+        </div>
         <label class="lang"><span class="sr" data-i18n="lang_label">언어</span>
           <select id="lang">
             <option value="ko">한국어</option>
