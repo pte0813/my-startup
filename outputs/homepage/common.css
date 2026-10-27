@@ -371,3 +371,4 @@ dialog .consent small { display: block; opacity: .75; margin-top: 2px; }
 .q-rank-me { font-weight: 700; color: var(--primary); }
 .pay-coupon { display: flex; gap: 8px; align-items: center; font-size: .9rem; margin: 6px 0; }
 .pay-coupon select { flex: 1; min-width: 0; font: inherit; padding: 6px 8px; border-radius: 10px; border: 2px solid rgba(31,58,95,.15); }
+.reset-links { margin: 8px 0 0; text-align: center; }

@@ -953,6 +953,34 @@
     });
   }
 
+  /* ---------------- 비밀번호 재설정(메일 링크로 들어온 뒤) ---------------- */
+  function initReset() {
+    const form = $('#rs-form');
+    if (!form || !authClient) return;
+    const invalid = $('#rs-invalid'), msg = $('#rs-msg');
+    let ready = false;
+    const show = (ok) => { ready = ok; form.hidden = !ok; invalid.hidden = ok; };
+    // 재설정 링크로 들어오면 supabase-js가 주소의 토큰으로 세션을 만들고 PASSWORD_RECOVERY 이벤트를 낸다
+    authClient.auth.onAuthStateChange((event) => { if (event === 'PASSWORD_RECOVERY') show(true); });
+    const hasToken = /type=recovery|access_token|code=/.test(location.hash + location.search);
+    setTimeout(() => { if (!ready) show(false); }, hasToken ? 4000 : 300);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pw = form.pw.value, pw2 = form.pw2.value;
+      if (pw.length < 8) return setMsg(msg, 'err_pw', 'err');
+      if (pw !== pw2) return setMsg(msg, 'rs_mismatch', 'err');
+      const btn = $('#rs-submit'); btn.disabled = true; setMsg(msg, 'auth_wait');
+      try {
+        const { error } = await authClient.auth.updateUser({ password: pw });
+        if (error) {
+          const same = /same|different/i.test(error.message || '');
+          setMsg(msg, same ? 'rs_same' : /expired|invalid|session/i.test(error.message || '') ? 'rs_invalid' : 'err_generic', 'err');
+        } else { setMsg(msg, 'rs_done', 'ok'); form.reset(); setTimeout(() => { location.href = 'index.html'; }, 1800); }
+      } catch (err) { setMsg(msg, 'err_generic', 'err'); }
+      btn.disabled = false;
+    });
+  }
+
   /* ---------------- 개인정보 처리방침: 한국어가 정본, 그 외 언어는 영어 참고 번역 + 안내 ---------------- */
   function renderPrivacy() {
     const ko = document.querySelector('[data-policy="ko"]'), en = document.querySelector('[data-policy="en"]');
@@ -975,6 +1003,6 @@
     renderTrips(); renderReviews(); renderSuggest(); renderPrivacy(); renderQuest();
   };
   window.pageHooks.push(pageHook);
-  initTrips(); initReviews(); initSuggest(); initContact(); initReports(); initQuest();
+  initTrips(); initReviews(); initSuggest(); initContact(); initReports(); initQuest(); initReset();
   if ($('#q-body')) pageHook(); // 로그인 확인이 이 파일보다 먼저 끝났을 수 있어 한 번 직접 실행한다
 })();
