@@ -172,7 +172,7 @@ async function redeemInvite() {
     var s = await authClient.auth.getSession();
     var token = s.data && s.data.session && s.data.session.access_token;
     if (!token) return;
-    var r = await fetch('/api/growth', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ action: 'invite.redeem', code: code }) });
+    var r = await fetch('/api/gamify', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ action: 'invite.redeem', code: code }) });
     if (r.status === 503 || r.status >= 500 || r.status === 401) return; // 서버가 준비되지 않았으면 다음에 다시 시도
     try { localStorage.removeItem('hk_ref'); } catch (e) { /* 무시 */ }
     if (r.ok) { loadNotifs(); alert(tr('inv_redeemed')); }

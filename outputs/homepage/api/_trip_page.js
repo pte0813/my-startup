@@ -1,7 +1,8 @@
-// GET /trip/<id>?ref=<초대코드>&lang=ko|en|zh|ja|es   (vercel.json이 /trip/:id를 이 함수로 보낸다)
+// GET /trip/<id>?ref=<초대코드>&lang=ko|en|zh|ja|es   (vercel.json이 /trip/:id를 /api/og?type=page로 보내고, og.js가 이 파일을 호출한다.
+// Vercel Hobby 플랜은 서버리스 함수가 12개까지라 별도 함수로 만들지 않았다.)
 // 로그인 없이 볼 수 있는 모임 상세 미리보기. 링크 공유용 OG 메타(제목·설명·이미지)를 서버에서 넣어 SNS·메신저 미리보기가 나온다.
 // 공개된 모임(숨김 아님·승인됨)만 보여 주고, 연락처·신청자 정보는 담지 않는다. 신청은 로그인 후 여행 신청 페이지에서 한다.
-const { env, db, withErrors } = require('./_lib');
+const { env, db } = require('./_lib');
 
 const UUID = /^[0-9a-f-]{36}$/i;
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -92,4 +93,4 @@ ${trip.summary ? `<p>${esc(trip.summary)}</p>` : ''}
   return send(200, page({ lang, t, title: t.title(trip.title), desc, canonical: `${base}/trip/${trip.id}`, image: `${base}/api/og?type=trip&id=${trip.id}`, body }), 'public, s-maxage=300, stale-while-revalidate=3600');
 }
 
-module.exports = withErrors('trip-page', handler);
+module.exports = { tripPage: handler };

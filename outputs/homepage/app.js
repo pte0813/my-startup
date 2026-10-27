@@ -768,7 +768,7 @@
     } catch (e) { return { ok: false, error: 'unavailable' }; }
   }
   const gamify = (action, params) => callApi('/api/gamify', action, params);
-  const growth = (action, params) => callApi('/api/growth', action, params);
+  const growth = (action, params) => callApi('/api/gamify', 'invite.' + action, params); // 'overview' | 'redeem'
   const errText = (code) => T('q_err_' + code) || T('q_err_generic');
   // DB에 JSON 문자열(언어별)로 저장된 이름을 현재 언어로 고른다
   const L10n = (v) => {

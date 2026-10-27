@@ -58,7 +58,7 @@
     },
     {
       "source": "/trip/:id",
-      "destination": "/api/trip-page?id=:id"
+      "destination": "/api/og?type=page&id=:id"
     }
   ],
   "functions": {

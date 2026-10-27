@@ -70,8 +70,9 @@
 - `POST /api/pay-prepare`는 `coupon_id`(선택)를 받아 서버가 할인 금액을 계산한다(정률·정액, 본인 쿠폰·사용 가능·미만료만, 결제 금액 최소 100원). 쿠폰은 `pay-return`에서 결제가 확정될 때 사용 처리한다.
 - 관리자 `api/admin.js`에 `gamify.*` 작업 추가(XP 규칙·쿠폰·레벨 보상·도장판·시즌·미션·질문 은행·쿠폰 수동 지급).
 
-### api/growth.js · api/og.js · api/trip-page.js (4단계 유입과 공유)
-- `POST /api/growth { action: overview | invite.redeem{code} }` — 내 초대 코드·초대 수 조회, 가입 직후 초대 코드 등록(양쪽에 쿠폰 INVITE5000). 브라우저는 링크의 `?ref=코드`를 localStorage에 기억했다가 로그인 직후 한 번 호출한다(`common.js redeemInvite`).
+### 4단계 유입과 공유 (api/gamify.js invite.* · api/og.js · api/_trip_page.js)
+> Vercel Hobby 플랜은 서버리스 함수를 12개까지만 배포할 수 있다. 지금 정확히 12개이므로 **새 함수 파일을 만들지 말고 기존 함수에 action으로 합친다**(`_`로 시작하는 파일은 함수로 세지 않는다).
+- `POST /api/gamify { action: invite.overview | invite.redeem{code} }` — 내 초대 코드·초대 수 조회, 가입 직후 초대 코드 등록(양쪽에 쿠폰 INVITE5000). 브라우저는 링크의 `?ref=코드`를 localStorage에 기억했다가 로그인 직후 한 번 호출한다(`common.js redeemInvite`).
 - `GET /api/og?type=trip|review&id=&size=og|story` — 공개된 모임·승인된 후기의 공유 이미지(PNG, CDN 캐시). `type=me-title|me-report`는 `Authorization: Bearer` 필요, 이름·연락처 없이 레벨·칭호·성향만 담는다. 문구는 ko/en만(글꼴 한계). Vercel 함수에 글꼴을 넣으려고 `vercel.json functions.includeFiles`를 쓴다.
-- `GET /trip/<id>?ref=&lang=` — 로그인 없이 보는 모임 상세 미리보기 + OG 메타. 숨김·미승인 모임은 404.
+- `GET /trip/<id>?ref=&lang=`(= `/api/og?type=page&id=`) — 로그인 없이 보는 모임 상세 미리보기 + OG 메타. 숨김·미승인 모임은 404.
 - 마감 임박 알림은 DB 트리거(`notify_seats_low`)가 만들고, 모임 카드의 "마감 임박 알림 받기"는 `trip_watch`를 브라우저가 RLS로 직접 넣고 뺀다.

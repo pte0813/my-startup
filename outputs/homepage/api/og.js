@@ -1,3 +1,4 @@
+// GET /api/og?type=page&id=<uuid>   → 비회원 모임 미리보기 HTML(/trip/<id>가 여기로 온다, _trip_page.js)
 // GET /api/og?type=trip|review&id=<uuid>&size=og|story      (공개: 링크 미리보기·공유 이미지)
 // GET /api/og?type=me-title|me-report&size=og|story&lang=ko|en  (Authorization: Bearer <access token>: 내 칭호·성향 카드)
 // Vercel OG와 같은 엔진(satori → SVG, resvg → PNG)으로 1200x630(og) 또는 1080x1920(인스타 스토리) PNG를 만든다.
@@ -6,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const { env, json, db, verifyUser, withErrors } = require('./_lib');
+const { tripPage } = require('./_trip_page');
 
 const NAVY = '#1F3A5F', CORAL = '#FF6B5B', CREAM = '#FFF1D6';
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -108,6 +110,7 @@ async function build(req, e, store) {
 }
 
 async function handler(req, res) {
+  if (new URL(req.url, 'http://x').searchParams.get('type') === 'page') return tripPage(req, res);
   if (req.method !== 'GET') { res.setHeader('Allow', 'GET'); res.statusCode = 405; return res.end(); }
   const e = env();
   if (!(e.supabaseUrl && e.serviceKey && e.anonKey)) return json(res, 503, { error: 'not_configured' });
