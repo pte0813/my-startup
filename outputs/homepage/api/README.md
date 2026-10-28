@@ -78,5 +78,5 @@
 - 마감 임박 알림은 DB 트리거(`notify_seats_low`)가 만들고, 모임 카드의 "마감 임박 알림 받기"는 `trip_watch`를 브라우저가 RLS로 직접 넣고 뺀다.
 
 ### 여행 상세 페이지 · 관리자 상세 입력
-- `/trip/<id>?lang=ko|en|zh|ja|es`(= `/api/og?type=page`)는 로그인 없이 보는 여행 상세 페이지다. 숨김·미승인 모임은 404. 사진은 우리 저장소(`trip-photos`) 주소만 보여 준다.
+- `/trip/<id>?lang=ko|en|zh|ja|es`(= `/api/og?type=page`)는 로그인 없이 보는 여행 상세 페이지다. 숨김·미승인 모임은 404. 사진은 우리 저장소(`trip-photos`)와 Unsplash(`images.unsplash.com/photo-…`, hotlink, 촬영자는 `trips.photo_credits`에 `[{n,u}]`로 photos와 같은 순서로 저장해 "Photo by … on Unsplash"로 표기) 주소만 보여 준다. Unsplash 사진은 `?auto=format&fit=crop&w=<너비>&q=75`로 줄여 불러온다.
 - 관리자 `api/admin.js`: `trips.update`가 상세 필드(`is_sample`, `min_participants`, `host_name`, `*_i18n` 일정·포함·불포함·집합 장소·호스트 소개)를 받고(허용 언어만·길이 제한), `trips.translate`는 한국어 입력을 Claude로 영·중·일·스페인어로 번역해 돌려주며(저장은 하지 않음, 최대 60초), `trips.photo.add`(브라우저가 줄인 JPEG base64, 3MB 이하, 최대 8장)·`trips.photo.remove`가 사진을 관리한다.

@@ -75,6 +75,19 @@
     card.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }
 
+  // 여행 대표 이미지 우선순위: 올린 실제 사진(trip-photos) → cover_url → 여행지별 일러스트(art_key, art/dest/<키>-1.svg) → 장소 이름으로 고른 기본 일러스트
+  const UNSPLASH = 'https://images.unsplash.com/photo-';
+  const ourPhoto = (u) => typeof u === 'string' && ((!!window.APP_CONFIG && u.startsWith(APP_CONFIG.url + '/storage/v1/object/public/trip-photos/')) || /^https:\/\/images\.unsplash\.com\/photo-[\w-]+$/.test(u));
+  // Unsplash 사진은 원본이 매우 커서 용도별 너비로 줄여 불러온다
+  const sized = (u, w) => (u.startsWith(UNSPLASH) ? `${u}?auto=format&fit=crop&w=${w}&q=75` : u);
+  function tripImage(t) {
+    const p = (t.photos || []).find(ourPhoto);
+    if (p) return sized(p, 640);
+    if (safeUrl(t.cover_url)) return t.cover_url;
+    if (t.art_key && /^[a-z0-9-]{2,30}$/.test(t.art_key)) return 'art/dest/' + t.art_key + '-1.svg';
+    return null;
+  }
+  const coverHtml = (t) => { const u = tripImage(t); return u ? `<img src="${esc(u)}" alt="" loading="lazy">` : `<img class="art" src="art/cover-${coverKind(t)}.svg" alt="" loading="lazy">`; };
   // 사진(cover_url)이 없으면 장소 이름으로 어울리는 일러스트를 고르고, 단서가 없으면 여행마다 고정된 일러스트를 쓴다
   function coverKind(t) {
     const text = ((t.location || '') + ' ' + (t.title || '')).toLowerCase();
@@ -326,7 +339,7 @@
   function tripCard(t) {
     const n = tripState.counts[t.id] || 0;
     const mine = tripState.mine[t.id];
-    const cover = safeUrl(t.cover_url) ? `<img src="${esc(t.cover_url)}" alt="" loading="lazy">` : `<img class="art" src="art/cover-${coverKind(t)}.svg" alt="" loading="lazy">`;
+    const cover = coverHtml(t);
     const dates = t.start_date ? (t.end_date && t.end_date !== t.start_date ? fmtDay(t.start_date) + ' – ' + fmtDay(t.end_date) : fmtDay(t.start_date)) : '';
     const meta = [trx(t, 'location'), dates].filter(Boolean).map(esc).join(' · ');
     const seats = t.capacity ? T('trip_seats', { n, cap: t.capacity }) : (n ? T('trip_count', { n }) : '');
@@ -999,7 +1012,7 @@
   async function initHomeTrips() {
     if (document.body.dataset.page !== 'index' || !authClient) return;
     try {
-      const t = await authClient.from('trips').select('id,title,location,title_i18n,location_i18n,start_date,end_date,price,capacity,status,cover_url,is_sample,sort_order').in('status', ['open', 'upcoming']).order('sort_order').order('start_date').limit(12);
+      const t = await authClient.from('trips').select('id,title,location,title_i18n,location_i18n,start_date,end_date,price,capacity,status,cover_url,photos,art_key,is_sample,sort_order').in('status', ['open', 'upcoming']).order('sort_order').order('start_date').limit(12);
       if (t.error) return;
       const rows = t.data || [];
       let list = rows.filter((x) => x.status === 'open'), kind = 'open';
@@ -1020,7 +1033,7 @@
       const n = home.counts[t.id] || 0, left = t.capacity ? t.capacity - n : null;
       const dates = t.start_date ? (t.end_date && t.end_date !== t.start_date ? fmtDay(t.start_date) + ' – ' + fmtDay(t.end_date) : fmtDay(t.start_date)) : '';
       const meta = [trx(t, 'location'), dates].filter(Boolean).map(esc).join(' · ');
-      const cover = safeUrl(t.cover_url) ? `<img src="${esc(t.cover_url)}" alt="" loading="lazy">` : `<img class="art" src="art/cover-${coverKind(t)}.svg" alt="" loading="lazy">`;
+      const cover = coverHtml(t);
       const low = home.kind === 'open' && left != null && left > 0 && left <= 2;
       return `<article class="trip-card"><a class="trip-link" href="/trip/${esc(t.id)}?lang=${esc(currentLang)}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;flex:1">
         <div class="trip-cover">${cover}<span class="badge st-${esc(t.status)}">${esc(T('st_' + t.status))}</span>${t.is_sample ? `<span class="badge sample">${esc(T('sample_badge'))}</span>` : ''}</div>
@@ -1039,7 +1052,7 @@
     try { if (localStorage.getItem(POP_KEY) === popToday()) return; } catch (e) { /* 저장소를 못 써도 팝업은 보여 준다 */ }
     let kind = 'open', list = [], counts = {};
     try {
-      const t = await authClient.from('trips').select('id,title,location,title_i18n,location_i18n,start_date,end_date,price,capacity,status,cover_url,sort_order').in('status', ['open', 'upcoming']).order('sort_order').order('start_date').limit(12);
+      const t = await authClient.from('trips').select('id,title,location,title_i18n,location_i18n,start_date,end_date,price,capacity,status,cover_url,photos,art_key,sort_order').in('status', ['open', 'upcoming']).order('sort_order').order('start_date').limit(12);
       if (t.error) return;
       const rows = t.data || [];
       list = rows.filter((x) => x.status === 'open');
@@ -1069,7 +1082,7 @@
       const n = counts[t.id] || 0, left = t.capacity ? t.capacity - n : null;
       const dates = t.start_date ? (t.end_date && t.end_date !== t.start_date ? fmtDay(t.start_date) + ' – ' + fmtDay(t.end_date) : fmtDay(t.start_date)) : '';
       const meta = [trx(t, 'location'), dates].filter(Boolean).map(esc).join(' · ');
-      const cover = safeUrl(t.cover_url) ? `<img src="${esc(t.cover_url)}" alt="" loading="lazy">` : `<img class="art" src="art/cover-${coverKind(t)}.svg" alt="" loading="lazy">`;
+      const cover = coverHtml(t);
       const low = kind === 'open' && left != null && left > 0 && left <= 2;
       return `<a class="pop-item" href="trips.html#trip-${kind === 'open' ? 'open' : 'soon'}"><span class="pop-cover">${cover}</span><span class="pop-text"><strong>${esc(trx(t, 'title'))}</strong>${meta ? `<small>${meta}</small>` : ''}<small>${t.price > 0 ? esc(money(t.price)) : ''}${low ? ` <b class="pop-low">${esc(T('pop_low', { n: left }))}</b>` : ''}</small></span></a>`;
     }).join('');

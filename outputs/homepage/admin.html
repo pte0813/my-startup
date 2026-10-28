@@ -330,6 +330,7 @@
       }).join('') || '<tr><td colspan="8" class="muted">모임이 없어요.</td></tr>';
     }
     /* ---- 여행 상세·번역: 한국어가 원문, 나머지 4개 언어는 직접 입력하거나 "AI로 채우기" ---- */
+    const ART_SETS = [['tokyo', '도쿄'], ['danang', '다낭'], ['chiangmai', '치앙마이'], ['paris', '파리'], ['alps', '스위스 알프스'], ['santorini', '산토리니'], ['newyork', '뉴욕'], ['hawaii', '하와이'], ['rockies', '로키산맥']];
     const D_LANGS = [['ko', '한국어(원문)'], ['en', '영어'], ['zh', '중국어'], ['ja', '일본어'], ['es', '스페인어']];
     const TR_BASE = [['title', '이름'], ['location', '장소'], ['summary', '설명']];   // 한국어는 기존 컬럼, 나머지 언어는 *_i18n
     const toLines = (a) => (a || []).join('\n');
@@ -349,13 +350,14 @@
     function showTranslate(id, filled) {
       const t = TRIPS[id]; if (!t) return;
       const box = $('t-detail'); box.hidden = false;
-      const photos = (t.photos || []).map((u) => `<span class="ph"><img src="${esc(u)}" alt="" width="72" height="72"><button class="btn ghost small" data-photo-rm="${esc(id)}" data-url="${esc(u)}">삭제</button></span>`).join('');
+      const photos = (t.photos || []).map((u) => `<span class="ph"><img src="${esc(/^https:\/\/images\.unsplash\.com\//.test(u) ? u + '?auto=format&fit=crop&w=144&q=70' : u)}" alt="" width="72" height="72"><button class="btn ghost small" data-photo-rm="${esc(id)}" data-url="${esc(u)}">삭제</button></span>`).join('');
       box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>${esc(t.title)} · 상세·번역</h3><div class="row"><button class="btn ghost small" data-tr-ai="${esc(id)}">AI로 번역 채우기</button><button class="btn small" data-tr-save="${esc(id)}">저장</button><button class="btn ghost small" data-close-detail>닫기</button></div></div>
         <p class="muted">여행 상세 페이지(/trip/…)에 보이는 내용이에요. 한국어를 입력하고 "AI로 번역 채우기"를 누르면 다른 언어 입력칸이 채워지고, 확인한 뒤 "저장"을 눌러야 반영돼요. 비워 둔 항목은 화면에서 숨기거나 한국어로 보여요.</p>
         <fieldset class="tr-set"><legend>기본 정보</legend>
           <label><input type="checkbox" data-d="is_sample"${t.is_sample ? ' checked' : ''}> 예시(시험용) 상품으로 표시</label>
           <label>최소 출발 인원<input type="number" min="1" max="99" data-d="min_participants" value="${esc(t.min_participants || '')}"></label>
-          <label>호스트 이름<input type="text" maxlength="50" data-d="host_name" value="${esc(t.host_name || '')}"></label></fieldset>
+          <label>호스트 이름<input type="text" maxlength="50" data-d="host_name" value="${esc(t.host_name || '')}"></label>
+          <label>일러스트 세트 (실제 사진이 없을 때 대표·갤러리 이미지로 쓰여요)<select data-d="art_key"><option value="">없음(기본 일러스트)</option>${ART_SETS.map(([k, n]) => `<option value="${k}"${t.art_key === k ? ' selected' : ''}>${n}</option>`).join('')}</select></label></fieldset>
         <fieldset class="tr-set"><legend>사진 (첫 장이 대표 사진, 최대 8장·장당 3MB 이하는 자동으로 줄여 올려요)</legend>
           <div class="row">${photos || '<span class="muted">사진이 없으면 일러스트가 보여요.</span>'}</div>
           <input type="file" accept="image/jpeg,image/png,image/webp" multiple data-photo-add="${esc(id)}"></fieldset>
@@ -370,7 +372,7 @@
         o[f][l] = f === 'itinerary_i18n' ? fromItin(v) : (f === 'includes_i18n' || f === 'excludes_i18n') ? fromLines(v) : v;
       });
       const q = (k) => document.querySelector('#t-detail [data-d="' + k + '"]');
-      return { ...o, is_sample: q('is_sample').checked, min_participants: q('min_participants').value, host_name: q('host_name').value };
+      return { ...o, art_key: q('art_key').value, is_sample: q('is_sample').checked, min_participants: q('min_participants').value, host_name: q('host_name').value };
     }
     // 사진 한 장을 긴 변 1600px JPEG로 줄여 base64로 만든다
     const shrink = (file) => new Promise((resolve, reject) => {
@@ -561,7 +563,7 @@
         if (r.status !== 200) return flash($('t-msg'), r.body && r.body.error === 'ai_not_configured' ? 'AI 키가 설정되지 않았어요(운영에서만 동작해요).' : errText(r), 'err');
         // 번역 결과로 영·중·일·스페인어 칸을 채운다. 한국어 칸은 지금 입력한 값을 그대로 유지한다
         const merged = { ...r.body }; for (const f of ['meeting_i18n', 'host_bio_i18n', 'itinerary_i18n', 'includes_i18n', 'excludes_i18n']) merged[f] = { ...(r.body[f] || {}), ...(cur[f].ko ? { ko: cur[f].ko } : {}) };
-        TRIPS[trAi.dataset.trAi] = { ...TRIPS[trAi.dataset.trAi], is_sample: cur.is_sample, min_participants: cur.min_participants, host_name: cur.host_name };
+        TRIPS[trAi.dataset.trAi] = { ...TRIPS[trAi.dataset.trAi], is_sample: cur.is_sample, art_key: cur.art_key, min_participants: cur.min_participants, host_name: cur.host_name };
         showTranslate(trAi.dataset.trAi, merged); return flash($('t-msg'), 'AI가 채웠어요. 확인하고 저장을 눌러 주세요.', 'ok');
       }
       const trSave = t.closest('[data-tr-save]');

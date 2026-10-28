@@ -4,3 +4,4 @@ build.py
 bundle.py
 dist/
 og.py
+art_dest.py
