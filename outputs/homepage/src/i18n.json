@@ -364,7 +364,8 @@
   "how4_t": "떠나고 이어가기",
   "how4_d": "느슨한 일정으로 함께 떠나고, 후기를 남기고, 서로 원하면 다시 만나요.",
   "trip_detail": "자세히 보기",
-  "sample_badge": "예시 상품"
+  "sample_badge": "예시 상품",
+  "prelaunch_granted": "사전 신청해 주셔서 고마워요! 첫 여행 5천원 쿠폰이 지급됐어요. 내 쿠폰에서 확인하세요. 🎁"
  },
  "en": {
   "menu_label": "Main menu",
@@ -731,7 +732,8 @@
   "how4_t": "Travel and stay connected",
   "how4_d": "Travel together on a loose schedule, leave a review, and meet again if you both want to.",
   "trip_detail": "View details",
-  "sample_badge": "Sample"
+  "sample_badge": "Sample",
+  "prelaunch_granted": "Thanks for pre-registering! A 5,000 KRW first-trip coupon has been issued. Check My coupons. 🎁"
  },
  "zh": {
   "menu_label": "主菜单",
@@ -1098,7 +1100,8 @@
   "how4_t": "出发并保持联系",
   "how4_d": "在宽松的行程中同行，留下评价，双方愿意就再次见面。",
   "trip_detail": "查看详情",
-  "sample_badge": "示例"
+  "sample_badge": "示例",
+  "prelaunch_granted": "感谢您的预约！已发放首次旅行5千韩元优惠券，请在“我的优惠券”查看。🎁"
  },
  "ja": {
   "menu_label": "メインメニュー",
@@ -1465,7 +1468,8 @@
   "how4_t": "旅して、つながり続ける",
   "how4_d": "ゆるい日程で一緒に旅し、レビューを書き、お互いに望めばまた会えます。",
   "trip_detail": "詳細を見る",
-  "sample_badge": "サンプル"
+  "sample_badge": "サンプル",
+  "prelaunch_granted": "事前申込ありがとうございます！初めての旅行用5千ウォンクーポンを付与しました。マイクーポンで確認してください。🎁"
  },
  "es": {
   "menu_label": "Menú principal",
@@ -1832,6 +1836,7 @@
   "how4_t": "Viaja y sigue en contacto",
   "how4_d": "Viajad con un plan flexible, deja tu reseña y volved a veros si ambos queréis.",
   "trip_detail": "Ver detalles",
-  "sample_badge": "Ejemplo"
+  "sample_badge": "Ejemplo",
+  "prelaunch_granted": "¡Gracias por registrarte antes! Se emitió un cupón de 5.000 KRW para tu primer viaje. Míralo en Mis cupones. 🎁"
  }
 }

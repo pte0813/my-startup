@@ -1,6 +1,6 @@
 // POST /api/gamify  { action, ...params }   (Authorization: Bearer <로그인 회원의 access token>)
 // 게이미피케이션: 레벨·XP, 데일리 체크인, 칭호, 도장판, 쿠폰, 시즌 크루·미션. XP·쿠폰·크루는 모두 서버(service_role)와 DB 트리거만 바꾼다.
-//  overview · invite.overview · invite.redeem{code} · checkin{choice} · crew.create{name} · crew.join{code} · crew.leave · crew.ranking · crew.claim{mission_id} · priority.apply{trip_id}
+//  overview · prelaunch.claim · invite.overview · invite.redeem{code} · checkin{choice} · crew.create{name} · crew.join{code} · crew.leave · crew.ranking · crew.claim{mission_id} · priority.apply{trip_id}
 const crypto = require('crypto');
 const { env, json, readBody, db, verifyUser, withErrors } = require('./_lib');
 
@@ -257,6 +257,20 @@ async function handler(req, res) {
       }
       return json(res, 200, { ok: true, rewarded: !!tpl });
     }
+  }
+
+  // ---- 사전 신청(랜딩) 감사 쿠폰: 사전 신청한 이메일과 같고 이메일 확인이 끝난 계정에 한 번만 ----
+  if (action === 'prelaunch.claim') {
+    if (suspended) return json(res, 403, { error: 'suspended' });
+    const email = String(user.email || '').trim();
+    if (!email || !user.email_confirmed_at) return json(res, 200, { granted: false, reason: 'unconfirmed' });
+    let hit = await one(`signups?select=id&email=eq.${encodeURIComponent(email)}`);
+    if (!hit && email !== email.toLowerCase()) hit = await one(`signups?select=id&email=eq.${encodeURIComponent(email.toLowerCase())}`);
+    if (!hit) return json(res, 200, { granted: false, reason: 'not_signed_up' });
+    const tpl = await one('coupon_templates?select=id&code=eq.PRELAUNCH5000&active=eq.true');
+    if (!tpl) return json(res, 200, { granted: false, reason: 'no_template' });
+    const given = await rpc('issue_coupon', { uid: user.id, tpl: tpl.id, src: 'referral', ref: 'prelaunch' });
+    return json(res, 200, { granted: !!given, reason: given ? 'ok' : 'already' }); // 이미 받았으면 쿠폰 함수가 null을 돌려준다
   }
 
   return json(res, 400, { error: 'invalid_action' });

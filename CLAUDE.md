@@ -13,7 +13,7 @@
   - 서버 함수: `api/*.js` (`_lib.js` 공통·오류 보고, `_ai.js` AI 공통). 설명은 `api/README.md`
   - **관리자**: `/admin`(= `admin.html`, 독립 파일) + `api/admin.js`. 권한은 `profiles.role`(super_admin/operator/cs/user)을 서버가 매번 확인하고, 변경 작업은 `admin_logs`에 기록한다. 데이터는 service_role로 서버에서만 읽는다. 오류 모니터링은 `monitor.js` + `SENTRY_DSN`(`outputs/monitoring-guide.md`)
   - 배포 설정: `vercel.json`(빌드 `node write-config.js`로 환경변수에서 `config.js` 생성, 보안 헤더, 크론), `.vercelignore`
-  - 랜딩(사전 신청): `outputs/landing/` (별도 Vercel 프로젝트 `hamkkedat-landing`)
+  - 랜딩(광고 유입 전환 + 사전 신청): `outputs/landing/` (별도 Vercel 프로젝트 `hamkkedat-landing`, Git 연결·Root Directory 설정이 없어 파일 업로드로 배포한다). 지금 모집 중인 여행 카드는 `outputs/landing/api/trips.js`(공개 키로 공개 여행만 읽음)가 채우고, 카드는 메인 사이트 `/trip/<id>`로 연결한다. 사전 신청 이메일로 메인 사이트에 가입하면 `api/gamify.js prelaunch.claim`이 PRELAUNCH5000 쿠폰을 한 번 지급한다(이메일 확인된 계정만)
 - DB: `supabase/migrations/` (규칙은 `supabase/README.md`). 옛 SQL 메모는 `outputs/*.sql`(기록용)
 - 테스트: 별도 테스트 프레임워크 없음. 가짜 Supabase 스텁 + Playwright(chromium, `/opt/pw-browsers/chromium`)로 화면을, 가짜 fetch로 서버 함수를 시험한다.
 
