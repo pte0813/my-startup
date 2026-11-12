@@ -20,9 +20,12 @@ menu.addEventListener('click', (e) => {
   if (!a) return;
   if (a.classList.contains('top')) {
     const li = a.closest('li.group');
-    // 모바일은 눌러서 펼침, 터치 기기의 큰 화면은 첫 탭에 펼침
-    if (isMobileNav()) { e.preventDefault(); li.classList.toggle('expanded'); return; }
-    if (noHover() && !header.classList.contains('mega-open')) { e.preventDefault(); setMega(true); return; }
+    // 하위 메뉴가 없는 항목(퀘스트 등)은 펼칠 것이 없으니 바로 이동한다
+    if (li.querySelector('.sub')) {
+      // 모바일은 눌러서 펼침, 터치 기기의 큰 화면은 첫 탭에 펼침
+      if (isMobileNav()) { e.preventDefault(); li.classList.toggle('expanded'); return; }
+      if (noHover() && !header.classList.contains('mega-open')) { e.preventDefault(); setMega(true); return; }
+    }
   }
   setOpen(false); setMega(false);
 });
